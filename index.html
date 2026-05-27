@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>时代信息切片咖啡 | Time Slice Coffee</title>
+    <meta
+      name="description"
+      content="一条真正值得今天被看见的信息，装进一杯未来便利店咖啡。"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="Time Slice Coffee 首页">
+        <span class="brand-mark"></span>
+        <span>Time Slice Coffee</span>
+      </a>
+      <nav>
+        <a href="#signals">Order</a>
+        <a href="#story">Concept</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Future Convenience Coffee</p>
+          <h1 id="hero-title">Today’s Information Slice.</h1>
+          <p class="hero-text">一条真正值得今天被看见的信息。</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#signals">Order Today’s Slice</a>
+          </div>
+        </div>
+
+        <div class="product-stage" aria-label="未来便利店咖啡纸杯产品展示">
+          <div class="code-cup-visual" id="hero-code-cup" aria-label="Code characters forming a Time Slice Coffee cup">
+            <div class="code-cup-field" id="code-cup-field" aria-hidden="true"></div>
+            <div class="code-cup-scan" aria-hidden="true"></div>
+            <div class="code-cup-status" aria-hidden="true">
+              <span>Extracting signal...</span>
+              <span>Rewriting value...</span>
+              <span>Brewing your slice...</span>
+            </div>
+            <div class="code-cup-label" aria-hidden="true">
+              <span>TIME SLICE COFFEE</span>
+              <strong>#024</strong>
+              <small>Today’s Information Slice.</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="manifesto-section" id="story" aria-labelledby="story-title">
+        <p class="eyebrow">Core Narrative</p>
+        <h2 id="story-title">
+          过去，人们买水是为了解渴。后来，人们购买品牌。而 AI 时代，人们开始购买：对这个时代的理解。
+        </h2>
+        <p>
+          于是，我们把今天真正重要的一则变化，装进了一杯咖啡里。产品不是 AI 新闻聚合，不是 AI SaaS，不是 ChatGPT 套壳。它是一个 AI 驱动的时代切片系统。
+        </p>
+      </section>
+
+      <section class="flow-section" id="signals" aria-labelledby="signals-title">
+        <div class="section-heading">
+          <p class="eyebrow">ORDER → BREW → LABEL → PICK UP</p>
+          <h2 id="signals-title">选择今日信息豆</h2>
+          <p>不是所有信息都需要被你看见。今天，只选择一条与你有关的变化。</p>
+          <small class="tech-flow">Signal → Slice → Value → Label</small>
+        </div>
+
+        <div class="signal-grid" id="signal-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="flow-section muted-section is-disabled" id="identity-section" aria-labelledby="identity-title">
+        <div class="section-heading">
+          <p class="eyebrow">Choose Your Taste</p>
+          <h2 id="identity-title">选择你的视角</h2>
+          <p>同一杯信息咖啡，会因为你的身份而呈现不同味道。</p>
+        </div>
+
+        <div class="identity-grid" id="identity-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="flow-section is-disabled" id="brew-section" aria-labelledby="brew-title">
+        <div class="section-heading">
+          <p class="eyebrow">Information Strength</p>
+          <h2 id="brew-title">选择信息浓度</h2>
+          <p>浓度只影响你看见的层次，不改变这条切片本身。</p>
+        </div>
+
+        <div class="strength-grid" id="strength-grid" aria-label="信息浓度选择"></div>
+      </section>
+
+      <section class="flow-section muted-section is-disabled" id="serve-section" aria-labelledby="serve-title">
+        <div class="section-heading">
+          <p class="eyebrow">Served Style</p>
+          <h2 id="serve-title">Choose how today is served.</h2>
+          <p>选择今天的上杯方式</p>
+        </div>
+
+        <div class="serve-grid" id="serve-grid" aria-label="上杯方式选择"></div>
+        <button class="button primary brew-button" id="brew-button" type="button">Brew My Slice / 萃取我的时代切片</button>
+      </section>
+
+      <section class="flow-section is-disabled" id="value-section" aria-labelledby="value-title">
+        <div class="section-heading">
+          <p class="eyebrow">Brew Result</p>
+          <h2 id="value-title">正在准备你的信息咖啡</h2>
+        </div>
+
+        <article class="value-panel" id="value-panel" aria-live="polite"></article>
+      </section>
+
+      <section class="flow-section label-section is-disabled" id="label-section" aria-labelledby="label-title">
+        <div class="section-heading">
+          <p class="eyebrow">Pick Up</p>
+          <h2 id="label-title">你的今日杯贴已生成</h2>
+          <p>打印它，贴到咖啡杯上。</p>
+        </div>
+
+        <div class="label-workbench">
+          <div class="product-preview" id="product-preview" aria-label="杯型预览"></div>
+          <article class="print-label" id="print-label" aria-live="polite"></article>
+          <div class="label-actions">
+            <button class="button primary" id="print-button" type="button">Print Label / 打印杯贴</button>
+            <button class="button ghost" id="reset-button" type="button">Start Again</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Signal Brew Prototype</span>
+      <span>Signal → Slice → Value → Label</span>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
