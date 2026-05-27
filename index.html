@@ -64,12 +64,18 @@
       <section class="flow-section" id="signals" aria-labelledby="signals-title">
         <div class="section-heading">
           <p class="eyebrow">ORDER → BREW → LABEL → PICK UP</p>
-          <h2 id="signals-title">选择今日信息豆</h2>
-          <p>不是所有信息都需要被你看见。今天，只选择一条与你有关的变化。</p>
+          <h2 id="signals-title">选择一组时代风味。</h2>
+          <p>像选择咖啡豆的产地一样，先选择你今天想理解的世界切面。</p>
           <small class="tech-flow">Signal → Slice → Value → Label</small>
         </div>
 
-        <div class="signal-grid" id="signal-grid" aria-live="polite"></div>
+        <div class="signal-wall" aria-label="Signal Shelves">
+          <div class="shelf-grid" id="shelf-grid" aria-live="polite"></div>
+        </div>
+        <div class="signal-bean-stage" id="signal-bean-stage" aria-live="polite">
+          <div class="signal-grid" id="signal-grid" aria-live="polite"></div>
+        </div>
+        <div class="selected-signal-panel" id="selected-signal-panel" aria-live="polite"></div>
       </section>
 
       <section class="flow-section muted-section is-disabled" id="identity-section" aria-labelledby="identity-title">

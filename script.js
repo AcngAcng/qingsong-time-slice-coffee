@@ -1,6 +1,9 @@
-import { identities, signals, valueRewrites } from "./data/signals.js";
+import { identities, signalShelves, signals, valueRewrites } from "./data/signals.js";
 
+const shelfGrid = document.querySelector("#shelf-grid");
+const signalBeanStage = document.querySelector("#signal-bean-stage");
 const signalGrid = document.querySelector("#signal-grid");
+const selectedSignalPanel = document.querySelector("#selected-signal-panel");
 const identityGrid = document.querySelector("#identity-grid");
 const strengthGrid = document.querySelector("#strength-grid");
 const serveGrid = document.querySelector("#serve-grid");
@@ -58,7 +61,8 @@ const serveStyles = [
   },
 ];
 
-let selectedSignal = signals[0];
+let selectedSignal = null;
+let selectedShelfId = null;
 let selectedIdentity = null;
 let selectedStrength = strengths[1];
 let selectedServeStyle = serveStyles[0];
@@ -216,25 +220,90 @@ function enableSection(section) {
   section.classList.remove("is-disabled");
 }
 
+function getSelectedShelf() {
+  return signalShelves.find((shelf) => shelf.shelfId === selectedShelfId);
+}
+
+function renderShelves() {
+  shelfGrid.innerHTML = signalShelves
+    .map(
+      (shelf) => `
+        <button
+          class="shelf-card${shelf.shelfId === selectedShelfId ? " is-selected" : ""}"
+          data-shelf-id="${shelf.shelfId}"
+          type="button"
+        >
+          <span class="shelf-label">Signal Shelf</span>
+          <strong>${shelf.title}</strong>
+          <span>${shelf.description}</span>
+        </button>
+      `,
+    )
+    .join("");
+}
+
 function renderSignals() {
-  signalGrid.innerHTML = signals
+  const shelf = getSelectedShelf();
+  const shelfSignals = signals.filter((signal) => signal.shelfId === selectedShelfId);
+
+  if (!shelf) {
+    signalBeanStage.classList.add("is-empty");
+    signalGrid.innerHTML = "";
+    renderSelectedSignal();
+    return;
+  }
+
+  signalBeanStage.classList.remove("is-empty");
+  signalGrid.innerHTML = `
+    <div class="bean-stage-heading">
+      <span>Signal Beans / 今日信息豆</span>
+      <strong>${shelf.title}</strong>
+    </div>
+    <div class="bean-grid">
+      ${shelfSignals
     .map(
       (signal) => `
         <button
           class="signal-card${signal.id === selectedSignal?.id ? " is-selected" : ""}"
           data-signal-id="${signal.id}"
-          title="${signal.source}: ${signal.rawTitle}"
+          title="${signal.sliceTitle}"
           type="button"
         >
           <span class="signal-number">#${signal.id}</span>
           <strong>${signal.sliceTitle}</strong>
-          <span class="reason">${signal.sliceReason}</span>
-          <span class="relation">关系：${signal.relation}</span>
-          <span class="source">Source: ${signal.source}</span>
+          <span class="relation">${signal.shelfTitle}</span>
         </button>
       `,
     )
-    .join("");
+    .join("")}
+    </div>
+  `;
+  renderSelectedSignal();
+}
+
+function renderSelectedSignal() {
+  if (!selectedSignal) {
+    selectedSignalPanel.innerHTML = "";
+    return;
+  }
+
+  selectedSignalPanel.innerHTML = `
+    <article class="selected-signal-card">
+      <div class="selected-signal-kicker">
+        <span>今日已选择的信息豆</span>
+        <span>#${selectedSignal.id}</span>
+      </div>
+      <h3>${selectedSignal.sliceTitle}</h3>
+      <p>${selectedSignal.sliceReason}</p>
+      <div class="selected-signal-meta">
+        <span>Shelf / ${selectedSignal.shelfTitle}</span>
+        <span>Source / ${selectedSignal.source}</span>
+      </div>
+      <button class="button primary continue-signal-button" id="continue-signal-button" type="button">
+        Continue to Lens / 选择今日视角
+      </button>
+    </article>
+  `;
 }
 
 function renderIdentities() {
@@ -265,6 +334,11 @@ function renderStrengths() {
 }
 
 function renderServeStyles() {
+  if (!selectedSignal) {
+    serveGrid.innerHTML = "";
+    return;
+  }
+
   serveGrid.innerHTML = serveStyles
     .map(
       (serveStyle) => `
@@ -485,10 +559,29 @@ function selectSignal(signalId) {
   selectedIdentity = null;
   renderSignals();
   renderIdentities();
-  enableSection(identitySection);
+  identitySection.classList.add("is-disabled");
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
+}
+
+function selectShelf(shelfId) {
+  selectedShelfId = shelfId;
+  selectedSignal = null;
+  selectedIdentity = null;
+  renderShelves();
+  renderSignals();
+  renderIdentities();
+  identitySection.classList.add("is-disabled");
+  brewSection.classList.add("is-disabled");
+  serveSection.classList.add("is-disabled");
+  resetBrewResult();
+}
+
+function continueToLens() {
+  if (!selectedSignal) return;
+
+  enableSection(identitySection);
   scrollToSection(identitySection);
 }
 
@@ -549,11 +642,23 @@ async function brewSlice() {
   }
 }
 
+shelfGrid.addEventListener("click", (event) => {
+  const card = event.target.closest("[data-shelf-id]");
+
+  if (!card) return;
+  selectShelf(card.dataset.shelfId);
+});
+
 signalGrid.addEventListener("click", (event) => {
   const card = event.target.closest("[data-signal-id]");
 
   if (!card) return;
   selectSignal(card.dataset.signalId);
+});
+
+selectedSignalPanel.addEventListener("click", (event) => {
+  if (!event.target.closest("#continue-signal-button")) return;
+  continueToLens();
 });
 
 identityGrid.addEventListener("click", (event) => {
@@ -595,12 +700,14 @@ printButton.addEventListener("click", () => {
 });
 
 resetButton.addEventListener("click", () => {
-  selectedSignal = signals[0];
+  selectedSignal = null;
+  selectedShelfId = null;
   selectedIdentity = null;
   selectedStrength = strengths[1];
   selectedServeStyle = serveStyles[0];
   activeRewrite = null;
   heroCodeCup?.classList.remove("is-brewing", "is-ordering", "is-complete");
+  renderShelves();
   renderSignals();
   renderIdentities();
   renderStrengths();
@@ -612,6 +719,7 @@ resetButton.addEventListener("click", () => {
   scrollToSection(document.querySelector("#signals"));
 });
 
+renderShelves();
 renderSignals();
 renderIdentities();
 renderStrengths();
