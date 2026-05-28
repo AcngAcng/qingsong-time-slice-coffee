@@ -502,6 +502,7 @@ h2 {
 .flow-section {
   border-top: 1px solid var(--line);
   padding: 88px clamp(22px, 6vw, 88px);
+  scroll-margin-top: 112px;
 }
 
 .manifesto-section {
@@ -516,6 +517,32 @@ h2 {
 
 .section-heading {
   max-width: 800px;
+}
+
+.signal-refresh-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.signal-refresh-button {
+  border-color: rgba(23, 23, 23, 0.18);
+  color: var(--muted);
+  font-size: 12px;
+  padding: 10px 14px;
+}
+
+.signal-refresh-button:disabled {
+  cursor: wait;
+  opacity: 0.56;
+}
+
+.signal-refresh-status {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .shelf-card,
@@ -592,6 +619,7 @@ h2 {
 .signal-bean-stage {
   margin-top: 26px;
   max-width: 920px;
+  scroll-margin-top: 112px;
 }
 
 .signal-bean-stage.is-empty {
@@ -669,6 +697,7 @@ h2 {
 .selected-signal-panel {
   margin-top: 24px;
   max-width: 780px;
+  scroll-margin-top: 112px;
 }
 
 .selected-signal-card {

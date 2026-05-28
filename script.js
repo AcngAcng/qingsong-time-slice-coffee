@@ -1,4 +1,5 @@
-import { identities, signalShelves, signals, valueRewrites } from "./data/signals.js";
+import { preparedSignals, signalShelves } from "./data/prepared-signals.js";
+import { identities, valueRewrites } from "./data/signals.js";
 
 const shelfGrid = document.querySelector("#shelf-grid");
 const signalBeanStage = document.querySelector("#signal-bean-stage");
@@ -19,6 +20,8 @@ const printLabel = document.querySelector("#print-label");
 const printButton = document.querySelector("#print-button");
 const resetButton = document.querySelector("#reset-button");
 const brewButton = document.querySelector("#brew-button");
+const refreshSignalsButton = document.querySelector("#refresh-signals-button");
+const signalRefreshStatus = document.querySelector("#signal-refresh-status");
 const heroCodeCup = document.querySelector("#hero-code-cup");
 const codeCupField = document.querySelector("#code-cup-field");
 const heroOrderButton = document.querySelector(".hero-actions .primary");
@@ -67,6 +70,8 @@ let selectedIdentity = null;
 let selectedStrength = strengths[1];
 let selectedServeStyle = serveStyles[0];
 let activeRewrite = null;
+let activeSignals = preparedSignals;
+let isPreparingSignals = false;
 
 const codeCupTokens = [
   "0",
@@ -216,12 +221,48 @@ function scrollToSection(section) {
   section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function scrollAfterRender(element, block = "start") {
+  window.setTimeout(() => {
+    element?.scrollIntoView({ behavior: "smooth", block });
+  }, 0);
+}
+
 function enableSection(section) {
   section.classList.remove("is-disabled");
 }
 
 function getSelectedShelf() {
   return signalShelves.find((shelf) => shelf.shelfId === selectedShelfId);
+}
+
+function setSignalRefreshState(isLoading, message = "") {
+  isPreparingSignals = isLoading;
+
+  if (refreshSignalsButton) {
+    refreshSignalsButton.disabled = isLoading;
+  }
+
+  if (signalRefreshStatus) {
+    signalRefreshStatus.textContent = message;
+  }
+}
+
+function resetSignalFlowAfterRefresh(nextSignals) {
+  activeSignals = Array.isArray(nextSignals) && nextSignals.length ? nextSignals : preparedSignals;
+  selectedSignal = null;
+  selectedIdentity = null;
+  renderSignals();
+  renderIdentities();
+  identitySection.classList.add("is-disabled");
+  brewSection.classList.add("is-disabled");
+  serveSection.classList.add("is-disabled");
+  resetBrewResult();
+}
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
 }
 
 function renderShelves() {
@@ -244,7 +285,7 @@ function renderShelves() {
 
 function renderSignals() {
   const shelf = getSelectedShelf();
-  const shelfSignals = signals.filter((signal) => signal.shelfId === selectedShelfId);
+  const shelfSignals = activeSignals.filter((signal) => signal.shelfId === selectedShelfId);
 
   if (!shelf) {
     signalBeanStage.classList.add("is-empty");
@@ -556,7 +597,7 @@ function resetBrewResult() {
 }
 
 function selectSignal(signalId) {
-  selectedSignal = signals.find((signal) => signal.id === signalId);
+  selectedSignal = activeSignals.find((signal) => signal.id === signalId);
   selectedIdentity = null;
   renderSignals();
   renderIdentities();
@@ -564,6 +605,7 @@ function selectSignal(signalId) {
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
+  scrollAfterRender(selectedSignalPanel, "center");
 }
 
 function selectShelf(shelfId) {
@@ -577,6 +619,7 @@ function selectShelf(shelfId) {
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
+  scrollAfterRender(signalBeanStage, "start");
 }
 
 function continueToLens() {
@@ -643,6 +686,41 @@ async function brewSlice() {
   }
 }
 
+async function refreshPreparedSignals() {
+  if (isPreparingSignals) return;
+
+  setSignalRefreshState(true, "正在准备今日信息豆... Preparing today’s signal beans...");
+
+  try {
+    const [response] = await Promise.all([
+      fetch("/api/prepare-signals", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          source: "x-grok",
+          query: "AI OR work OR education OR climate OR design",
+          limit: 20,
+        }),
+      }),
+      wait(520),
+    ]);
+
+    if (!response.ok) {
+      throw new Error(`Prepare signals failed with ${response.status}`);
+    }
+
+    const payload = await response.json();
+    resetSignalFlowAfterRefresh(payload.signals);
+    setSignalRefreshState(false, "");
+  } catch (error) {
+    console.error("Prepare signals mock failed; using local fallback.", error);
+    resetSignalFlowAfterRefresh(preparedSignals);
+    setSignalRefreshState(false, "Using local prepared signal beans.");
+  }
+}
+
 shelfGrid.addEventListener("click", (event) => {
   const card = event.target.closest("[data-shelf-id]");
 
@@ -684,6 +762,7 @@ serveGrid.addEventListener("click", (event) => {
 });
 
 brewButton.addEventListener("click", brewSlice);
+refreshSignalsButton?.addEventListener("click", refreshPreparedSignals);
 
 if (heroOrderButton) {
   heroOrderButton.addEventListener("click", () => {

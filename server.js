@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 
 const port = Number(process.env.PORT || 8080);
 const root = process.cwd();
@@ -66,6 +67,15 @@ function sendJson(response, statusCode, payload) {
     "Content-Type": "application/json;charset=utf-8",
   });
   response.end(JSON.stringify(payload));
+}
+
+function getShanghaiDate() {
+  return new Intl.DateTimeFormat("en-CA", {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+  }).format(new Date());
 }
 
 function extractOutputText(payload) {
@@ -299,6 +309,31 @@ async function handleSlice(request, response) {
   }
 }
 
+async function handlePrepareSignals(request, response) {
+  if (request.method !== "POST") {
+    sendJson(response, 405, { error: "Method not allowed" });
+    return;
+  }
+
+  try {
+    const bodyText = await readRequestBody(request);
+    const body = bodyText ? JSON.parse(bodyText) : {};
+    const limit = Number.isFinite(Number(body.limit)) ? Number(body.limit) : 20;
+    const moduleUrl = pathToFileURL(path.join(root, "data", "prepared-signals.js")).href;
+    const { preparedSignals } = await import(`${moduleUrl}?mock=${Date.now()}`);
+    const fetchedAt = getShanghaiDate();
+    const signals = preparedSignals.slice(0, Math.max(1, limit)).map((signal) => ({
+      ...signal,
+      fetchedAt,
+    }));
+
+    sendJson(response, 200, { signals });
+  } catch (error) {
+    console.error("Prepare signals route failed:", error);
+    sendJson(response, 500, { error: "Prepare signals route failed" });
+  }
+}
+
 function serveStatic(request, response) {
   const url = new URL(request.url, `http://${request.headers.host}`);
   let pathname = decodeURIComponent(url.pathname);
@@ -337,6 +372,11 @@ const server = http.createServer((request, response) => {
 
   if (request.url?.startsWith("/api/slice")) {
     handleSlice(request, response);
+    return;
+  }
+
+  if (request.url?.startsWith("/api/prepare-signals")) {
+    handlePrepareSignals(request, response);
     return;
   }
 
