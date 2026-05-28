@@ -266,7 +266,10 @@ function wait(ms) {
 }
 
 function renderShelves() {
-  shelfGrid.innerHTML = signalShelves
+  shelfGrid.innerHTML = `
+    <div class="rack-kicker">SIGNAL SHELVES / 信息货架</div>
+    <div class="shelf-label-grid">
+      ${signalShelves
     .map(
       (shelf) => `
         <button
@@ -274,13 +277,15 @@ function renderShelves() {
           data-shelf-id="${shelf.shelfId}"
           type="button"
         >
-          <span class="shelf-label">Signal Shelf</span>
+          <span class="selected-shelf-mark">SELECTED</span>
           <strong>${shelf.title}</strong>
-          <span>${shelf.description}</span>
+          <span class="shelf-description">${shelf.description}</span>
         </button>
       `,
     )
-    .join("");
+    .join("")}
+    </div>
+  `;
 }
 
 function renderSignals() {
@@ -297,8 +302,11 @@ function renderSignals() {
   signalBeanStage.classList.remove("is-empty");
   signalGrid.innerHTML = `
     <div class="bean-stage-heading">
-      <span>Signal Beans / 今日信息豆</span>
-      <strong>${shelf.title}</strong>
+      <span>SIGNAL BEANS / 今日信息豆</span>
+      <div>
+        <strong>${shelf.title}</strong>
+        <p>${shelf.description}</p>
+      </div>
     </div>
     <div class="bean-grid">
       ${shelfSignals
@@ -311,8 +319,9 @@ function renderSignals() {
           type="button"
         >
           <span class="signal-number">#${signal.id}</span>
+          <span class="bean-label">SIGNAL BEAN</span>
           <strong>${signal.sliceTitle}</strong>
-          <span class="relation">${signal.shelfTitle}</span>
+          <span class="relation">${signal.relation} / ${signal.source}</span>
         </button>
       `,
     )
@@ -331,7 +340,7 @@ function renderSelectedSignal() {
   selectedSignalPanel.innerHTML = `
     <article class="selected-signal-card">
       <div class="selected-signal-kicker">
-        <span>今日已选择的信息豆</span>
+        <span>SELECTED BEAN / 已选信息豆</span>
         <span>#${selectedSignal.id}</span>
       </div>
       <h3>${selectedSignal.sliceTitle}</h3>
