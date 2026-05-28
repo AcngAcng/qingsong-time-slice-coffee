@@ -297,6 +297,7 @@ function renderSelectedSignal() {
       <p>${selectedSignal.sliceReason}</p>
       <div class="selected-signal-meta">
         <span>Shelf / ${selectedSignal.shelfTitle}</span>
+        <span>Relation / ${selectedSignal.relation}</span>
         <span>Source / ${selectedSignal.source}</span>
       </div>
       <button class="button primary continue-signal-button" id="continue-signal-button" type="button">
