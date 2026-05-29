@@ -78,6 +78,21 @@ function getShanghaiDate() {
   }).format(new Date());
 }
 
+function clampSignalLimit(limit) {
+  if (!Number.isFinite(limit)) return 18;
+  return Math.min(18, Math.max(8, Math.floor(limit)));
+}
+
+async function loadPreparedSignalFallback(limit, fetchedAt) {
+  const moduleUrl = pathToFileURL(path.join(root, "data", "prepared-signals.js")).href;
+  const { preparedSignals } = await import(`${moduleUrl}?fallback=${Date.now()}`);
+
+  return preparedSignals.slice(0, clampSignalLimit(limit)).map((signal) => ({
+    ...signal,
+    fetchedAt,
+  }));
+}
+
 function extractOutputText(payload) {
   if (payload.output_text) {
     return payload.output_text;
@@ -315,22 +330,20 @@ async function handlePrepareSignals(request, response) {
     return;
   }
 
+  const fetchedAt = getShanghaiDate();
+
   try {
     const bodyText = await readRequestBody(request);
     const body = bodyText ? JSON.parse(bodyText) : {};
-    const limit = Number.isFinite(Number(body.limit)) ? Number(body.limit) : 20;
-    const moduleUrl = pathToFileURL(path.join(root, "data", "prepared-signals.js")).href;
-    const { preparedSignals } = await import(`${moduleUrl}?mock=${Date.now()}`);
-    const fetchedAt = getShanghaiDate();
-    const signals = preparedSignals.slice(0, Math.max(1, limit)).map((signal) => ({
-      ...signal,
-      fetchedAt,
-    }));
+    const limit = clampSignalLimit(Number(body.limit));
 
-    sendJson(response, 200, { signals });
+    const signals = await loadPreparedSignalFallback(limit, fetchedAt);
+    sendJson(response, 200, { signals, fallback: true, reason: "Using local raw signal mock" });
   } catch (error) {
-    console.error("Prepare signals route failed:", error);
-    sendJson(response, 500, { error: "Prepare signals route failed" });
+    console.error("Prepare signals route failed; using local fallback.", error);
+    const signals = await loadPreparedSignalFallback(12, fetchedAt);
+
+    sendJson(response, 200, { signals, fallback: true, reason: "Prepare signals route failed" });
   }
 }
 

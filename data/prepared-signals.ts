@@ -1,0 +1,48 @@
+import { rawSignalsXaiSample } from "./raw-signals-xai-sample.js";
+
+export type PreparedSignal = {
+  id: string;
+  shelfId: string;
+  shelfTitle: string;
+  rawTitle: string;
+  rawTitleZh?: string;
+  rawSummary: string;
+  rawSummaryZh?: string;
+  rawUrl: string;
+  source: string;
+  whyWorthWatching: string;
+  whyWorthWatchingZh?: string;
+  fetchedAt: string;
+  sliceTitle: string;
+  sliceReason: string;
+  relation: string;
+  score: number;
+  coreJudgment?: string;
+  keywords?: string[];
+};
+
+const extractedById: Record<string, Omit<PreparedSignal, "id" | "shelfId" | "shelfTitle" | "rawTitle" | "rawTitleZh" | "rawSummary" | "rawSummaryZh" | "rawUrl" | "source" | "whyWorthWatching" | "whyWorthWatchingZh" | "fetchedAt">> = {
+  "024": { sliceTitle: "答案变多之后，问题开始变贵。", sliceReason: "AI 让答案变得便宜，但判断什么值得问、如何验证答案，正在成为新的学习能力。", relation: "人与知识", score: 0.94, coreJudgment: "判断什么值得问，正在变得更稀缺。", keywords: ["Question", "Judgment", "Knowledge"] },
+  "025": { sliceTitle: "软件开始替人走完一段流程。", sliceReason: "AI 不再只是给建议，而是在接手研究、整理、回复和交接这些连续动作。", relation: "人与工具", score: 0.93, coreJudgment: "工具正在从回答问题变成完成步骤。", keywords: ["Workflow", "Execution", "Tools"] },
+  "026": { sliceTitle: "生成变快之后，取舍变得更贵。", sliceReason: "当工具能快速给出多个版本，真正稀缺的是结构、节奏和审美判断。", relation: "人与创作", score: 0.91, coreJudgment: "产出变快之后，取舍成为新的能力。", keywords: ["Design", "Taste", "Structure"] },
+  "027": { sliceTitle: "天气正在变成一条经济信号。", sliceReason: "极端天气开始通过食品、物流和价格进入普通人的日常判断。", relation: "人与环境", score: 0.9, coreJudgment: "天气正在从背景条件变成经济变量。", keywords: ["Climate", "Supply", "Price"] },
+  "028": { sliceTitle: "推荐正在变成一次被设计过的对话。", sliceReason: "系统不只展示商品，也通过提问、排序和解释参与人的选择。", relation: "人与消费", score: 0.88, coreJudgment: "推荐正在从陈列变成引导。", keywords: ["Recommendation", "Choice", "Retail"] },
+  "029": { sliceTitle: "会使用工具，正在变成会安排工具。", sliceReason: "真正的效率来自把多个 AI 工具放进稳定流程，而不是只会单次提问。", relation: "人与工作", score: 0.92, coreJudgment: "安排工具的能力，正在比使用工具更重要。", keywords: ["Workflow", "Orchestration", "Work"] },
+  "030": { sliceTitle: "看见信息，不等于理解信息。", sliceReason: "同一事实被不同方式剪裁后，会把人带向完全不同的判断。", relation: "人与社会", score: 0.89, coreJudgment: "理解信息，需要看见信息背后的结构。", keywords: ["Context", "Source", "Society"] },
+  "031": { sliceTitle: "学习评价开始从结果转向过程。", sliceReason: "当答案可以被快速生成，提问、修改和验证过程会更能说明真实能力。", relation: "人与学习", score: 0.91, coreJudgment: "学习的中心正在从答案迁移到过程。", keywords: ["Learning", "Process", "Verification"] },
+  "032": { sliceTitle: "创意和执行之间的距离正在变短。", sliceReason: "生成工具让想法更快落地，也让方向判断和版本选择变得更关键。", relation: "人与表达", score: 0.87, coreJudgment: "执行变快之后，创意更需要清晰的方向。", keywords: ["Creation", "Execution", "Taste"] },
+  "033": { sliceTitle: "丰收不只是田里的事。", sliceReason: "农业结果越来越受气候、仓储、运输和市场预期共同影响。", relation: "人与土地", score: 0.86, coreJudgment: "土地之外的系统，正在决定田里的结果。", keywords: ["Agriculture", "Supply Chain", "Climate"] },
+  "034": { sliceTitle: "效率开始发生在动作之间。", sliceReason: "AI 的价值不只在生成内容，也在减少会议、任务和项目状态之间的信息搬运。", relation: "人与组织", score: 0.89, coreJudgment: "流程缝隙正在成为新的自动化空间。", keywords: ["Meeting", "Tasks", "Automation"] },
+  "035": { sliceTitle: "购买前的比较劳动正在被系统接手。", sliceReason: "AI 导购把参数、评价和风险先整理出来，改变了人做消费判断的入口。", relation: "人与消费", score: 0.85, coreJudgment: "购买决策正在被更多自动化系统参与。", keywords: ["Consumption", "Agent", "Choice"] },
+  "036": { sliceTitle: "真实正在变成需要被验证的东西。", sliceReason: "生成内容越逼真，人们越需要新的证据、来源和验证习惯。", relation: "人与信任", score: 0.9, coreJudgment: "真实感不再等于真实本身。", keywords: ["Trust", "Verification", "Reality"] },
+  "037": { sliceTitle: "提问正在成为可训练的基本功。", sliceReason: "AI 进入学习后，问题拆解和答案核验不再是技巧，而是学习过程的一部分。", relation: "人与知识", score: 0.88, coreJudgment: "会问，正在成为会学的一部分。", keywords: ["Prompt", "Learning", "Question"] },
+  "038": { sliceTitle: "创作交付开始要求过程透明。", sliceReason: "当 AI 参与内容生产，来源、生成比例和人工修改痕迹也变成作品的一部分。", relation: "人与创作", score: 0.84, coreJudgment: "创作不只交付结果，也要交付可信过程。", keywords: ["Creation", "Source", "Transparency"] },
+  "039": { sliceTitle: "日常选择正在被系统提前解释。", sliceReason: "平台把评价、风险和适合人群整理成摘要，让消费判断更依赖系统给出的解释。", relation: "人与生活", score: 0.84, coreJudgment: "生活选择正在被系统预处理。", keywords: ["Local Life", "Review", "Choice"] },
+  "040": { sliceTitle: "普通人开始读供应链信号。", sliceReason: "菜价、天气、产地和库存被放在一起讨论，说明气候与农业正在进入日常理解。", relation: "人与环境", score: 0.83, coreJudgment: "供应链正在变成生活常识的一部分。", keywords: ["Food", "Weather", "Supply"] },
+  "041": { sliceTitle: "信息信任正在回到原始链路。", sliceReason: "当截图和二手转述容易误导，原始链接、上下文和时间线变得更重要。", relation: "人与信任", score: 0.87, coreJudgment: "可信信息需要保留来路。", keywords: ["Source", "Link", "Context"] },
+};
+
+export const preparedSignals: PreparedSignal[] = rawSignalsXaiSample.map((rawSignal) => ({
+  ...rawSignal,
+  ...extractedById[rawSignal.id],
+}));

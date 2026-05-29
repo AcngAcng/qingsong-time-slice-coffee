@@ -1,4 +1,5 @@
-import { preparedSignals, signalShelves } from "./data/prepared-signals.js";
+import { preparedSignals } from "./data/prepared-signals.js";
+import { signalShelves } from "./data/signal-shelves.js";
 import { identities, valueRewrites } from "./data/signals.js";
 
 const shelfGrid = document.querySelector("#shelf-grid");
@@ -72,6 +73,7 @@ let selectedServeStyle = serveStyles[0];
 let activeRewrite = null;
 let activeSignals = preparedSignals;
 let isPreparingSignals = false;
+let signalRoundIndex = 0;
 
 const codeCupTokens = [
   "0",
@@ -265,6 +267,51 @@ function wait(ms) {
   });
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function getShortText(value, maxLength = 112) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength - 1)}…`;
+}
+
+function getSignalRawTitle(signal) {
+  return signal.rawTitleZh || signal.rawTitle || signal.sliceTitle;
+}
+
+function getSignalRawSummary(signal) {
+  return signal.rawSummaryZh || signal.rawSummary || signal.whyWorthWatchingZh || signal.whyWorthWatching || signal.sliceReason;
+}
+
+function getSignalWorthWatching(signal) {
+  return signal.whyWorthWatchingZh || signal.whyWorthWatching || signal.rawSummaryZh || signal.rawSummary || signal.sliceReason;
+}
+
+function getRoundSignals() {
+  return signalShelves
+    .flatMap((shelf) => {
+      const shelfSignals = activeSignals.filter((signal) => signal.shelfId === shelf.shelfId);
+      const count = Math.min(3, shelfSignals.length);
+
+      if (!count) return [];
+
+      const startIndex = shelfSignals.length > 3
+        ? (signalRoundIndex * 3) % shelfSignals.length
+        : signalRoundIndex % shelfSignals.length;
+
+      return Array.from({ length: count }, (_, index) => shelfSignals[(startIndex + index) % shelfSignals.length]);
+    })
+    .filter(Boolean);
+}
+
 function renderShelves() {
   shelfGrid.innerHTML = `
     <div class="rack-kicker">SIGNAL SHELVES / 信息货架</div>
@@ -290,7 +337,7 @@ function renderShelves() {
 
 function renderSignals() {
   const shelf = getSelectedShelf();
-  const shelfSignals = activeSignals.filter((signal) => signal.shelfId === selectedShelfId);
+  const shelfSignals = getRoundSignals().filter((signal) => signal.shelfId === selectedShelfId);
 
   if (!shelf) {
     signalBeanStage.classList.add("is-empty");
@@ -302,28 +349,42 @@ function renderSignals() {
   signalBeanStage.classList.remove("is-empty");
   signalGrid.innerHTML = `
     <div class="bean-stage-heading">
-      <span>SIGNAL BEANS / 今日信息豆</span>
+      <span>RAW SIGNALS / 今日热点原料</span>
       <div>
-        <strong>${shelf.title}</strong>
-        <p>${shelf.description}</p>
+        <strong>${escapeHtml(shelf.title)}</strong>
+        <p>${escapeHtml(shelf.description)}</p>
       </div>
     </div>
     <div class="bean-grid">
       ${shelfSignals
     .map(
-      (signal) => `
+      (signal) => {
+        const rawTitle = getSignalRawTitle(signal);
+        const rawSummary = getSignalRawSummary(signal);
+        const worthWatching = getSignalWorthWatching(signal);
+        const rawUrl = signal.rawUrl || "No public URL";
+
+        return `
         <button
           class="signal-card${signal.id === selectedSignal?.id ? " is-selected" : ""}"
           data-signal-id="${signal.id}"
-          title="${signal.sliceTitle}"
+          title="${escapeHtml(rawTitle)}"
           type="button"
         >
           <span class="signal-number">#${signal.id}</span>
-          <span class="bean-label">SIGNAL BEAN</span>
-          <strong>${signal.sliceTitle}</strong>
-          <span class="relation">${signal.relation} / ${signal.source}</span>
+          <span class="bean-label">RAW SIGNAL</span>
+          <span class="raw-source-row">
+            <span>${escapeHtml(signal.source || "X / Grok Search")}</span>
+            <span>${escapeHtml(signal.fetchedAt || "")}</span>
+          </span>
+          <strong class="raw-title">${escapeHtml(rawTitle)}</strong>
+          <span class="raw-summary">${escapeHtml(getShortText(rawSummary))}</span>
+          <span class="raw-watch-chip">${escapeHtml(getShortText(worthWatching, 72))}</span>
+          <span class="raw-url">${escapeHtml(rawUrl)}</span>
+          <span class="relation">${escapeHtml(signal.shelfTitle || shelf.title)}</span>
         </button>
-      `,
+      `;
+      },
     )
     .join("")}
     </div>
@@ -337,18 +398,36 @@ function renderSelectedSignal() {
     return;
   }
 
+  const rawTitle = getSignalRawTitle(selectedSignal);
+  const rawSummary = getSignalRawSummary(selectedSignal);
+  const whyWorthWatching = getSignalWorthWatching(selectedSignal);
+  const rawUrl = selectedSignal.rawUrl || "No public URL attached";
+
   selectedSignalPanel.innerHTML = `
     <article class="selected-signal-card">
       <div class="selected-signal-kicker">
-        <span>SELECTED BEAN / 已选信息豆</span>
-        <span>#${selectedSignal.id}</span>
+        <span>SELECTED RAW SIGNAL / 已选原始信号</span>
+        <span>#${escapeHtml(selectedSignal.id)}</span>
       </div>
-      <h3>${selectedSignal.sliceTitle}</h3>
-      <p>${selectedSignal.sliceReason}</p>
+      <h3>${escapeHtml(rawTitle)}</h3>
+      <p>${escapeHtml(rawSummary)}</p>
+      <p class="raw-watch-note">${escapeHtml(whyWorthWatching)}</p>
       <div class="selected-signal-meta">
-        <span>Shelf / ${selectedSignal.shelfTitle}</span>
-        <span>Relation / ${selectedSignal.relation}</span>
-        <span>Source / ${selectedSignal.source}</span>
+        <span>Source / ${escapeHtml(selectedSignal.source)}</span>
+        <span>Fetched / ${escapeHtml(selectedSignal.fetchedAt)}</span>
+        <span>URL / ${escapeHtml(rawUrl)}</span>
+      </div>
+      <div class="extracted-slice-card">
+        <div class="selected-signal-kicker">
+          <span>EXTRACTED SLICE / 已萃取时代切片</span>
+          <span>${escapeHtml(selectedSignal.relation)}</span>
+        </div>
+        <h4>${escapeHtml(selectedSignal.sliceTitle)}</h4>
+        <p>${escapeHtml(selectedSignal.sliceReason)}</p>
+        <div class="selected-signal-meta">
+          <span>Shelf / ${escapeHtml(selectedSignal.shelfTitle)}</span>
+          <span>Relation / ${escapeHtml(selectedSignal.relation)}</span>
+        </div>
       </div>
       <button class="button primary continue-signal-button" id="continue-signal-button" type="button">
         Continue to Lens / 选择今日视角
@@ -606,7 +685,7 @@ function resetBrewResult() {
 }
 
 function selectSignal(signalId) {
-  selectedSignal = activeSignals.find((signal) => signal.id === signalId);
+  selectedSignal = getRoundSignals().find((signal) => signal.id === signalId) || activeSignals.find((signal) => signal.id === signalId);
   selectedIdentity = null;
   renderSignals();
   renderIdentities();
@@ -698,7 +777,8 @@ async function brewSlice() {
 async function refreshPreparedSignals() {
   if (isPreparingSignals) return;
 
-  setSignalRefreshState(true, "正在准备今日信息豆... Preparing today’s signal beans...");
+  signalRoundIndex += 1;
+  setSignalRefreshState(true, "正在更新今日信息货架... Refreshing today’s signal shelf...");
 
   try {
     const [response] = await Promise.all([
@@ -709,7 +789,7 @@ async function refreshPreparedSignals() {
         },
         body: JSON.stringify({
           source: "x-grok",
-          query: "AI OR work OR education OR climate OR design",
+          query: "AI OR work OR education OR climate OR design OR consumption",
           limit: 20,
         }),
       }),
@@ -795,6 +875,7 @@ resetButton.addEventListener("click", () => {
   selectedStrength = strengths[1];
   selectedServeStyle = serveStyles[0];
   activeRewrite = null;
+  signalRoundIndex = 0;
   heroCodeCup?.classList.remove("is-brewing", "is-ordering", "is-complete");
   renderShelves();
   renderSignals();

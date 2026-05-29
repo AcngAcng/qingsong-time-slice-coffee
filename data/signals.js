@@ -1,4 +1,5 @@
-export { preparedSignals as signals, signalShelves } from "./prepared-signals.js";
+export { preparedSignals as signals } from "./prepared-signals.js";
+export { signalShelves } from "./signal-shelves.js";
 
 export const identities = [
   {
