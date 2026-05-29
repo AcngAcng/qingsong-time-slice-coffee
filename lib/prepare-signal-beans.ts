@@ -1,11 +1,17 @@
 import { signalShelves } from "../data/signal-shelves.js";
 
 export type RawSignal = {
+  id?: string;
+  shelfId?: string;
+  shelfTitle?: string;
   rawTitle: string;
+  rawTitleZh?: string;
   rawSummary: string;
+  rawSummaryZh?: string;
   rawUrl: string;
   source: "X / Grok Search";
   whyWorthWatching: string;
+  whyWorthWatchingZh?: string;
   fetchedAt: string;
   categoryHint: string;
 };
@@ -39,9 +45,10 @@ export const SIGNAL_EDITOR_RULES = [
 
 const DEFAULT_SHELF_ID = "life-signals";
 const BANNED_TERMS = ["赋能", "重塑", "革新", "开启新时代"];
+const MAX_PREPARED_COUNT = 54;
 
 const relationByShelf: Record<string, string> = {
-  "ai-frontier": "人与技术边界",
+  "ai-frontier": "人与模型",
   "build-workflow": "人与工具链",
   "design-creation": "人与创作",
   "market-capital": "人与市场",
@@ -77,8 +84,8 @@ const shelfKeywords: Record<string, string[]> = {
 };
 
 function clampPreparedCount(limit?: number) {
-  if (!Number.isFinite(limit)) return 36;
-  return Math.min(36, Math.max(8, Math.floor(limit || 36)));
+  if (!Number.isFinite(limit)) return MAX_PREPARED_COUNT;
+  return Math.min(MAX_PREPARED_COUNT, Math.max(8, Math.floor(limit || MAX_PREPARED_COUNT)));
 }
 
 function sanitizeText(value: unknown) {
@@ -91,6 +98,10 @@ function getShelf(shelfId: string) {
 }
 
 export function classifySignal(rawSignal: Partial<RawSignal>) {
+  if (signalShelves.some((shelf) => shelf.shelfId === rawSignal.shelfId)) {
+    return rawSignal.shelfId!;
+  }
+
   const text = `${rawSignal.categoryHint || ""} ${rawSignal.rawTitle || ""} ${rawSignal.rawSummary || ""}`.toLowerCase();
 
   for (const [shelfId, keywords] of Object.entries(shelfKeywords)) {
@@ -105,15 +116,27 @@ export function normalizeRawSignals(rawSignals: unknown, fetchedAt: string): Raw
 
   return rawSignals
     .map((signal: any) => ({
+      id: sanitizeText(signal?.id || ""),
+      shelfId: sanitizeText(signal?.shelfId || ""),
+      shelfTitle: sanitizeText(signal?.shelfTitle || ""),
       rawTitle: sanitizeText(signal?.rawTitle || signal?.title || ""),
+      rawTitleZh: sanitizeText(signal?.rawTitleZh || signal?.rawTitle || signal?.title || ""),
       rawSummary: sanitizeText(signal?.rawSummary || signal?.summary || signal?.text || ""),
+      rawSummaryZh: sanitizeText(signal?.rawSummaryZh || signal?.rawSummary || signal?.summary || signal?.text || ""),
       rawUrl: sanitizeText(signal?.rawUrl || signal?.url || ""),
-      source: "X / Grok Search" as const,
+      source: sanitizeText(signal?.source || "X / Grok Search") as "X / Grok Search",
       whyWorthWatching: sanitizeText(signal?.whyWorthWatching || signal?.reason || signal?.rawSummary || signal?.summary || ""),
-      fetchedAt,
+      whyWorthWatchingZh: sanitizeText(signal?.whyWorthWatchingZh || signal?.whyWorthWatching || signal?.reason || signal?.rawSummary || signal?.summary || ""),
+      fetchedAt: sanitizeText(signal?.fetchedAt || fetchedAt),
       categoryHint: sanitizeText(signal?.categoryHint || signal?.category || ""),
     }))
     .filter((signal) => signal.rawTitle || signal.rawSummary);
+}
+
+function buildSliceReason(rawSignal: RawSignal, shelfId: string) {
+  const evidence = sanitizeText(rawSignal.whyWorthWatching || rawSignal.rawSummary || rawSignal.rawTitle);
+  if (evidence) return evidence;
+  return reasonTemplates[shelfId] || reasonTemplates[DEFAULT_SHELF_ID];
 }
 
 export function prepareSignalBeans(rawSignals: unknown, options: { fetchedAt?: string; limit?: number } = {}): PreparedSignalBean[] {
@@ -127,26 +150,28 @@ export function prepareSignalBeans(rawSignals: unknown, options: { fetchedAt?: s
       const shelf = getShelf(shelfId);
       const titlePool = titleTemplates[shelfId] || titleTemplates[DEFAULT_SHELF_ID];
       const sliceTitle = titlePool[index % titlePool.length];
-      const sliceReason = reasonTemplates[shelfId] || reasonTemplates[DEFAULT_SHELF_ID];
-      const score = Math.max(0.72, Number((0.96 - index * 0.025).toFixed(2)));
+      const sliceReason = buildSliceReason(rawSignal, shelfId);
+      const score = Math.max(0.78, Number((0.96 - (index % 9) * 0.02).toFixed(2)));
 
       return {
-        id: String(101 + index).padStart(3, "0"),
+        id: rawSignal.id || String(101 + index).padStart(3, "0"),
         shelfId,
-        shelfTitle: shelf.title,
+        shelfTitle: rawSignal.shelfTitle || shelf.title,
         sliceTitle,
         sliceReason,
         relation: relationByShelf[shelfId] || relationByShelf[DEFAULT_SHELF_ID],
         source: rawSignal.source,
         rawTitle: rawSignal.rawTitle,
+        rawTitleZh: rawSignal.rawTitleZh || rawSignal.rawTitle,
         rawUrl: rawSignal.rawUrl,
         rawSummary: rawSignal.rawSummary,
+        rawSummaryZh: rawSignal.rawSummaryZh || rawSignal.rawSummary,
         whyWorthWatching: rawSignal.whyWorthWatching,
+        whyWorthWatchingZh: rawSignal.whyWorthWatchingZh || rawSignal.whyWorthWatching,
         score,
-        fetchedAt,
+        fetchedAt: rawSignal.fetchedAt || fetchedAt,
         coreJudgment: sliceTitle.replace(/。$/, ""),
         keywords: [shelf.title.split(" / ")[0], "Signal", "Judgment"],
       };
     })
-    .sort((a, b) => b.score - a.score);
 }

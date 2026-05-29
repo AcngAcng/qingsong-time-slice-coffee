@@ -1197,7 +1197,7 @@ async function refreshPreparedSignals() {
         body: JSON.stringify({
           source: "x-grok",
           query: "AI OR work OR education OR climate OR design OR consumption",
-          limit: 36,
+          limit: 54,
         }),
       }),
       wait(520),
