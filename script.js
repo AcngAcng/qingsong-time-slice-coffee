@@ -74,6 +74,7 @@ let activeRewrite = null;
 let activeSignals = preparedSignals;
 let isPreparingSignals = false;
 let signalRoundIndex = 0;
+let generatedLabel = null;
 
 const signalMarkByShelf = {
   "ai-frontier": "ai-frontier",
@@ -239,7 +240,7 @@ function setCodeCupComplete() {
 
   const labelNumber = heroCodeCup.querySelector(".code-cup-label strong");
   if (labelNumber) {
-    labelNumber.textContent = `#${selectedSignal.id}`;
+    labelNumber.textContent = selectedSignal?.id ? `#${selectedSignal.id}` : "#000";
   }
 
   heroCodeCup.classList.remove("is-brewing", "is-ordering");
@@ -380,15 +381,15 @@ function formatLabelDate(value) {
 }
 
 function getSignalRawTitle(signal) {
-  return signal.rawTitle || signal.rawTitleZh || "";
+  return signal?.rawTitle || signal?.rawTitleZh || "";
 }
 
 function getSignalRawSummary(signal) {
-  return signal.rawSummary || signal.rawSummaryZh || signal.whyWorthWatching || signal.whyWorthWatchingZh || "";
+  return signal?.rawSummary || signal?.rawSummaryZh || signal?.whyWorthWatching || signal?.whyWorthWatchingZh || "";
 }
 
 function getSignalWorthWatching(signal) {
-  return signal.whyWorthWatching || signal.whyWorthWatchingZh || "";
+  return signal?.whyWorthWatching || signal?.whyWorthWatchingZh || "";
 }
 
 function getSignalMark(signal = selectedSignal) {
@@ -701,6 +702,28 @@ function getServeMeta(serveStyle) {
   };
 }
 
+function buildFallbackTimeSliceLabel() {
+  const identity = selectedIdentity?.en?.toUpperCase() || selectedIdentity?.name || selectedIdentity?.label || "EVERYDAY PERSON";
+  const intensity = selectedStrength?.id || "regular";
+  const serveStyle = selectedServeStyle?.id || "hot";
+  const signalId = selectedSignal?.id ? `#${selectedSignal.id}` : "#000";
+
+  return {
+    labelNo: signalId,
+    shelf: selectedSignal?.shelfTitle || getLabelShelf(selectedSignal) || "TIME SLICE",
+    source: selectedSignal?.source || "LOCAL FALLBACK",
+    date: formatLabelDate(selectedSignal?.fetchedAt || "TODAY"),
+    sourceSignal: getSignalRawTitle(selectedSignal) || "No source signal available",
+    sliceTitle: selectedSignal?.sliceTitle || "今天，只看一条真正相关的变化。",
+    identity,
+    identityValue: "先判断这条变化和你今天的选择有什么关系。",
+    todayFocus: "保留一个真实判断。",
+    intensity,
+    serveStyle,
+    signalMark: selectedSignal?.shelfId || "life-signals",
+  };
+}
+
 function getSignalMarkSvg(signalMark) {
   const mark = String(signalMark || "life-signals");
   const svgAttrs = `class="signal-mark-svg" viewBox="0 0 44 44" aria-hidden="true" focusable="false"`;
@@ -774,24 +797,29 @@ function getSignalMarkSvg(signalMark) {
 }
 
 function buildMockTimeSliceLabel() {
-  const base = valueRewrites[selectedIdentity.id];
-  const identityName = selectedIdentity.en.toUpperCase();
-  const intensity = selectedStrength.id;
-  const serveStyle = selectedServeStyle.id;
+  const fallback = buildFallbackTimeSliceLabel();
+  if (!selectedSignal || !selectedIdentity || !selectedStrength || !selectedServeStyle) {
+    return fallback;
+  }
+
+  const base = valueRewrites[selectedIdentity.id] || valueRewrites.everyday || {};
+  const identityName = selectedIdentity.en?.toUpperCase() || fallback.identity;
+  const intensity = selectedStrength.id || fallback.intensity;
+  const serveStyle = selectedServeStyle.id || fallback.serveStyle;
 
   return {
-    labelNo: `#${selectedSignal.id}`,
-    shelf: getLabelShelf(selectedSignal),
-    source: selectedSignal.source || "X / Grok Search",
-    date: formatLabelDate(selectedSignal.fetchedAt),
-    sourceSignal: getShortRawSignalTitle(selectedSignal),
-    sliceTitle: selectedSignal.sliceTitle,
+    labelNo: fallback.labelNo,
+    shelf: getLabelShelf(selectedSignal) || fallback.shelf,
+    source: selectedSignal.source || fallback.source,
+    date: formatLabelDate(selectedSignal.fetchedAt || fallback.date),
+    sourceSignal: getShortRawSignalTitle(selectedSignal) || fallback.sourceSignal,
+    sliceTitle: selectedSignal.sliceTitle || fallback.sliceTitle,
     identity: identityName,
-    identityValue: buildLabelIdentityValue(base, selectedIdentity, selectedSignal, intensity),
-    todayFocus: buildLabelTodayFocus(selectedIdentity, selectedSignal, intensity, serveStyle),
+    identityValue: buildLabelIdentityValue(base, selectedIdentity, selectedSignal, intensity) || fallback.identityValue,
+    todayFocus: buildLabelTodayFocus(selectedIdentity, selectedSignal, intensity, serveStyle) || fallback.todayFocus,
     intensity,
     serveStyle,
-    signalMark: getSignalMark(selectedSignal),
+    signalMark: getSignalMark(selectedSignal) || fallback.signalMark,
   };
 }
 
@@ -838,7 +866,7 @@ function normalizeRewrite(rewrite) {
 
   return {
     title: rewrite?.title || fallback.title,
-    todayChange: rewrite?.todayChange || selectedSignal.sliceReason || fallback.todayChange,
+    todayChange: rewrite?.todayChange || selectedSignal?.sliceReason || fallback.todayChange,
     whyImportant: rewrite?.whyImportant || timeSliceLabel.identityValue || fallback.whyImportant,
     relationToYou: rewrite?.relationToYou || timeSliceLabel.identityValue || fallback.relationToYou,
     focusNow: rewrite?.focusNow || timeSliceLabel.todayFocus || fallback.focusNow,
@@ -910,9 +938,12 @@ function renderValueRewrite(rewrite) {
 
 function renderTimeSliceLabel(rewrite = activeRewrite) {
   const value = normalizeRewrite(rewrite);
-  const label = value.timeSliceLabel;
+  const label = value.timeSliceLabel || buildFallbackTimeSliceLabel();
   const serveMeta = getServeMeta(label.serveStyle);
+  value.timeSliceLabel = label;
   activeRewrite = value;
+  generatedLabel = label;
+  console.log("generatedLabel", generatedLabel);
 
   printLabel.innerHTML = `
     <div class="print-label-top">
@@ -953,53 +984,55 @@ function renderTimeSliceLabel(rewrite = activeRewrite) {
   `;
 
   renderProductPreview(value);
+  return label;
 }
 
 function renderProductPreview(value) {
-  const label = value.timeSliceLabel || buildMockTimeSliceLabel();
+  const label = value.timeSliceLabel || buildFallbackTimeSliceLabel();
 
   productPreview.innerHTML = `
     <div class="preview-scene">
-      ${getCupPreviewMarkup(selectedServeStyle.id, {
-        number: selectedSignal.id,
+      ${getCupPreviewMarkup(selectedServeStyle?.id || "hot", {
+        number: selectedSignal?.id || "000",
         title: label.sliceTitle,
         persona: `FOR ${label.identity} / ${label.intensity.toUpperCase()}`,
         coreLine: label.todayFocus,
         variant: "pickup",
         showOverlayLabel: SHOW_CUP_OVERLAY_LABEL,
       })}
-      <p>${selectedServeStyle.label} · ${selectedServeStyle.vessel}</p>
+      <p>${selectedServeStyle?.label || "Served Hot"} · ${selectedServeStyle?.vessel || "Paper Cup"}</p>
     </div>
   `;
 }
 
-async function fetchAiRewrite() {
+async function fetchAiRewrite({ signal } = {}) {
   const response = await fetch("/api/rewrite", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    signal,
     body: JSON.stringify({
       signal: {
-        id: selectedSignal.id,
-        slice: selectedSignal.sliceTitle,
-        shortReason: selectedSignal.sliceReason,
+        id: selectedSignal?.id || "000",
+        slice: selectedSignal?.sliceTitle || "今天，只看一条真正相关的变化。",
+        shortReason: selectedSignal?.sliceReason || selectedSignal?.whyWorthWatching || "",
         rawTitle: getSignalRawTitle(selectedSignal),
         rawSummary: getSignalRawSummary(selectedSignal),
         whyWorthWatching: getSignalWorthWatching(selectedSignal),
-        source: selectedSignal.source,
-        fetchedAt: selectedSignal.fetchedAt,
+        source: selectedSignal?.source || "LOCAL FALLBACK",
+        fetchedAt: selectedSignal?.fetchedAt || "TODAY",
         shelf: getLabelShelf(selectedSignal),
         signalMark: getSignalMark(selectedSignal),
       },
       identity: {
-        id: selectedIdentity.id,
-        name: selectedIdentity.name,
-        en: selectedIdentity.en,
-        label: selectedIdentity.label,
+        id: selectedIdentity?.id || "everyday",
+        name: selectedIdentity?.name || "Everyday Person",
+        en: selectedIdentity?.en || "Everyday Person",
+        label: selectedIdentity?.label || "普通人",
       },
-      intensity: selectedStrength.id,
-      serveStyle: selectedServeStyle.id,
+      intensity: selectedStrength?.id || "regular",
+      serveStyle: selectedServeStyle?.id || "hot",
     }),
   });
 
@@ -1086,24 +1119,65 @@ function selectServeStyle(serveId) {
 async function brewSlice() {
   if (!selectedSignal || !selectedIdentity) return;
 
+  console.log("brewing started");
+  console.log("selectedSignal", selectedSignal);
+  console.log("selectedIdentity", selectedIdentity);
+  console.log("selectedIntensity", selectedStrength?.id || "regular");
+  console.log("selectedServeStyle", selectedServeStyle?.id || "hot");
+
   enableSection(valueSection);
   enableSection(labelSection);
   setCodeCupBrewing(true);
   renderLoading();
-  renderTimeSliceLabel(getMockValueRewrite());
   scrollToSection(valueSection);
 
   try {
-    const aiRewrite = await fetchAiRewrite();
-    renderValueRewrite(aiRewrite);
-    renderTimeSliceLabel(aiRewrite);
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 1200);
+    let rewrite;
+
+    try {
+      rewrite = await fetchAiRewrite({ signal: controller.signal });
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+
+    renderValueRewrite(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
+    generatedLabel = renderTimeSliceLabel(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
+    console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
   } catch (error) {
-    console.error("OpenAI rewrite failed; using mock fallback.", error);
-    const fallback = getMockValueRewrite();
+    console.error(error);
+    const fallbackLabel = buildFallbackTimeSliceLabel();
+    let fallback;
+
+    try {
+      fallback = {
+        ...getMockValueRewrite(),
+        timeSliceLabel: fallbackLabel,
+      };
+    } catch (fallbackError) {
+      console.error(fallbackError);
+      fallback = {
+        title: fallbackLabel.sliceTitle,
+        todayChange: fallbackLabel.sliceTitle,
+        whyImportant: fallbackLabel.identityValue,
+        relationToYou: fallbackLabel.identityValue,
+        focusNow: fallbackLabel.todayFocus,
+        keywords: ["Signal", "Fallback", "Label"],
+        coreLine: fallbackLabel.sliceTitle,
+        timeSliceLabel: fallbackLabel,
+      };
+    }
+
     renderValueRewrite(fallback);
-    renderTimeSliceLabel(fallback);
+    generatedLabel = renderTimeSliceLabel(fallback);
+    console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
+  } finally {
+    setCodeCupBrewing(false);
+    scrollAfterRender(labelSection, "start");
+    console.log("brewing finished");
   }
 }
 
