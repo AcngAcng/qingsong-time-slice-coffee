@@ -77,8 +77,8 @@ const shelfKeywords: Record<string, string[]> = {
 };
 
 function clampPreparedCount(limit?: number) {
-  if (!Number.isFinite(limit)) return 18;
-  return Math.min(18, Math.max(8, Math.floor(limit || 18)));
+  if (!Number.isFinite(limit)) return 36;
+  return Math.min(36, Math.max(8, Math.floor(limit || 36)));
 }
 
 function sanitizeText(value: unknown) {

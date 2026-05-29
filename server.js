@@ -114,8 +114,8 @@ function getShanghaiDate() {
 }
 
 function clampSignalLimit(limit) {
-  if (!Number.isFinite(limit)) return 18;
-  return Math.min(18, Math.max(8, Math.floor(limit)));
+  if (!Number.isFinite(limit)) return 36;
+  return Math.min(36, Math.max(8, Math.floor(limit)));
 }
 
 async function loadPreparedSignalFallback(limit, fetchedAt) {
