@@ -514,43 +514,48 @@ h2 {
 }
 
 .manifesto-section {
-  padding-bottom: clamp(104px, 10vw, 148px);
-  padding-top: clamp(104px, 10vw, 148px);
+  align-items: stretch;
+  display: grid;
+  gap: clamp(40px, 6vw, 96px);
+  grid-template-columns: minmax(260px, 0.38fr) minmax(0, 0.62fr);
+  padding-bottom: clamp(76px, 7vw, 104px);
+  padding-top: clamp(86px, 7vw, 116px);
 }
 
-.narrative-panel {
-  margin: 0 auto;
-  max-width: 860px;
+.manifesto-copy {
+  display: flex;
+  flex-direction: column;
+  max-width: 460px;
+  min-height: clamp(340px, 31vw, 480px);
 }
 
-.narrative-title {
-  color: var(--ink);
-  font-size: clamp(28px, 3vw, 48px);
-  font-weight: 580;
-  letter-spacing: 0;
-  line-height: 1.38;
-  margin: 0;
-}
-
-.narrative-line {
-  display: block;
-}
-
-.narrative-quiet {
+.manifesto-copy .eyebrow {
   color: rgba(23, 23, 23, 0.5);
-  font-size: 0.68em;
-  font-weight: 520;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  margin-bottom: 0;
 }
 
-.narrative-pause {
-  margin-top: clamp(28px, 3vw, 44px);
+.manifesto-copy p:not(.eyebrow) {
+  color: rgba(23, 23, 23, 0.58);
+  font-size: clamp(16px, 1.08vw, 18px);
+  font-weight: 500;
+  line-height: 1.86;
+  margin: auto 0 0;
 }
 
-.narrative-focus {
-  color: var(--ink);
-  font-size: clamp(42px, 4.7vw, 74px);
-  font-weight: 760;
+.manifesto-body {
+  justify-self: end;
+  max-width: 940px;
+}
+
+.manifesto-title {
+  font-size: clamp(38px, 4.45vw, 72px);
+  font-weight: 820;
+  letter-spacing: 0;
   line-height: 1.08;
+  margin: 0;
+  text-align: left;
 }
 
 .section-heading {
@@ -1499,7 +1504,8 @@ footer {
     place-items: center;
   }
 
-  .narrative-panel {
+  .manifesto-copy,
+  .manifesto-body {
     max-width: none;
   }
 
