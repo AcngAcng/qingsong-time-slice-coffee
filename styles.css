@@ -77,14 +77,15 @@ nav a {
 .hero {
   align-items: center;
   display: grid;
-  gap: clamp(40px, 8vw, 120px);
-  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 560px);
+  gap: clamp(36px, 5.5vw, 92px);
+  grid-template-columns: minmax(0, 0.88fr) minmax(420px, 0.8fr);
   min-height: 100vh;
-  padding: 112px clamp(22px, 6vw, 88px) 64px;
+  padding: 96px clamp(22px, 5.5vw, 84px) 44px;
 }
 
 .hero-copy {
-  max-width: 620px;
+  max-width: 680px;
+  padding-bottom: clamp(0px, 3vh, 30px);
 }
 
 .eyebrow {
@@ -171,9 +172,11 @@ h2 {
 }
 
 .product-stage {
+  align-self: end;
   display: grid;
-  min-height: 650px;
-  place-items: center;
+  min-height: min(74vh, 700px);
+  padding-bottom: clamp(84px, 9vh, 116px);
+  place-items: end center;
   position: relative;
 }
 
@@ -182,10 +185,10 @@ h2 {
   background:
     radial-gradient(circle at 42% 36%, rgba(255, 254, 251, 0.84), transparent 34%),
     radial-gradient(circle at 50% 72%, rgba(23, 23, 23, 0.045), transparent 42%);
-  max-width: 520px;
+  max-width: 640px;
   overflow: visible;
   position: relative;
-  width: min(76vw, 520px);
+  width: min(41vw, 640px, 80vh);
 }
 
 .code-cup-field {
@@ -511,13 +514,43 @@ h2 {
 }
 
 .manifesto-section {
-  display: grid;
-  gap: 28px;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.72fr);
+  padding-bottom: clamp(104px, 10vw, 148px);
+  padding-top: clamp(104px, 10vw, 148px);
 }
 
-.manifesto-section h2 {
-  max-width: 940px;
+.narrative-panel {
+  margin: 0 auto;
+  max-width: 860px;
+}
+
+.narrative-title {
+  color: var(--ink);
+  font-size: clamp(28px, 3vw, 48px);
+  font-weight: 580;
+  letter-spacing: 0;
+  line-height: 1.38;
+  margin: 0;
+}
+
+.narrative-line {
+  display: block;
+}
+
+.narrative-quiet {
+  color: rgba(23, 23, 23, 0.5);
+  font-size: 0.68em;
+  font-weight: 520;
+}
+
+.narrative-pause {
+  margin-top: clamp(28px, 3vw, 44px);
+}
+
+.narrative-focus {
+  color: var(--ink);
+  font-size: clamp(42px, 4.7vw, 74px);
+  font-weight: 760;
+  line-height: 1.08;
 }
 
 .section-heading {
@@ -1455,6 +1488,19 @@ footer {
   .manifesto-section,
   .label-workbench {
     grid-template-columns: 1fr;
+  }
+
+  .hero-copy {
+    padding-bottom: 0;
+  }
+
+  .product-stage {
+    align-self: center;
+    place-items: center;
+  }
+
+  .narrative-panel {
+    max-width: none;
   }
 
   .shelf-label-grid,
