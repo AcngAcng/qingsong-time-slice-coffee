@@ -411,8 +411,10 @@ function renderSignals() {
           title="${escapeHtml(rawTitle)}"
           type="button"
         >
-          <span class="signal-number">#${signal.id}</span>
-          <span class="bean-label">RAW SIGNAL</span>
+          <span class="signal-card-top">
+            <span class="bean-label">RAW SIGNAL</span>
+            <span class="signal-number">#${signal.id}</span>
+          </span>
           <span class="raw-source-row">
             <span>${escapeHtml(signal.source || "X / Grok Search")}</span>
             <span>${escapeHtml(signal.fetchedAt || "")}</span>
