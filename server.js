@@ -17,19 +17,36 @@ const mimeTypes = {
 const rewriteSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["title", "todayChange", "whyImportant", "relationToYou", "focusNow", "keywords", "coreLine"],
+  required: [
+    "labelNo",
+    "shelf",
+    "source",
+    "date",
+    "sourceSignal",
+    "sliceTitle",
+    "identity",
+    "identityValue",
+    "todayFocus",
+    "intensity",
+    "serveStyle",
+    "signalMark",
+  ],
   properties: {
-    title: { type: "string" },
-    todayChange: { type: "string" },
-    whyImportant: { type: "string" },
-    relationToYou: { type: "string" },
-    focusNow: { type: "string" },
-    keywords: {
-      type: "array",
-      maxItems: 3,
-      items: { type: "string" },
+    labelNo: { type: "string" },
+    shelf: { type: "string" },
+    source: { type: "string" },
+    date: { type: "string" },
+    sourceSignal: { type: "string" },
+    sliceTitle: { type: "string" },
+    identity: { type: "string" },
+    identityValue: { type: "string" },
+    todayFocus: { type: "string" },
+    intensity: { enum: ["light", "regular", "double"], type: "string" },
+    serveStyle: { enum: ["hot", "iced"], type: "string" },
+    signalMark: {
+      enum: ["ai-frontier", "build-workflow", "design-creation", "market-capital", "self-upgrade", "life-signals"],
+      type: "string",
     },
-    coreLine: { type: "string" },
   },
 };
 
@@ -155,52 +172,64 @@ async function requestOpenAiJson({ schemaName, schema, systemPrompt, userPrompt,
 function buildRewriteSystemPrompt() {
   return [
     "你不是新闻总结助手。",
-    "你是“时代信息编辑”。",
+    "你是“今日时代切片标签”的编辑。",
     "",
-    "你的任务不是生成更多信息，而是判断：什么值得被谁看见。",
-    "你需要把一条时代变化，重构成某个身份真正需要理解的信息价值。",
+    "你的任务不是生成普通 AI 总结，而是把 Raw Signal → Extracted Slice → Identity Value 输出成一张结构化标签。",
     "",
     "要求：",
     "- 不写鸡汤",
     "- 不写空泛鼓励",
-    "- 不重复新闻",
-    "- 不要“拥抱未来”“赋能每个人”这种话",
-    "- 强调真实变化",
-    "- 强调对该身份的实际关系",
+    "- 不要“拥抱未来”“赋能”“重塑新时代”这种话",
+    "- 必须基于 rawTitle / rawSummary / whyWorthWatching",
+    "- 必须使用 Extracted Slice 的 sliceTitle / sliceReason",
+    "- identityValue 必须说明该身份为什么需要看这条信息",
+    "- todayFocus 必须是今天可以关注的具体点",
     "- 输出必须简洁",
-    "- 像未来消费品标签上的文字",
+    "- 像未来消费品标签上的结构化文字",
     "- 目标是减少 FOMO，而不是制造更多焦虑",
-    "",
-    "核心叙事必须隐含在输出里：",
-    "过去，人们买水是为了解渴。",
-    "后来，人们购买品牌。",
-    "而 AI 时代，人们开始购买“对这个时代的理解”。",
-    "于是，我们把今天真正重要的一则变化，装进了一杯咖啡里。",
   ].join("\n");
 }
 
-function buildRewriteUserPrompt({ signal, identity }) {
+function buildRewriteUserPrompt({ signal, identity, intensity, serveStyle }) {
   return [
-    "请根据以下输入生成身份化价值重构：",
+    "请根据以下输入生成 TimeSliceLabel JSON：",
     "",
-    "时代切片：",
+    "Raw Signal:",
+    `rawTitle: ${signal.rawTitle}`,
+    `rawSummary: ${signal.rawSummary}`,
+    `whyWorthWatching: ${signal.whyWorthWatching}`,
+    `source: ${signal.source}`,
+    `fetchedAt: ${signal.fetchedAt}`,
+    "",
+    "Extracted Slice:",
     signal.slice,
     "",
     "切片说明：",
     signal.shortReason,
     "",
     "用户身份：",
-    identity.name,
+    `${identity.name} / ${identity.en || identity.label}`,
+    "",
+    `intensity: ${intensity}`,
+    `serveStyle: ${serveStyle}`,
+    `labelNo: #${signal.id}`,
+    `shelf: ${signal.shelf}`,
+    `signalMark: ${signal.signalMark}`,
     "",
     "输出 JSON：",
     "{",
-    '  "title": "不超过20字",',
-    '  "todayChange": "不超过50字",',
-    '  "whyImportant": "不超过60字",',
-    '  "relationToYou": "不超过60字",',
-    '  "focusNow": "不超过60字",',
-    '  "keywords": ["最多3个关键词"],',
-    '  "coreLine": "适合放在咖啡杯标签上的一句核心判断，不超过28字"',
+    '  "labelNo": "#024",',
+    '  "shelf": "AI FRONTIER / BUILD & WORKFLOW",',
+    '  "source": "X / Grok Search",',
+    '  "date": "2026.05.29",',
+    '  "sourceSignal": "rawTitle 的短版，不超过32个中文字",',
+    '  "sliceTitle": "使用输入中的 sliceTitle",',
+    '  "identity": "STUDENT / BUILDER / DESIGNER / FOUNDER / VC / EVERYDAY PERSON",',
+    '  "identityValue": "这条信息对该身份的具体价值，不超过42个中文字",',
+    '  "todayFocus": "今天可以关注的一个具体点，不超过28个中文字",',
+    '  "intensity": "light | regular | double",',
+    '  "serveStyle": "hot | iced",',
+    '  "signalMark": "ai-frontier | build-workflow | design-creation | market-capital | self-upgrade | life-signals"',
     "}",
   ].join("\n");
 }
@@ -268,7 +297,7 @@ async function handleRewrite(request, response) {
 
   try {
     const body = JSON.parse(await readRequestBody(request));
-    const { signal, identity } = body;
+    const { signal, identity, intensity = "regular", serveStyle = "hot" } = body;
 
     if (!signal?.slice || !signal?.shortReason || !identity?.name || !identity?.label) {
       sendJson(response, 400, { error: "Missing signal or identity fields" });
@@ -279,7 +308,7 @@ async function handleRewrite(request, response) {
       schemaName: "time_slice_value_rewrite",
       schema: rewriteSchema,
       systemPrompt: buildRewriteSystemPrompt(),
-      userPrompt: buildRewriteUserPrompt({ signal, identity }),
+      userPrompt: buildRewriteUserPrompt({ signal, identity, intensity, serveStyle }),
     });
 
     sendJson(response, 200, result);

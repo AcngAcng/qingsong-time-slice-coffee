@@ -75,6 +75,24 @@ let activeSignals = preparedSignals;
 let isPreparingSignals = false;
 let signalRoundIndex = 0;
 
+const signalMarkByShelf = {
+  "ai-work": "build-workflow",
+  learning: "self-upgrade",
+  creation: "design-creation",
+  "life-consumption": "life-signals",
+  "climate-agriculture": "life-signals",
+  "trust-society": "life-signals",
+};
+
+const labelShelfByShelf = {
+  "ai-work": "AI FRONTIER / BUILD & WORKFLOW",
+  learning: "SELF-UPGRADE / LEARNING",
+  creation: "DESIGN & CREATION",
+  "life-consumption": "LIFE SIGNALS / CONSUMPTION",
+  "climate-agriculture": "LIFE SIGNALS / CLIMATE",
+  "trust-society": "LIFE SIGNALS / TRUST",
+};
+
 const codeCupTokens = [
   "0",
   "1",
@@ -283,16 +301,38 @@ function getShortText(value, maxLength = 112) {
   return `${text.slice(0, maxLength - 1)}…`;
 }
 
+function formatLabelDate(value) {
+  const date = String(value || "").trim();
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date.replaceAll("-", ".");
+  }
+
+  return date || new Intl.DateTimeFormat("zh-CN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date()).replaceAll("/", ".");
+}
+
 function getSignalRawTitle(signal) {
-  return signal.rawTitleZh || signal.rawTitle || signal.sliceTitle;
+  return signal.rawTitle || signal.rawTitleZh || "";
 }
 
 function getSignalRawSummary(signal) {
-  return signal.rawSummaryZh || signal.rawSummary || signal.whyWorthWatchingZh || signal.whyWorthWatching || signal.sliceReason;
+  return signal.rawSummary || signal.rawSummaryZh || signal.whyWorthWatching || signal.whyWorthWatchingZh || "";
 }
 
 function getSignalWorthWatching(signal) {
-  return signal.whyWorthWatchingZh || signal.whyWorthWatching || signal.rawSummaryZh || signal.rawSummary || signal.sliceReason;
+  return signal.whyWorthWatching || signal.whyWorthWatchingZh || "";
+}
+
+function getSignalMark(signal = selectedSignal) {
+  return signalMarkByShelf[signal?.shelfId] || "life-signals";
+}
+
+function getLabelShelf(signal = selectedSignal) {
+  return labelShelfByShelf[signal?.shelfId] || String(signal?.shelfTitle || "TODAY SIGNAL").toUpperCase();
 }
 
 function getRoundSignals() {
@@ -520,28 +560,80 @@ function getCupPreviewMarkup(serveStyle, labelData) {
   `;
 }
 
+function buildMockTimeSliceLabel() {
+  const base = valueRewrites[selectedIdentity.id];
+  const identityName = selectedIdentity.en.toUpperCase();
+  const intensity = selectedStrength.id;
+  const serveStyle = selectedServeStyle.id;
+  const rawTitle = getSignalRawTitle(selectedSignal);
+  const focusByIntensity = {
+    light: base.coreLine,
+    regular: base.focusNow,
+    double: `${base.focusNow} 先看一个可验证的具体场景。`,
+  };
+
+  return {
+    labelNo: `#${selectedSignal.id}`,
+    shelf: getLabelShelf(selectedSignal),
+    source: selectedSignal.source || "X / Grok Search",
+    date: formatLabelDate(selectedSignal.fetchedAt),
+    sourceSignal: getShortText(rawTitle, 46),
+    sliceTitle: selectedSignal.sliceTitle,
+    identity: identityName,
+    identityValue: base.relationToYou,
+    todayFocus: focusByIntensity[intensity] || base.focusNow,
+    intensity,
+    serveStyle,
+    signalMark: getSignalMark(selectedSignal),
+  };
+}
+
 function getMockValueRewrite() {
   const base = valueRewrites[selectedIdentity.id];
+  const timeSliceLabel = buildMockTimeSliceLabel();
 
   return {
     ...base,
     todayChange: selectedSignal.sliceReason,
     keywords: selectedSignal.keywords,
     coreLine: selectedSignal.coreJudgment,
+    timeSliceLabel,
+  };
+}
+
+function normalizeTimeSliceLabel(rewrite) {
+  const fallback = buildMockTimeSliceLabel();
+  const candidate = rewrite?.timeSliceLabel || rewrite;
+
+  return {
+    labelNo: candidate?.labelNo || fallback.labelNo,
+    shelf: candidate?.shelf || fallback.shelf,
+    source: candidate?.source || fallback.source,
+    date: formatLabelDate(candidate?.date || fallback.date),
+    sourceSignal: candidate?.sourceSignal || fallback.sourceSignal,
+    sliceTitle: candidate?.sliceTitle || fallback.sliceTitle,
+    identity: candidate?.identity || fallback.identity,
+    identityValue: candidate?.identityValue || fallback.identityValue,
+    todayFocus: candidate?.todayFocus || fallback.todayFocus,
+    intensity: candidate?.intensity || fallback.intensity,
+    serveStyle: candidate?.serveStyle || fallback.serveStyle,
+    signalMark: candidate?.signalMark || fallback.signalMark,
   };
 }
 
 function normalizeRewrite(rewrite) {
   const fallback = getMockValueRewrite();
+  const timeSliceLabel = normalizeTimeSliceLabel(rewrite);
 
   return {
     title: rewrite?.title || fallback.title,
-    todayChange: rewrite?.todayChange || fallback.todayChange,
-    whyImportant: rewrite?.whyImportant || fallback.whyImportant,
-    relationToYou: rewrite?.relationToYou || fallback.relationToYou,
-    focusNow: rewrite?.focusNow || fallback.focusNow,
+    todayChange: rewrite?.todayChange || selectedSignal.sliceReason || fallback.todayChange,
+    whyImportant: rewrite?.whyImportant || timeSliceLabel.identityValue || fallback.whyImportant,
+    relationToYou: rewrite?.relationToYou || timeSliceLabel.identityValue || fallback.relationToYou,
+    focusNow: rewrite?.focusNow || timeSliceLabel.todayFocus || fallback.focusNow,
     keywords: Array.isArray(rewrite?.keywords) && rewrite.keywords.length ? rewrite.keywords.slice(0, 3) : fallback.keywords,
-    coreLine: rewrite?.coreLine || fallback.coreLine,
+    coreLine: rewrite?.coreLine || timeSliceLabel.sliceTitle || fallback.coreLine,
+    timeSliceLabel,
   };
 }
 
@@ -607,27 +699,35 @@ function renderValueRewrite(rewrite) {
 
 function renderTimeSliceLabel(rewrite = activeRewrite) {
   const value = normalizeRewrite(rewrite);
+  const label = value.timeSliceLabel;
   activeRewrite = value;
-  const today = new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
 
   printLabel.innerHTML = `
     <div class="print-label-top">
       <span>TIME SLICE COFFEE</span>
-      <span>#${selectedSignal.id}</span>
+      <span>${escapeHtml(label.labelNo)}</span>
     </div>
-    <h3>${selectedSignal.sliceTitle}</h3>
-    <p class="for-line">${selectedIdentity.label} / ${selectedStrength.label.toUpperCase()}</p>
-    <p class="judgment">${value.coreLine}</p>
-    <div class="print-keywords">
-      ${value.keywords.map((keyword) => `<span>${keyword}</span>`).join("")}
+    <p class="label-subtitle">TODAY’S INFORMATION SLICE</p>
+    <div class="label-meta-line">
+      <span>${escapeHtml(label.labelNo)} / ${escapeHtml(label.shelf)}</span>
+      <span>${escapeHtml(label.source)} · ${escapeHtml(label.date)}</span>
+    </div>
+    <h3>${escapeHtml(label.sliceTitle)}</h3>
+    <div class="label-value-block">
+      <span>FOR ${escapeHtml(label.identity)}</span>
+      <p>${escapeHtml(label.identityValue)}</p>
+    </div>
+    <div class="label-focus-block">
+      <span>TODAY’S FOCUS</span>
+      <p>${escapeHtml(label.todayFocus)}</p>
+    </div>
+    <div class="label-source-block">
+      <span>SOURCE SIGNAL</span>
+      <p>${escapeHtml(label.sourceSignal)}</p>
     </div>
     <div class="print-label-bottom">
-      <span>Today’s Information Slice.</span>
-      <span>${today}</span>
+      <span>SIGNAL → SLICE → VALUE → LABEL</span>
+      <span>${escapeHtml(label.signalMark)}</span>
     </div>
   `;
 
@@ -635,13 +735,15 @@ function renderTimeSliceLabel(rewrite = activeRewrite) {
 }
 
 function renderProductPreview(value) {
+  const label = value.timeSliceLabel || buildMockTimeSliceLabel();
+
   productPreview.innerHTML = `
     <div class="preview-scene">
       ${getCupPreviewMarkup(selectedServeStyle.id, {
         number: selectedSignal.id,
-        title: selectedSignal.sliceTitle,
-        persona: `${selectedIdentity.label} / ${selectedStrength.label.toUpperCase()}`,
-        coreLine: value.coreLine,
+        title: label.sliceTitle,
+        persona: `FOR ${label.identity} / ${label.intensity.toUpperCase()}`,
+        coreLine: label.todayFocus,
         variant: "pickup",
         showOverlayLabel: SHOW_CUP_OVERLAY_LABEL,
       })}
@@ -661,12 +763,22 @@ async function fetchAiRewrite() {
         id: selectedSignal.id,
         slice: selectedSignal.sliceTitle,
         shortReason: selectedSignal.sliceReason,
+        rawTitle: getSignalRawTitle(selectedSignal),
+        rawSummary: getSignalRawSummary(selectedSignal),
+        whyWorthWatching: getSignalWorthWatching(selectedSignal),
+        source: selectedSignal.source,
+        fetchedAt: selectedSignal.fetchedAt,
+        shelf: getLabelShelf(selectedSignal),
+        signalMark: getSignalMark(selectedSignal),
       },
       identity: {
         id: selectedIdentity.id,
         name: selectedIdentity.name,
+        en: selectedIdentity.en,
         label: selectedIdentity.label,
       },
+      intensity: selectedStrength.id,
+      serveStyle: selectedServeStyle.id,
     }),
   });
 
