@@ -498,11 +498,16 @@ h2 {
   font-size: 3px;
 }
 
+.hero,
+.manifesto-section,
+.flow-section {
+  scroll-margin-top: 104px;
+}
+
 .manifesto-section,
 .flow-section {
   border-top: 1px solid var(--line);
   padding: 88px clamp(22px, 6vw, 88px);
-  scroll-margin-top: 112px;
 }
 
 .manifesto-section {
@@ -672,7 +677,7 @@ h2 {
 
 .signal-bean-stage {
   margin-top: 26px;
-  scroll-margin-top: 112px;
+  scroll-margin-top: 104px;
 }
 
 .signal-bean-stage.is-empty {
@@ -849,7 +854,7 @@ h2 {
 .selected-signal-panel {
   margin-top: 24px;
   max-width: 780px;
-  scroll-margin-top: 112px;
+  scroll-margin-top: 104px;
 }
 
 .selected-signal-card {
@@ -1186,6 +1191,13 @@ h2 {
   padding: 8px 12px;
 }
 
+.value-actions {
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 28px;
+}
+
 .label-section {
   background:
     linear-gradient(rgba(248, 244, 236, 0.78), rgba(248, 244, 236, 0.78)),
@@ -1193,22 +1205,22 @@ h2 {
 }
 
 .label-workbench {
-  align-items: start;
+  align-items: center;
   display: grid;
-  gap: 34px;
+  gap: 28px;
   grid-template-columns: minmax(260px, 360px) minmax(280px, 440px) minmax(220px, 1fr);
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 .product-preview {
-  min-height: 520px;
+  min-height: 460px;
 }
 
 .preview-scene {
   align-items: center;
   display: grid;
   justify-items: center;
-  min-height: 520px;
+  min-height: 460px;
 }
 
 .preview-scene p {
@@ -1423,8 +1435,9 @@ h2 {
 
 .label-actions {
   align-content: start;
+  align-self: center;
   margin-top: 0;
-  padding-top: 10px;
+  padding-top: 0;
 }
 
 footer {

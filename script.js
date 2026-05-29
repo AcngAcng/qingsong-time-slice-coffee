@@ -27,6 +27,23 @@ const heroCodeCup = document.querySelector("#hero-code-cup");
 const codeCupField = document.querySelector("#code-cup-field");
 const heroOrderButton = document.querySelector(".hero-actions .primary");
 const SHOW_CUP_OVERLAY_LABEL = true;
+const DEFAULT_HEADER_OFFSET = 72;
+const DEFAULT_SCROLL_EXTRA_OFFSET = 40;
+const sectionScrollOffsets = {
+  top: 0,
+  signals: 40,
+  "signal-bean-stage": 480,
+  "selected-signal-panel": 96,
+  "identity-section": 96,
+  "brew-section": 96,
+  "serve-section": 96,
+  "value-section": -132,
+  "label-section": 118,
+};
+
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
 
 const strengths = [
   {
@@ -247,14 +264,54 @@ function setCodeCupComplete() {
   heroCodeCup.classList.add("is-complete");
 }
 
-function scrollToSection(section) {
-  section.scrollIntoView({ behavior: "smooth", block: "start" });
+function getHeaderScrollOffset() {
+  const header = document.querySelector(".site-header");
+  const headerHeight = header?.getBoundingClientRect().height || DEFAULT_HEADER_OFFSET;
+
+  return Math.ceil(headerHeight + DEFAULT_SCROLL_EXTRA_OFFSET);
 }
 
-function scrollAfterRender(element, block = "start") {
+function getSectionTarget(section) {
+  if (!section) return null;
+  if (typeof section === "string") {
+    return document.querySelector(section.startsWith("#") ? section : `#${section}`);
+  }
+
+  return section;
+}
+
+function scrollToSection(section, options = {}) {
+  const target = getSectionTarget(section);
+  if (!target) return;
+
+  const behavior = options.behavior || "smooth";
+  const targetId = options.offsetKey || target.id || "";
+  const offset = options.offset ?? sectionScrollOffsets[targetId] ?? getHeaderScrollOffset();
+  const top = targetId === "top" || offset === 0
+    ? 0
+    : Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset);
+
+  window.scrollTo({
+    top,
+    behavior,
+  });
+}
+
+function scrollAfterRender(element, options = {}) {
   window.setTimeout(() => {
-    element?.scrollIntoView({ behavior: "smooth", block });
+    scrollToSection(element, options);
   }, 0);
+}
+
+function resetPagePositionOnLoad() {
+  if (window.location.hash) {
+    window.history.replaceState(null, "", window.location.pathname);
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "auto",
+  });
 }
 
 function enableSection(section) {
@@ -877,25 +934,12 @@ function normalizeRewrite(rewrite) {
 }
 
 function getVisibleRows(value) {
-  const baseRows = [
+  return [
     ["标题", value.title],
     ["今日变化", value.todayChange],
+    ["为什么重要", value.whyImportant],
+    ["与你的关系", value.relationToYou],
   ];
-
-  if (selectedStrength.id === "light") {
-    return [["核心判断", value.coreLine], ...baseRows];
-  }
-
-  if (selectedStrength.id === "double") {
-    return [
-      ...baseRows,
-      ["为什么重要", value.whyImportant],
-      ["与你的关系", value.relationToYou],
-      ["现在真正该关注什么", value.focusNow],
-    ];
-  }
-
-  return [...baseRows, ["为什么重要", value.whyImportant], ["与你的关系", value.relationToYou]];
 }
 
 function renderLoading() {
@@ -932,6 +976,9 @@ function renderValueRewrite(rewrite) {
     <div class="value-row">
       <span>关键词</span>
       <div class="keyword-row">${value.keywords.map((keyword) => `<b>${keyword}</b>`).join("")}</div>
+    </div>
+    <div class="value-actions">
+      <button class="button primary" id="generate-label-button" type="button">Generate Label / 生成杯贴</button>
     </div>
   `;
 }
@@ -1050,6 +1097,30 @@ function resetBrewResult() {
   labelSection.classList.add("is-disabled");
 }
 
+function resetDemoFlow({ render = true } = {}) {
+  selectedSignal = null;
+  selectedShelfId = null;
+  selectedIdentity = null;
+  selectedStrength = strengths[1];
+  selectedServeStyle = serveStyles[0];
+  activeRewrite = null;
+  signalRoundIndex = 0;
+  heroCodeCup?.classList.remove("is-brewing", "is-ordering", "is-complete");
+  identitySection.classList.add("is-disabled");
+  brewSection.classList.add("is-disabled");
+  serveSection.classList.add("is-disabled");
+  valueSection.classList.add("is-disabled");
+  labelSection.classList.add("is-disabled");
+
+  if (!render) return;
+
+  renderShelves();
+  renderSignals();
+  renderIdentities();
+  renderStrengths();
+  renderServeStyles();
+}
+
 function selectSignal(signalId) {
   selectedSignal = getRoundSignals().find((signal) => signal.id === signalId) || activeSignals.find((signal) => signal.id === signalId);
   selectedIdentity = null;
@@ -1059,7 +1130,7 @@ function selectSignal(signalId) {
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
-  scrollAfterRender(selectedSignalPanel, "center");
+  scrollAfterRender(selectedSignalPanel);
 }
 
 function selectShelf(shelfId) {
@@ -1073,7 +1144,7 @@ function selectShelf(shelfId) {
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
-  scrollAfterRender(signalBeanStage, "start");
+  scrollAfterRender(signalBeanStage);
 }
 
 function continueToLens() {
@@ -1099,6 +1170,7 @@ function selectStrength(strengthId) {
   renderStrengths();
   renderServeStyles();
   enableSection(serveSection);
+  labelSection.classList.add("is-disabled");
   scrollToSection(serveSection);
 
   if (activeRewrite) {
@@ -1110,10 +1182,20 @@ function selectStrength(strengthId) {
 function selectServeStyle(serveId) {
   selectedServeStyle = serveStyles.find((serveStyle) => serveStyle.id === serveId);
   renderServeStyles();
+  labelSection.classList.add("is-disabled");
 
   if (activeRewrite) {
     renderTimeSliceLabel(activeRewrite);
   }
+}
+
+function showGeneratedLabel() {
+  if (!activeRewrite) return;
+
+  enableSection(labelSection);
+  generatedLabel = renderTimeSliceLabel(activeRewrite);
+  console.log("generatedLabel", generatedLabel);
+  scrollAfterRender(labelSection);
 }
 
 async function brewSlice() {
@@ -1126,7 +1208,7 @@ async function brewSlice() {
   console.log("selectedServeStyle", selectedServeStyle?.id || "hot");
 
   enableSection(valueSection);
-  enableSection(labelSection);
+  labelSection.classList.add("is-disabled");
   setCodeCupBrewing(true);
   renderLoading();
   scrollToSection(valueSection);
@@ -1176,7 +1258,7 @@ async function brewSlice() {
     setCodeCupComplete();
   } finally {
     setCodeCupBrewing(false);
-    scrollAfterRender(labelSection, "start");
+    scrollAfterRender(valueSection);
     console.log("brewing finished");
   }
 }
@@ -1236,6 +1318,11 @@ selectedSignalPanel.addEventListener("click", (event) => {
   continueToLens();
 });
 
+valuePanel.addEventListener("click", (event) => {
+  if (!event.target.closest("#generate-label-button")) return;
+  showGeneratedLabel();
+});
+
 identityGrid.addEventListener("click", (event) => {
   const card = event.target.closest("[data-identity-id]");
 
@@ -1260,6 +1347,23 @@ serveGrid.addEventListener("click", (event) => {
 brewButton.addEventListener("click", brewSlice);
 refreshSignalsButton?.addEventListener("click", refreshPreparedSignals);
 
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const hash = link.getAttribute("href");
+    if (!hash || hash === "#") return;
+
+    event.preventDefault();
+    window.history.replaceState(null, "", window.location.pathname);
+
+    if (hash === "#top") {
+      scrollToSection("top", { offset: 0 });
+      return;
+    }
+
+    scrollToSection(hash);
+  });
+});
+
 if (heroOrderButton) {
   heroOrderButton.addEventListener("click", () => {
     pulseCodeCup("is-ordering", 1800);
@@ -1276,29 +1380,20 @@ printButton.addEventListener("click", () => {
 });
 
 resetButton.addEventListener("click", () => {
-  selectedSignal = null;
-  selectedShelfId = null;
-  selectedIdentity = null;
-  selectedStrength = strengths[1];
-  selectedServeStyle = serveStyles[0];
-  activeRewrite = null;
-  signalRoundIndex = 0;
-  heroCodeCup?.classList.remove("is-brewing", "is-ordering", "is-complete");
-  renderShelves();
-  renderSignals();
-  renderIdentities();
-  renderStrengths();
-  renderServeStyles();
-  brewSection.classList.add("is-disabled");
-  serveSection.classList.add("is-disabled");
-  valueSection.classList.add("is-disabled");
-  labelSection.classList.add("is-disabled");
-  scrollToSection(document.querySelector("#signals"));
+  window.history.replaceState(null, "", window.location.pathname);
+  resetDemoFlow();
+  scrollToSection("top", { offset: 0 });
 });
 
+resetPagePositionOnLoad();
+resetDemoFlow({ render: false });
 renderShelves();
 renderSignals();
 renderIdentities();
 renderStrengths();
 renderServeStyles();
 renderCodeCupVisual();
+
+window.addEventListener("load", () => {
+  resetPagePositionOnLoad();
+});
