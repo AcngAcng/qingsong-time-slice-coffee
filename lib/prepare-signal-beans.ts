@@ -37,43 +37,43 @@ export const SIGNAL_EDITOR_RULES = [
   "句子要自然、具体、有判断。",
 ];
 
-const DEFAULT_SHELF_ID = "trust-society";
+const DEFAULT_SHELF_ID = "life-signals";
 const BANNED_TERMS = ["赋能", "重塑", "革新", "开启新时代"];
 
 const relationByShelf: Record<string, string> = {
-  "ai-work": "人与工作",
-  learning: "人与知识",
-  creation: "人与创作",
-  "life-consumption": "人与消费",
-  "climate-agriculture": "人与环境",
-  "trust-society": "人与信任",
+  "ai-frontier": "人与技术边界",
+  "build-workflow": "人与工具链",
+  "design-creation": "人与创作",
+  "market-capital": "人与市场",
+  "self-upgrade": "人与能力",
+  "life-signals": "人与日常",
 };
 
 const titleTemplates: Record<string, string[]> = {
-  "ai-work": ["工具开始接手流程里的中间步骤。", "会安排工具，正在比会使用工具更重要。", "工作里的重复动作，正在被重新分配。"],
-  learning: ["答案越容易得到，问题越需要被判断。", "学习开始从记住内容，转向判断路径。", "知识变多之后，选择问题变得更难。"],
-  creation: ["生成变快之后，取舍变得更贵。", "创意和执行之间的距离正在变短。", "工具会产出更多版本，人要负责方向。"],
-  "life-consumption": ["推荐不只陈列商品，也在设计选择。", "下一次影响购买的，可能是一套系统。", "日常消费正在变成被计算过的对话。"],
-  "climate-agriculture": ["天气正在进入每个人的成本表。", "土地之外的系统，正在决定田里的结果。", "气候不再只是背景，而是供应链变量。"],
-  "trust-society": ["看见信息，不等于理解信息。", "真实感越强，来源越需要被看见。", "信息越多，判断立场越重要。"],
+  "ai-frontier": ["模型和 Agent 正在把技术边界往外推。", "AI 基础设施开始决定谁能更快行动。", "技术前沿正在从能力演示走向真实场景。"],
+  "build-workflow": ["工具开始接手流程里的中间步骤。", "会安排工具，正在比会使用工具更重要。", "工作里的重复动作，正在被重新分配。"],
+  "design-creation": ["生成变快之后，取舍变得更贵。", "创意和执行之间的距离正在变短。", "工具会产出更多版本，人要负责方向。"],
+  "market-capital": ["市场开始给 AI 变化重新定价。", "资本情绪正在暴露新的机会和风险。", "价格、资金和预期正在变成时代信号。"],
+  "self-upgrade": ["答案越容易得到，问题越需要被判断。", "学习开始从记住内容，转向判断路径。", "知识变多之后，选择问题变得更难。"],
+  "life-signals": ["推荐不只陈列商品，也在设计选择。", "天气正在进入每个人的成本表。", "看见信息，不等于理解信息。", "日常选择正在变成被系统解释过的对话。"],
 };
 
 const reasonTemplates: Record<string, string> = {
-  "ai-work": "这条信号说明，AI 不只是提供建议，也开始进入研究、整理、协作和交付这些具体环节。",
-  learning: "这条信号说明，当答案变得便宜，学习能力会更多落在提问、验证和判断上。",
-  creation: "这条信号说明，生成工具降低了产出门槛，但方向、结构和取舍反而更关键。",
-  "life-consumption": "这条信号说明，推荐和购买不再只是展示商品，而是在组织人的注意和选择。",
-  "climate-agriculture": "这条信号说明，天气、土地、物流和价格正在连成一条更贴近日常生活的变化链。",
-  "trust-society": "这条信号说明，信息抵达得越快，人越需要判断来源、语境和没有被说出的部分。",
+  "ai-frontier": "这条信号说明，模型、Agent 与 AI 基础设施正在改变技术边界。",
+  "build-workflow": "这条信号说明，代码、工具链与自动化流程正在改变产品构建方式。",
+  "design-creation": "这条信号说明，生成工具、版权争议与创作者工作流正在被重新定义。",
+  "market-capital": "这条信号说明，资本、加密与 AI 公司动态正在释放新的机会信号。",
+  "self-upgrade": "这条信号说明，当答案越来越便宜，个人真正需要更新的是判断力。",
+  "life-signals": "这条信号说明，气候、医疗、教育与消费正在进入每个人的日常判断。",
 };
 
 const shelfKeywords: Record<string, string[]> = {
-  "ai-work": ["work", "job", "office", "agent", "workflow", "productivity", "enterprise", "software", "automation", "tool"],
-  learning: ["learn", "education", "student", "school", "university", "course", "teacher", "knowledge", "study"],
-  creation: ["design", "creative", "creator", "content", "interface", "video", "image", "music", "writing", "generate"],
-  "life-consumption": ["shop", "retail", "consumer", "consumption", "recommendation", "purchase", "brand", "commerce", "daily"],
-  "climate-agriculture": ["climate", "weather", "farm", "agriculture", "food", "crop", "supply chain", "energy", "land"],
-  "trust-society": ["trust", "source", "society", "media", "misinformation", "verify", "truth", "policy", "public", "safety"],
+  "ai-frontier": ["openai", "anthropic", "xai", "grok", "claude", "deepmind", "model", "agent", "robot", "robotics", "safety", "paper", "research", "infra", "infrastructure"],
+  "build-workflow": ["cursor", "codex", "claude code", "github copilot", "dspy", "coding", "code", "developer", "toolchain", "workflow", "automation", "delivery", "linear", "notion", "slack"],
+  "design-creation": ["design", "creative", "creator", "content", "video", "image", "music", "animation", "copyright", "ip", "film", "generate"],
+  "market-capital": ["market", "crypto", "stock", "funding", "nvidia", "macro", "capital", "price", "valuation", "consumer data", "finance"],
+  "self-upgrade": ["learn", "course", "student", "school", "skill", "habit", "career", "judgment", "fomo", "routine", "teacher", "study"],
+  "life-signals": ["education", "health", "medical", "climate", "weather", "farm", "agriculture", "city", "consumer", "daily", "trust", "source", "platform", "public", "cost", "retail", "shop"],
 };
 
 function clampPreparedCount(limit?: number) {

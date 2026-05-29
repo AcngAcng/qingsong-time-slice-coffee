@@ -2,37 +2,44 @@ export type SignalShelf = {
   shelfId: string;
   title: string;
   description: string;
+  tags: string[];
 };
 
 export const signalShelves: SignalShelf[] = [
   {
-    shelfId: "ai-work",
-    title: "AI & Work / AI 与工作",
-    description: "任务、组织、效率和职业边界正在被重新安排。",
+    shelfId: "ai-frontier",
+    title: "AI Frontier / AI 前沿",
+    description: "模型、Agent 与 AI 基础设施正在改变技术边界。",
+    tags: ["Models", "Agents", "Infra", "Safety"],
   },
   {
-    shelfId: "learning",
-    title: "Learning / 学习",
-    description: "答案变多之后，真正稀缺的是判断问题。",
+    shelfId: "build-workflow",
+    title: "Build & Workflow / 构建工作流",
+    description: "代码、工具链与自动化流程正在改变产品构建方式。",
+    tags: ["Coding", "Tools", "Agents", "Delivery"],
   },
   {
-    shelfId: "creation",
-    title: "Creation / 创作",
-    description: "当生成变容易，审美、结构和取舍变得更贵。",
+    shelfId: "design-creation",
+    title: "Design & Creation / 设计创作",
+    description: "生成工具、版权争议与创作者工作流正在被重新定义。",
+    tags: ["Design", "Video", "IP", "Creators"],
   },
   {
-    shelfId: "life-consumption",
-    title: "Life & Consumption / 生活与消费",
-    description: "推荐、购买和日常选择正在被系统重新组织。",
+    shelfId: "market-capital",
+    title: "Market & Capital / 市场资本",
+    description: "资本、加密与 AI 公司动态正在释放新的机会信号。",
+    tags: ["Markets", "Crypto", "Funding", "Macro"],
   },
   {
-    shelfId: "climate-agriculture",
-    title: "Climate & Agriculture / 气候与农业",
-    description: "天气、土地和供应链正在变成每个人都要理解的信号。",
+    shelfId: "self-upgrade",
+    title: "Self Upgrade / 自我升级",
+    description: "当答案越来越便宜，个人真正需要更新的是判断力。",
+    tags: ["Learning", "Skills", "Judgment", "Routine"],
   },
   {
-    shelfId: "trust-society",
-    title: "Trust & Society / 信任与社会",
-    description: "信息越多，判断真实、来源和立场越重要。",
+    shelfId: "life-signals",
+    title: "Life Signals / 生活信号",
+    description: "气候、医疗、教育与消费正在进入每个人的日常判断。",
+    tags: ["Climate", "Health", "Education", "Daily Life"],
   },
 ];
