@@ -14,6 +14,24 @@ const mimeTypes = {
   ".svg": "image/svg+xml;charset=utf-8",
 };
 
+const shelfTitlesById = {
+  "ai-frontier": "AI Frontier / AI 前沿",
+  "build-workflow": "Build & Workflow / 构建工作流",
+  "design-creation": "Design & Creation / 设计创作",
+  "market-capital": "Market & Capital / 市场资本",
+  "self-upgrade": "Self Upgrade / 自我升级",
+  "life-signals": "Life Signals / 生活信号",
+};
+
+const legacyShelfIdMap = {
+  "ai-work": "ai-frontier",
+  learning: "self-upgrade",
+  creation: "design-creation",
+  "life-consumption": "life-signals",
+  "climate-agriculture": "life-signals",
+  "trust-society": "life-signals",
+};
+
 const rewriteSchema = {
   type: "object",
   additionalProperties: false,
@@ -106,6 +124,11 @@ async function loadPreparedSignalFallback(limit, fetchedAt) {
 
   return preparedSignals.slice(0, clampSignalLimit(limit)).map((signal) => ({
     ...signal,
+    shelfId: shelfTitlesById[legacyShelfIdMap[signal.shelfId] || signal.shelfId]
+      ? legacyShelfIdMap[signal.shelfId] || signal.shelfId
+      : "ai-frontier",
+    shelfTitle: shelfTitlesById[legacyShelfIdMap[signal.shelfId] || signal.shelfId]
+      || shelfTitlesById["ai-frontier"],
     fetchedAt,
   }));
 }

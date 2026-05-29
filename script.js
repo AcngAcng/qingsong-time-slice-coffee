@@ -76,21 +76,30 @@ let isPreparingSignals = false;
 let signalRoundIndex = 0;
 
 const signalMarkByShelf = {
-  "ai-work": "build-workflow",
+  "ai-frontier": "ai-frontier",
+  "build-workflow": "build-workflow",
+  "design-creation": "design-creation",
+  "market-capital": "market-capital",
+  "self-upgrade": "self-upgrade",
+  "life-signals": "life-signals",
+};
+
+const labelShelfByShelf = {
+  "ai-frontier": "AI FRONTIER",
+  "build-workflow": "BUILD & WORKFLOW",
+  "design-creation": "DESIGN & CREATION",
+  "market-capital": "MARKET & CAPITAL",
+  "self-upgrade": "SELF UPGRADE",
+  "life-signals": "LIFE SIGNALS",
+};
+
+const legacyShelfIdMap = {
+  "ai-work": "ai-frontier",
   learning: "self-upgrade",
   creation: "design-creation",
   "life-consumption": "life-signals",
   "climate-agriculture": "life-signals",
   "trust-society": "life-signals",
-};
-
-const labelShelfByShelf = {
-  "ai-work": "AI FRONTIER / BUILD & WORKFLOW",
-  learning: "SELF-UPGRADE / LEARNING",
-  creation: "DESIGN & CREATION",
-  "life-consumption": "LIFE SIGNALS / CONSUMPTION",
-  "climate-agriculture": "LIFE SIGNALS / CLIMATE",
-  "trust-society": "LIFE SIGNALS / TRUST",
 };
 
 const codeCupTokens = [
@@ -255,6 +264,54 @@ function getSelectedShelf() {
   return signalShelves.find((shelf) => shelf.shelfId === selectedShelfId);
 }
 
+function getSafeShelf(shelfId) {
+  return signalShelves.find((shelf) => shelf.shelfId === shelfId)
+    || signalShelves.find((shelf) => shelf.shelfId === "ai-frontier")
+    || signalShelves[0];
+}
+
+function normalizeShelfId(shelfId) {
+  return legacyShelfIdMap[shelfId] || shelfId;
+}
+
+function normalizeSignalShelf(signal) {
+  const normalizedShelfId = normalizeShelfId(signal?.shelfId);
+  const shelf = getSafeShelf(normalizedShelfId);
+
+  return {
+    ...signal,
+    shelfId: shelf.shelfId,
+    shelfTitle: shelf.title,
+  };
+}
+
+function normalizeSignalList(signals) {
+  if (!Array.isArray(signals)) return [];
+  return signals.filter(Boolean).map(normalizeSignalShelf);
+}
+
+function getSignalCountForShelf(shelfId, signals = activeSignals) {
+  return signals.filter((signal) => signal.shelfId === shelfId).length;
+}
+
+function getFirstShelfIdWithSignals(signals = activeSignals) {
+  return signalShelves.find((shelf) => getSignalCountForShelf(shelf.shelfId, signals) > 0)?.shelfId
+    || "ai-frontier";
+}
+
+function getVisibleSignalsForShelf(shelfId = selectedShelfId) {
+  return getRoundSignals().filter((signal) => signal.shelfId === shelfId);
+}
+
+function logSignalRefreshDiagnostics() {
+  console.log("Signal refresh diagnostics", {
+    refreshedSignalsLength: activeSignals.length,
+    selectedShelfId,
+    availableShelfIds: Array.from(new Set(activeSignals.map((signal) => signal.shelfId))),
+    visibleSignalsLength: getVisibleSignalsForShelf().length,
+  });
+}
+
 function setSignalRefreshState(isLoading, message = "") {
   isPreparingSignals = isLoading;
 
@@ -268,15 +325,22 @@ function setSignalRefreshState(isLoading, message = "") {
 }
 
 function resetSignalFlowAfterRefresh(nextSignals) {
-  activeSignals = Array.isArray(nextSignals) && nextSignals.length ? nextSignals : preparedSignals;
+  const normalizedSignals = normalizeSignalList(nextSignals);
+  activeSignals = normalizedSignals.length ? normalizedSignals : normalizeSignalList(preparedSignals);
   selectedSignal = null;
   selectedIdentity = null;
+  selectedShelfId = getSignalCountForShelf(selectedShelfId, activeSignals)
+    ? selectedShelfId
+    : getFirstShelfIdWithSignals(activeSignals);
+
+  renderShelves();
   renderSignals();
   renderIdentities();
   identitySection.classList.add("is-disabled");
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
+  logSignalRefreshDiagnostics();
 }
 
 function wait(ms) {
@@ -367,6 +431,7 @@ function renderShelves() {
           <span class="selected-shelf-mark">SELECTED</span>
           <strong>${shelf.title}</strong>
           <span class="shelf-description">${shelf.description}</span>
+          <span class="shelf-tags">${(shelf.tags || []).map((tag) => `<b>${escapeHtml(tag)}</b>`).join("")}</span>
         </button>
       `,
     )
@@ -377,7 +442,7 @@ function renderShelves() {
 
 function renderSignals() {
   const shelf = getSelectedShelf();
-  const shelfSignals = getRoundSignals().filter((signal) => signal.shelfId === selectedShelfId);
+  const shelfSignals = getVisibleSignalsForShelf();
 
   if (!shelf) {
     signalBeanStage.classList.add("is-empty");
@@ -396,7 +461,8 @@ function renderSignals() {
       </div>
     </div>
     <div class="bean-grid">
-      ${shelfSignals
+      ${shelfSignals.length
+    ? shelfSignals
     .map(
       (signal) => {
         const rawTitle = getSignalRawTitle(signal);
@@ -428,7 +494,8 @@ function renderSignals() {
       `;
       },
     )
-    .join("")}
+    .join("")
+    : '<p class="raw-empty-note">No signals found for this shelf. Try refreshing again.</p>'}
     </div>
   `;
   renderSelectedSignal();
@@ -562,28 +629,166 @@ function getCupPreviewMarkup(serveStyle, labelData) {
   `;
 }
 
+function getLabelShelfShort(shelf) {
+  return String(shelf || "TODAY SIGNAL").split("/")[0].trim();
+}
+
+function getShortRawSignalTitle(signal) {
+  return getShortText(getSignalRawTitle(signal), 72);
+}
+
+function getSignalLabelContext(signal) {
+  return {
+    rawTitle: getSignalRawTitle(signal),
+    rawSummary: getSignalRawSummary(signal),
+    whyWorthWatching: getSignalWorthWatching(signal),
+    sliceReason: signal.sliceReason || "",
+  };
+}
+
+function buildLabelIdentityValue(base, identity, signal, intensity) {
+  const context = getSignalLabelContext(signal);
+  const identityLines = {
+    student: "Student lens: use this to choose what to learn, verify, or question next.",
+    builder: "Builder lens: check how this changes product flow, code, or toolchain use.",
+    designer: "Designer lens: watch what changes in expression, taste, workflow, or judgment.",
+    founder: "Founder lens: test whether this becomes demand, product surface, or team leverage.",
+    vc: "VC lens: read this as a market signal, risk, or place where capital may move.",
+    everyday: "Everyday lens: check how this changes daily choice, work, study, or family judgment.",
+  };
+  const intensityDetails = {
+    light: getShortText(context.rawTitle || context.sliceReason, 42),
+    regular: getShortText(context.sliceReason || context.rawSummary || context.rawTitle, 76),
+    double: getShortText(context.whyWorthWatching || context.rawSummary || context.sliceReason, 96),
+  };
+  const identityLine = identityLines[identity.id] || base.relationToYou;
+
+  return getShortText(`${identityLine} ${intensityDetails[intensity] || intensityDetails.regular}`, intensity === "light" ? 92 : intensity === "double" ? 148 : 124);
+}
+
+function buildLabelTodayFocus(identity, signal, intensity, serveStyle) {
+  const context = getSignalLabelContext(signal);
+  const evidence = getShortText(context.whyWorthWatching || context.rawSummary || context.sliceReason || context.rawTitle, intensity === "double" ? 44 : 34);
+  const identityFocus = {
+    student: "Name one skill to practice.",
+    builder: "Map the workflow step it changes.",
+    designer: "Mark the judgment still needed.",
+    founder: "Test demand or workflow leverage.",
+    vc: "Check demand, risk, or spend.",
+    everyday: "Check the reason before accepting it.",
+  };
+  const intensityFocus = {
+    light: "Keep one sentence.",
+    regular: "Name the main impact.",
+    double: "Add one case and one metric.",
+  };
+  const serveFocus = serveStyle === "iced" ? "Keep evidence visible." : "Carry one decision prompt.";
+
+  return getShortText(`${identityFocus[identity.id] || "Track the concrete change."} ${intensityFocus[intensity]} ${serveFocus} ${evidence}`, intensity === "light" ? 76 : intensity === "double" ? 142 : 108);
+}
+
+function getServeMeta(serveStyle) {
+  if (serveStyle === "iced") {
+    return {
+      label: "SERVED ICED / CLEAR CUP",
+      note: "See today's change more clearly.",
+    };
+  }
+
+  return {
+    label: "SERVED HOT / PAPER CUP",
+    note: "Carry today's understanding in hand.",
+  };
+}
+
+function getSignalMarkSvg(signalMark) {
+  const mark = String(signalMark || "life-signals");
+  const svgAttrs = `class="signal-mark-svg" viewBox="0 0 44 44" aria-hidden="true" focusable="false"`;
+
+  if (mark === "ai-frontier") {
+    return `
+      <svg ${svgAttrs}>
+        <circle cx="12" cy="12" r="1.7"></circle>
+        <circle cx="22" cy="12" r="1.7"></circle>
+        <circle cx="32" cy="12" r="1.7"></circle>
+        <circle cx="12" cy="22" r="1.7"></circle>
+        <circle cx="22" cy="22" r="1.7"></circle>
+        <circle cx="32" cy="22" r="1.7"></circle>
+        <circle cx="12" cy="32" r="1.7"></circle>
+        <circle cx="22" cy="32" r="1.7"></circle>
+        <circle cx="32" cy="32" r="1.7"></circle>
+      </svg>
+    `;
+  }
+
+  if (mark === "build-workflow") {
+    return `
+      <svg ${svgAttrs}>
+        <path d="M12 14h10v16h10"></path>
+        <circle cx="12" cy="14" r="3.2"></circle>
+        <circle cx="22" cy="30" r="3.2"></circle>
+        <circle cx="32" cy="30" r="3.2"></circle>
+      </svg>
+    `;
+  }
+
+  if (mark === "design-creation") {
+    return `
+      <svg ${svgAttrs}>
+        <path d="M12 18v-6h6"></path>
+        <path d="M26 12h6v6"></path>
+        <path d="M32 26v6h-6"></path>
+        <path d="M18 32h-6v-6"></path>
+        <path d="M17 22h10"></path>
+      </svg>
+    `;
+  }
+
+  if (mark === "market-capital") {
+    return `
+      <svg ${svgAttrs}>
+        <path d="M9 32h27"></path>
+        <path d="M10 28l7-8 6 5 10-13"></path>
+        <circle cx="17" cy="20" r="1.8"></circle>
+        <circle cx="23" cy="25" r="1.8"></circle>
+        <circle cx="33" cy="12" r="1.8"></circle>
+      </svg>
+    `;
+  }
+
+  if (mark === "self-upgrade") {
+    return `
+      <svg ${svgAttrs}>
+        <path d="M10 32h8v-7h8v-7h8v-7"></path>
+        <path d="M10 36h25"></path>
+      </svg>
+    `;
+  }
+
+  return `
+    <svg ${svgAttrs}>
+      <path d="M8 24h6l3-9 6 18 4-13h9"></path>
+      <path d="M8 34h28"></path>
+    </svg>
+  `;
+}
+
 function buildMockTimeSliceLabel() {
   const base = valueRewrites[selectedIdentity.id];
   const identityName = selectedIdentity.en.toUpperCase();
   const intensity = selectedStrength.id;
   const serveStyle = selectedServeStyle.id;
-  const rawTitle = getSignalRawTitle(selectedSignal);
-  const focusByIntensity = {
-    light: base.coreLine,
-    regular: base.focusNow,
-    double: `${base.focusNow} 先看一个可验证的具体场景。`,
-  };
 
   return {
     labelNo: `#${selectedSignal.id}`,
     shelf: getLabelShelf(selectedSignal),
     source: selectedSignal.source || "X / Grok Search",
     date: formatLabelDate(selectedSignal.fetchedAt),
-    sourceSignal: getShortText(rawTitle, 46),
+    sourceSignal: getShortRawSignalTitle(selectedSignal),
     sliceTitle: selectedSignal.sliceTitle,
     identity: identityName,
-    identityValue: base.relationToYou,
-    todayFocus: focusByIntensity[intensity] || base.focusNow,
+    identityValue: buildLabelIdentityValue(base, selectedIdentity, selectedSignal, intensity),
+    todayFocus: buildLabelTodayFocus(selectedIdentity, selectedSignal, intensity, serveStyle),
     intensity,
     serveStyle,
     signalMark: getSignalMark(selectedSignal),
@@ -606,20 +811,24 @@ function getMockValueRewrite() {
 function normalizeTimeSliceLabel(rewrite) {
   const fallback = buildMockTimeSliceLabel();
   const candidate = rewrite?.timeSliceLabel || rewrite;
+  const candidateMatchesCurrent =
+    candidate?.identity === fallback.identity &&
+    candidate?.intensity === fallback.intensity &&
+    candidate?.serveStyle === fallback.serveStyle;
 
   return {
-    labelNo: candidate?.labelNo || fallback.labelNo,
-    shelf: candidate?.shelf || fallback.shelf,
-    source: candidate?.source || fallback.source,
-    date: formatLabelDate(candidate?.date || fallback.date),
-    sourceSignal: candidate?.sourceSignal || fallback.sourceSignal,
-    sliceTitle: candidate?.sliceTitle || fallback.sliceTitle,
-    identity: candidate?.identity || fallback.identity,
-    identityValue: candidate?.identityValue || fallback.identityValue,
-    todayFocus: candidate?.todayFocus || fallback.todayFocus,
-    intensity: candidate?.intensity || fallback.intensity,
-    serveStyle: candidate?.serveStyle || fallback.serveStyle,
-    signalMark: candidate?.signalMark || fallback.signalMark,
+    labelNo: fallback.labelNo,
+    shelf: fallback.shelf,
+    source: fallback.source,
+    date: fallback.date,
+    sourceSignal: fallback.sourceSignal,
+    sliceTitle: fallback.sliceTitle,
+    identity: fallback.identity,
+    identityValue: candidateMatchesCurrent && candidate?.identityValue ? candidate.identityValue : fallback.identityValue,
+    todayFocus: candidateMatchesCurrent && candidate?.todayFocus ? candidate.todayFocus : fallback.todayFocus,
+    intensity: fallback.intensity,
+    serveStyle: fallback.serveStyle,
+    signalMark: fallback.signalMark,
   };
 }
 
@@ -702,17 +911,23 @@ function renderValueRewrite(rewrite) {
 function renderTimeSliceLabel(rewrite = activeRewrite) {
   const value = normalizeRewrite(rewrite);
   const label = value.timeSliceLabel;
+  const serveMeta = getServeMeta(label.serveStyle);
   activeRewrite = value;
 
   printLabel.innerHTML = `
     <div class="print-label-top">
-      <span>TIME SLICE COFFEE</span>
-      <span>${escapeHtml(label.labelNo)}</span>
+      <div class="label-brand-stack">
+        <span>TIME SLICE COFFEE</span>
+        <small>${escapeHtml(label.labelNo)}</small>
+      </div>
+      <div class="label-signal-mark" aria-label="${escapeHtml(label.signalMark)} signal mark">
+        ${getSignalMarkSvg(label.signalMark)}
+      </div>
     </div>
-    <p class="label-subtitle">TODAY’S INFORMATION SLICE</p>
+    <p class="label-subtitle">TODAY&rsquo;S INFORMATION SLICE</p>
     <div class="label-meta-line">
-      <span>${escapeHtml(label.labelNo)} / ${escapeHtml(label.shelf)}</span>
-      <span>${escapeHtml(label.source)} · ${escapeHtml(label.date)}</span>
+      <span>${escapeHtml(label.labelNo)} / ${escapeHtml(getLabelShelfShort(label.shelf))}</span>
+      <span>${escapeHtml(label.source)} &middot; ${escapeHtml(label.date)}</span>
     </div>
     <h3>${escapeHtml(label.sliceTitle)}</h3>
     <div class="label-value-block">
@@ -720,16 +935,20 @@ function renderTimeSliceLabel(rewrite = activeRewrite) {
       <p>${escapeHtml(label.identityValue)}</p>
     </div>
     <div class="label-focus-block">
-      <span>TODAY’S FOCUS</span>
+      <span>TODAY&rsquo;S FOCUS</span>
       <p>${escapeHtml(label.todayFocus)}</p>
     </div>
     <div class="label-source-block">
       <span>SOURCE SIGNAL</span>
       <p>${escapeHtml(label.sourceSignal)}</p>
     </div>
+    <div class="label-serve-block">
+      <span>${escapeHtml(label.intensity.toUpperCase())} / ${escapeHtml(label.signalMark)}</span>
+      <strong>${escapeHtml(serveMeta.label)}</strong>
+      <p>${escapeHtml(serveMeta.note)}</p>
+    </div>
     <div class="print-label-bottom">
-      <span>SIGNAL → SLICE → VALUE → LABEL</span>
-      <span>${escapeHtml(label.signalMark)}</span>
+      <span>SIGNAL &rarr; SLICE &rarr; VALUE &rarr; LABEL</span>
     </div>
   `;
 
