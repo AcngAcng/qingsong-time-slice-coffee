@@ -744,45 +744,175 @@ function getSignalLabelContext(signal) {
   };
 }
 
-function buildLabelIdentityValue(base, identity, signal, intensity) {
-  const context = getSignalLabelContext(signal);
-  const identityLines = {
-    student: "Student lens: use this to choose what to learn, verify, or question next.",
-    builder: "Builder lens: check how this changes product flow, code, or toolchain use.",
-    designer: "Designer lens: watch what changes in expression, taste, workflow, or judgment.",
-    founder: "Founder lens: test whether this becomes demand, product surface, or team leverage.",
-    vc: "VC lens: read this as a market signal, risk, or place where capital may move.",
-    everyday: "Everyday lens: check how this changes daily choice, work, study, or family judgment.",
-  };
-  const intensityDetails = {
-    light: getShortText(context.rawTitle || context.sliceReason, 42),
-    regular: getShortText(context.sliceReason || context.rawSummary || context.rawTitle, 76),
-    double: getShortText(context.whyWorthWatching || context.rawSummary || context.sliceReason, 96),
-  };
-  const identityLine = identityLines[identity.id] || base.relationToYou;
+function normalizeLabelIntensity(intensity) {
+  return ["light", "regular", "double"].includes(intensity) ? intensity : "regular";
+}
 
-  return getShortText(`${identityLine} ${intensityDetails[intensity] || intensityDetails.regular}`, intensity === "light" ? 92 : intensity === "double" ? 148 : 124);
+function normalizeLabelServeStyle(serveStyle) {
+  return ["hot", "iced"].includes(serveStyle) ? serveStyle : "hot";
+}
+
+function cleanLabelCopy(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/赋能|拥抱未来|重塑新时代|开启新时代/g, "")
+    .trim();
+}
+
+function trimLabelCopy(value, maxLength) {
+  const text = cleanLabelCopy(value);
+  if (text.length <= maxLength) return text;
+
+  return text
+    .slice(0, maxLength)
+    .replace(/[，、：；,.:\s]+$/g, "")
+    .trim();
+}
+
+function ensureLabelSentence(value) {
+  const text = cleanLabelCopy(value).replace(/[.。]+$/g, "");
+  return text ? `${text}。` : "";
+}
+
+function fitLabelSentence(value, maxLength, fallback) {
+  const fitted = trimLabelCopy(value, maxLength);
+  return ensureLabelSentence(fitted || fallback);
+}
+
+function getLabelCopyLimits(intensity) {
+  if (intensity === "light") {
+    return {
+      sliceTitle: 18,
+      identityValue: 18,
+      todayFocus: 0,
+    };
+  }
+
+  if (intensity === "double") {
+    return {
+      sliceTitle: 22,
+      identityValue: 30,
+      todayFocus: 20,
+    };
+  }
+
+  return {
+    sliceTitle: 22,
+    identityValue: 28,
+    todayFocus: 0,
+  };
+}
+
+function getLabelRelationNoun(signal) {
+  const relationBySignalShelf = {
+    "ai-frontier": "技术边界",
+    "build-workflow": "流程边界",
+    "design-creation": "表达取舍",
+    "market-capital": "市场信号",
+    "self-upgrade": "能力变化",
+    "life-signals": "日常选择",
+  };
+
+  return relationBySignalShelf[signal?.shelfId] || "关键变化";
+}
+
+function buildLabelSliceTitle(signal, intensity, candidateTitle) {
+  const limits = getLabelCopyLimits(intensity);
+  const source = candidateTitle || signal?.sliceTitle || signal?.coreJudgment || signal?.sliceReason;
+  const firstSentence = cleanLabelCopy(source).split(/[。！？!?]/)[0];
+  const compact = firstSentence
+    .replace("模型和 Agent 正在把技术边界往外推", "模型和 Agent 正在外推边界")
+    .replace("技术前沿正在从能力演示走向真实场景", "技术正在走向真实场景")
+    .replace("AI 基础设施开始决定谁能更快行动", "AI 基建决定行动速度")
+    .replace("工具开始接手流程里的中间步骤", "工具开始接手中间步骤")
+    .replace("会安排工具，正在比会使用工具更重要", "会安排工具更重要")
+    .replace("生成变快之后，取舍变得更贵", "生成变快，取舍更贵")
+    .replace("市场开始给 AI 变化重新定价", "市场正重估 AI 变化")
+    .replace("答案越容易得到，问题越需要被判断", "答案易得，问题更要判断")
+    .replace("看见信息，不等于理解信息", "看见信息不等于理解信息");
+
+  return fitLabelSentence(compact, limits.sliceTitle, "今天只看一条关键变化。");
+}
+
+function buildLabelIdentityFallback(identity, signal) {
+  const relation = getLabelRelationNoun(signal);
+  const lines = {
+    student: `判断这条${relation}会改变哪项能力。`,
+    builder: `判断哪些${relation}仍需要人来定义。`,
+    designer: `判断哪些${relation}仍需要人来完成。`,
+    founder: `判断这条${relation}能否进入真实场景。`,
+    vc: `判断这条${relation}是机会还是噪音。`,
+    everyday: `判断这条${relation}会影响哪个选择。`,
+  };
+
+  return lines[identity?.id] || "先判断这条变化与你有什么关系。";
+}
+
+function buildLabelFocusFallback(identity) {
+  const lines = {
+    student: "找出一个要练习的问题。",
+    builder: "找出一个需人工确认的环节。",
+    designer: "标出一个不能外包的判断。",
+    founder: "选一个可测试的入口。",
+    vc: "留下一个可验证信号。",
+    everyday: "保留一个真实判断。",
+  };
+
+  return lines[identity?.id] || "保留一个真实判断。";
+}
+
+function buildLabelIdentityValue(base, identity, signal, intensity) {
+  const normalizedIntensity = normalizeLabelIntensity(intensity);
+  const limits = getLabelCopyLimits(normalizedIntensity);
+  const fallback = normalizedIntensity === "light"
+    ? "一句今天要带走的判断。"
+    : buildLabelIdentityFallback(identity, signal);
+
+  return fitLabelSentence(fallback, limits.identityValue, fallback);
 }
 
 function buildLabelTodayFocus(identity, signal, intensity, serveStyle) {
-  const context = getSignalLabelContext(signal);
-  const evidence = getShortText(context.whyWorthWatching || context.rawSummary || context.sliceReason || context.rawTitle, intensity === "double" ? 44 : 34);
-  const identityFocus = {
-    student: "Name one skill to practice.",
-    builder: "Map the workflow step it changes.",
-    designer: "Mark the judgment still needed.",
-    founder: "Test demand or workflow leverage.",
-    vc: "Check demand, risk, or spend.",
-    everyday: "Check the reason before accepting it.",
-  };
-  const intensityFocus = {
-    light: "Keep one sentence.",
-    regular: "Name the main impact.",
-    double: "Add one case and one metric.",
-  };
-  const serveFocus = serveStyle === "iced" ? "Keep evidence visible." : "Carry one decision prompt.";
+  const normalizedIntensity = normalizeLabelIntensity(intensity);
+  if (normalizedIntensity !== "double") return "";
 
-  return getShortText(`${identityFocus[identity.id] || "Track the concrete change."} ${intensityFocus[intensity]} ${serveFocus} ${evidence}`, intensity === "light" ? 76 : intensity === "double" ? 142 : 108);
+  const limits = getLabelCopyLimits(normalizedIntensity);
+  const fallback = buildLabelFocusFallback(identity);
+  const servePrompt = normalizeLabelServeStyle(serveStyle) === "iced" ? "看清证据。" : "";
+
+  return fitLabelSentence(`${fallback.replace(/[。]+$/g, "")}${servePrompt}`, limits.todayFocus, fallback);
+}
+
+function fitTimeSliceLabelCopy(label, identity = selectedIdentity, signal = selectedSignal) {
+  const intensity = normalizeLabelIntensity(label?.intensity);
+  const serveStyle = normalizeLabelServeStyle(label?.serveStyle);
+  const limits = getLabelCopyLimits(intensity);
+  const sliceTitle = buildLabelSliceTitle(signal, intensity, label?.sliceTitle);
+  const identityFallback = intensity === "light"
+    ? "一句今天要带走的判断。"
+    : "先判断这条变化与你有什么关系。";
+  const identityValue = intensity === "light"
+    ? fitLabelSentence(label?.identityValue || identityFallback, limits.identityValue, identityFallback)
+    : fitLabelSentence(label?.identityValue, limits.identityValue, identityFallback);
+  const todayFocus = intensity === "double"
+    ? fitLabelSentence(label?.todayFocus, limits.todayFocus, "保留一个真实判断。")
+    : "";
+  const fittedLabel = {
+    ...label,
+    sliceTitle,
+    identityValue,
+    todayFocus,
+    intensity,
+    serveStyle,
+  };
+
+  console.log("LABEL COPY FIT", {
+    intensity,
+    sliceTitle,
+    identityValue,
+    todayFocus,
+  });
+
+  return fittedLabel;
 }
 
 function getServeMeta(serveStyle) {
@@ -801,24 +931,24 @@ function getServeMeta(serveStyle) {
 
 function buildFallbackTimeSliceLabel() {
   const identity = selectedIdentity?.en?.toUpperCase() || selectedIdentity?.name || selectedIdentity?.label || "EVERYDAY PERSON";
-  const intensity = selectedStrength?.id || "regular";
-  const serveStyle = selectedServeStyle?.id || "hot";
+  const intensity = normalizeLabelIntensity(selectedStrength?.id);
+  const serveStyle = normalizeLabelServeStyle(selectedServeStyle?.id);
   const signalId = selectedSignal?.id ? `#${selectedSignal.id}` : "#000";
 
-  return {
+  return fitTimeSliceLabelCopy({
     labelNo: signalId,
     shelf: selectedSignal?.shelfTitle || getLabelShelf(selectedSignal) || "TIME SLICE",
     source: selectedSignal?.source || "LOCAL FALLBACK",
     date: formatLabelDate(selectedSignal?.fetchedAt || "TODAY"),
     sourceSignal: getSignalRawTitle(selectedSignal) || "No source signal available",
-    sliceTitle: selectedSignal?.sliceTitle || "今天，只看一条真正相关的变化。",
+    sliceTitle: selectedSignal?.sliceTitle || "今天只看一条关键变化。",
     identity,
-    identityValue: "先判断这条变化和你今天的选择有什么关系。",
-    todayFocus: "保留一个真实判断。",
+    identityValue: intensity === "light" ? "一句今天要带走的判断。" : buildLabelIdentityFallback(selectedIdentity, selectedSignal),
+    todayFocus: intensity === "double" ? buildLabelFocusFallback(selectedIdentity) : "",
     intensity,
     serveStyle,
     signalMark: selectedSignal?.shelfId || "life-signals",
-  };
+  }, selectedIdentity, selectedSignal);
 }
 
 function getSignalMarkSvg(signalMark) {
@@ -901,10 +1031,10 @@ function buildMockTimeSliceLabel() {
 
   const base = valueRewrites[selectedIdentity.id] || valueRewrites.everyday || {};
   const identityName = selectedIdentity.en?.toUpperCase() || fallback.identity;
-  const intensity = selectedStrength.id || fallback.intensity;
-  const serveStyle = selectedServeStyle.id || fallback.serveStyle;
+  const intensity = normalizeLabelIntensity(selectedStrength.id || fallback.intensity);
+  const serveStyle = normalizeLabelServeStyle(selectedServeStyle.id || fallback.serveStyle);
 
-  return {
+  return fitTimeSliceLabelCopy({
     labelNo: fallback.labelNo,
     shelf: getLabelShelf(selectedSignal) || fallback.shelf,
     source: selectedSignal.source || fallback.source,
@@ -917,7 +1047,7 @@ function buildMockTimeSliceLabel() {
     intensity,
     serveStyle,
     signalMark: getSignalMark(selectedSignal) || fallback.signalMark,
-  };
+  }, selectedIdentity, selectedSignal);
 }
 
 function getMockValueRewrite() {
@@ -941,20 +1071,20 @@ function normalizeTimeSliceLabel(rewrite) {
     candidate?.intensity === fallback.intensity &&
     candidate?.serveStyle === fallback.serveStyle;
 
-  return {
+  return fitTimeSliceLabelCopy({
     labelNo: fallback.labelNo,
     shelf: fallback.shelf,
     source: fallback.source,
     date: fallback.date,
     sourceSignal: fallback.sourceSignal,
-    sliceTitle: fallback.sliceTitle,
+    sliceTitle: candidateMatchesCurrent && candidate?.sliceTitle ? candidate.sliceTitle : fallback.sliceTitle,
     identity: fallback.identity,
     identityValue: candidateMatchesCurrent && candidate?.identityValue ? candidate.identityValue : fallback.identityValue,
     todayFocus: candidateMatchesCurrent && candidate?.todayFocus ? candidate.todayFocus : fallback.todayFocus,
     intensity: fallback.intensity,
     serveStyle: fallback.serveStyle,
     signalMark: fallback.signalMark,
-  };
+  }, selectedIdentity, selectedSignal);
 }
 
 function normalizeRewrite(rewrite) {
