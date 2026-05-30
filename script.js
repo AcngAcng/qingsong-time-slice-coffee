@@ -88,6 +88,55 @@ const serveStyles = [
   },
 ];
 
+const identityIntentDisplay = {
+  student: {
+    option: "Learn / 学点什么",
+    description: "看见今天该更新的能力。",
+    forLabel: "FOR LEARNING",
+  },
+  builder: {
+    option: "Build / 做点东西",
+    description: "看见它如何改变做事方式。",
+    forLabel: "FOR BUILDING",
+  },
+  designer: {
+    option: "Create / 创作表达",
+    description: "看见它如何改变表达与判断。",
+    forLabel: "FOR CREATING",
+  },
+  founder: {
+    option: "Spot Opportunity / 找机会",
+    description: "看见它能否变成产品机会。",
+    forLabel: "FOR OPPORTUNITY",
+  },
+  vc: {
+    option: "Make a Decision / 做判断",
+    description: "看见它是否值得投入与关注。",
+    forLabel: "FOR DECIDING",
+  },
+  everyday: {
+    option: "Ease FOMO / 少焦虑一点",
+    description: "今天只带走真正相关的一条。",
+    forLabel: "FOR LESS FOMO",
+  },
+};
+
+const legacyIdentityForLabel = {
+  STUDENT: "FOR LEARNING",
+  LEARNING: "FOR LEARNING",
+  BUILDER: "FOR BUILDING",
+  BUILDING: "FOR BUILDING",
+  DESIGNER: "FOR CREATING",
+  CREATING: "FOR CREATING",
+  FOUNDER: "FOR OPPORTUNITY",
+  OPPORTUNITY: "FOR OPPORTUNITY",
+  VC: "FOR DECIDING",
+  DECIDING: "FOR DECIDING",
+  "EVERYDAY PERSON": "FOR LESS FOMO",
+  EVERYDAY: "FOR LESS FOMO",
+  "LESS FOMO": "FOR LESS FOMO",
+};
+
 let selectedSignal = null;
 let selectedShelfId = null;
 let selectedIdentity = null;
@@ -459,6 +508,18 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function getIdentityIntentDisplay(identityId) {
+  return identityIntentDisplay[identityId] || identityIntentDisplay.everyday;
+}
+
+function getIdentityForLabel(identityId = selectedIdentity?.id, fallbackIdentity = "") {
+  const byId = identityIntentDisplay[identityId]?.forLabel;
+  if (byId) return byId;
+
+  const legacyKey = String(fallbackIdentity || "").trim().toUpperCase();
+  return legacyIdentityForLabel[legacyKey] || "FOR TODAY";
+}
+
 function getShortText(value, maxLength = 112) {
   const text = String(value || "").replace(/\s+/g, " ").trim();
 
@@ -640,7 +701,7 @@ function renderSelectedSignal() {
         </div>
       </div>
       <button class="button primary continue-signal-button" id="continue-signal-button" type="button">
-        Continue to Lens / 选择今日视角
+        Continue to Intent / 选择今日用途
       </button>
     </article>
   `;
@@ -649,13 +710,16 @@ function renderSelectedSignal() {
 function renderIdentities() {
   identityGrid.innerHTML = identities
     .map(
-      (identity) => `
+      (identity) => {
+        const intentDisplay = getIdentityIntentDisplay(identity.id);
+        return `
         <button class="identity-card${identity.id === selectedIdentity?.id ? " is-selected" : ""}" data-identity-id="${identity.id}" type="button">
-          <span>${identity.name}</span>
-          <strong>${identity.en}</strong>
-          <small>${identity.label}</small>
+          <span>Today&apos;s Intent</span>
+          <strong>${escapeHtml(intentDisplay.option)}</strong>
+          <small>${escapeHtml(intentDisplay.description)}</small>
         </button>
-      `,
+      `;
+      },
     )
     .join("");
 }
@@ -694,7 +758,7 @@ function renderServeStyles() {
             ${getCupPreviewMarkup(serveStyle.id, {
               number: selectedSignal.id,
               title: selectedSignal.sliceTitle,
-              persona: selectedIdentity?.label || "FOR TODAY",
+              persona: getIdentityForLabel(),
               coreLine: selectedSignal.coreJudgment,
               variant: "small",
               showOverlayLabel: false,
@@ -1160,6 +1224,7 @@ function renderTimeSliceLabel(rewrite = activeRewrite) {
   const value = normalizeRewrite(rewrite);
   const label = value.timeSliceLabel || buildFallbackTimeSliceLabel();
   const serveMeta = getServeMeta(label.serveStyle);
+  const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
   value.timeSliceLabel = label;
   activeRewrite = value;
   generatedLabel = label;
@@ -1182,7 +1247,7 @@ function renderTimeSliceLabel(rewrite = activeRewrite) {
     </div>
     <h3>${escapeHtml(label.sliceTitle)}</h3>
     <div class="label-value-block">
-      <span>FOR ${escapeHtml(label.identity)}</span>
+      <span>${escapeHtml(identityForLabel)}</span>
       <p>${escapeHtml(label.identityValue)}</p>
     </div>
     <div class="label-focus-block">
@@ -1209,13 +1274,14 @@ function renderTimeSliceLabel(rewrite = activeRewrite) {
 
 function renderProductPreview(value) {
   const label = value.timeSliceLabel || buildFallbackTimeSliceLabel();
+  const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
 
   productPreview.innerHTML = `
     <div class="preview-scene">
       ${getCupPreviewMarkup(selectedServeStyle?.id || "hot", {
         number: selectedSignal?.id || "000",
         title: label.sliceTitle,
-        persona: `FOR ${label.identity} / ${label.intensity.toUpperCase()}`,
+        persona: `${identityForLabel} / ${label.intensity.toUpperCase()}`,
         coreLine: label.todayFocus,
         variant: "pickup",
         showOverlayLabel: SHOW_CUP_OVERLAY_LABEL,
@@ -1278,13 +1344,14 @@ function getDevLabel50x70Markup(label, { printable = false } = {}) {
   const shelfShort = getLabelShelfShort(label.shelf);
   const brewLine = `BREW ${label.intensity.toUpperCase()} / ${shelfShort}`;
   const serveLine = getDevLabelServeFooter(label.serveStyle);
+  const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
   const printAttribute = printable ? ` data-print-label="true"` : "";
   const headerMeta = label.intensity === "light"
     ? ""
     : `<span>${escapeHtml(label.source)} &middot; ${escapeHtml(label.date)}</span>`;
   const bodyValue = label.intensity === "light" || label.identityValue
     ? `<section class="label-test-body" aria-label="current identity">
-        <span>FOR ${escapeHtml(label.identity)}</span>
+        <span>${escapeHtml(identityForLabel)}</span>
         ${label.identityValue ? `<p>${escapeHtml(label.identityValue)}</p>` : ""}
       </section>`
     : "";
@@ -1318,12 +1385,12 @@ function getDevLabel50x70Markup(label, { printable = false } = {}) {
 
 function getDevLabel50x70MetaMarkup(label, hasGeneratedLabel) {
   const mode = hasGeneratedLabel ? label.intensity.toUpperCase() : "SAMPLE";
-  const identity = cleanLabelCopy(label.identity).toUpperCase() || "READER";
+  const intent = getIdentityForLabel(selectedIdentity?.id, label.identity);
   const serve = normalizeLabelServeStyle(label.serveStyle).toUpperCase();
 
   return `
     <span>CURRENT MODE: ${escapeHtml(mode)}</span>
-    <span>IDENTITY: ${escapeHtml(identity)}</span>
+    <span>INTENT: ${escapeHtml(intent)}</span>
     <span>SERVE: ${escapeHtml(serve)}</span>
   `;
 }
