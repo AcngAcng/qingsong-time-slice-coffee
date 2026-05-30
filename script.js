@@ -1451,7 +1451,7 @@ function getPrintFrame50x70Styles() {
       font-size: 11.8pt !important;
       line-height: 1.1 !important;
       margin: 2.2mm 0 2mm !important;
-      font-weight: 700 !important;
+      font-weight: 750 !important;
       letter-spacing: 0 !important;
     }
 
