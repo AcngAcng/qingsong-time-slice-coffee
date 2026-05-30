@@ -1305,6 +1305,27 @@ h2 {
   width: 100%;
 }
 
+.label-50x70-current {
+  border-bottom: 1px solid rgba(23, 23, 23, 0.12);
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  padding-bottom: 34px;
+  width: 100%;
+}
+
+.label-current-preview {
+  display: grid;
+  justify-items: center;
+  min-height: 70mm;
+}
+
+.label-template-heading {
+  display: grid;
+  justify-items: center;
+  margin-top: 8px;
+}
+
 .label-test-sample {
   display: grid;
   gap: 10px;

@@ -18,6 +18,7 @@ const valueTitle = document.querySelector("#value-title");
 const valuePanel = document.querySelector("#value-panel");
 const productPreview = document.querySelector("#product-preview");
 const printLabel = document.querySelector("#print-label");
+const devLabel50x70Current = document.querySelector("#label-50x70-current");
 const printButton = document.querySelector("#print-button");
 const resetButton = document.querySelector("#reset-button");
 const brewButton = document.querySelector("#brew-button");
@@ -1222,6 +1223,115 @@ function renderProductPreview(value) {
   `;
 }
 
+const devLabel50x70Sample = {
+  labelNo: "#042",
+  shelf: "AI FRONTIER",
+  source: "X / GROK SEARCH",
+  date: "2026.05.30",
+  sliceTitle: "模型和 Agent 正在外推边界。",
+  identity: "BUILDER",
+  identityValue: "判断哪些边界仍需要人来定义。",
+  todayFocus: "找出一个需人工确认的环节。",
+  intensity: "regular",
+  serveStyle: "hot",
+  signalMark: "ai-frontier",
+};
+
+function getTodayLabelDate() {
+  return new Intl.DateTimeFormat("zh-CN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date()).replaceAll("/", ".");
+}
+
+function getDevLabelServeFooter(serveStyle) {
+  return normalizeLabelServeStyle(serveStyle) === "iced" ? "SERVED ICED / CLEAR CUP" : "SERVED HOT / PAPER CUP";
+}
+
+function normalizeDevLabel50x70(label) {
+  const source = label || devLabel50x70Sample;
+  const intensity = normalizeLabelIntensity(source.intensity);
+  const shelf = cleanLabelCopy(source.shelf) || "TIME SIGNAL";
+  const identityValueFallback = intensity === "light"
+    ? "一句今天要带走的判断。"
+    : "先判断这条变化与你有什么关系。";
+  const todayFocusFallback = intensity === "double" ? "保留一个真实判断。" : "";
+
+  return {
+    labelNo: cleanLabelCopy(source.labelNo) || "#000",
+    shelf,
+    source: cleanLabelCopy(source.source) || "SIGNAL SOURCE",
+    date: cleanLabelCopy(source.date) || getTodayLabelDate(),
+    sliceTitle: cleanLabelCopy(source.sliceTitle) || "今天只看一条关键变化。",
+    identity: cleanLabelCopy(source.identity) || "READER",
+    identityValue: cleanLabelCopy(source.identityValue) || identityValueFallback,
+    todayFocus: cleanLabelCopy(source.todayFocus) || todayFocusFallback,
+    intensity,
+    serveStyle: normalizeLabelServeStyle(source.serveStyle),
+  };
+}
+
+function getDevLabel50x70Markup(label) {
+  const shelfShort = getLabelShelfShort(label.shelf);
+  const brewLine = `BREW ${label.intensity.toUpperCase()} / ${shelfShort}`;
+  const serveLine = getDevLabelServeFooter(label.serveStyle);
+  const headerMeta = label.intensity === "light"
+    ? ""
+    : `<span>${escapeHtml(label.source)} &middot; ${escapeHtml(label.date)}</span>`;
+  const bodyValue = label.intensity === "light" || label.identityValue
+    ? `<section class="label-test-body" aria-label="current identity">
+        <span>FOR ${escapeHtml(label.identity)}</span>
+        ${label.identityValue ? `<p>${escapeHtml(label.identityValue)}</p>` : ""}
+      </section>`
+    : "";
+  const focusValue = label.intensity === "double"
+    ? `<section class="label-test-focus" aria-label="current today focus">
+        <span>TODAY'S FOCUS</span>
+        <p>${escapeHtml(label.todayFocus)}</p>
+      </section>`
+    : "";
+
+  return `
+    <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)}">
+      <div class="label-safe-area">
+        <header class="label-test-header">
+          <strong>TIME SLICE COFFEE</strong>
+          <span>${escapeHtml(label.labelNo)} / ${escapeHtml(shelfShort)}</span>
+          ${headerMeta}
+        </header>
+
+        <h3>${escapeHtml(label.sliceTitle)}</h3>
+
+        ${bodyValue}
+        ${focusValue}
+
+        <div class="label-test-brew">${escapeHtml(brewLine)}</div>
+        <footer>${escapeHtml(serveLine)}</footer>
+      </div>
+    </article>
+  `;
+}
+
+function renderDevLabel50x70Preview(label = generatedLabel) {
+  if (!devLabel50x70Current) return;
+
+  const hasGeneratedLabel = Boolean(label);
+  const safeLabel = normalizeDevLabel50x70(label);
+  devLabel50x70Current.innerHTML = getDevLabel50x70Markup(safeLabel);
+
+  if (hasGeneratedLabel) {
+    console.log("DEV 50X70 LABEL PREVIEW", {
+      intensity: safeLabel.intensity,
+      labelNo: safeLabel.labelNo,
+      sliceTitle: safeLabel.sliceTitle,
+      identityValue: safeLabel.identityValue,
+      todayFocus: safeLabel.todayFocus,
+      serveStyle: safeLabel.serveStyle,
+    });
+  }
+}
+
 async function fetchAiRewrite({ signal } = {}) {
   const response = await fetch("/api/rewrite", {
     method: "POST",
@@ -1348,6 +1458,7 @@ function selectStrength(strengthId) {
   if (activeRewrite) {
     renderValueRewrite(activeRewrite);
     renderTimeSliceLabel(activeRewrite);
+    renderDevLabel50x70Preview();
   }
 }
 
@@ -1358,6 +1469,7 @@ function selectServeStyle(serveId) {
 
   if (activeRewrite) {
     renderTimeSliceLabel(activeRewrite);
+    renderDevLabel50x70Preview();
   }
 }
 
@@ -1366,6 +1478,7 @@ function showGeneratedLabel() {
 
   enableSection(labelSection);
   generatedLabel = renderTimeSliceLabel(activeRewrite);
+  renderDevLabel50x70Preview(generatedLabel);
   console.log("generatedLabel", generatedLabel);
   scrollAfterRender(labelSection);
 }
@@ -1398,6 +1511,7 @@ async function brewSlice() {
 
     renderValueRewrite(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
     generatedLabel = renderTimeSliceLabel(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
+    renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
   } catch (error) {
@@ -1426,6 +1540,7 @@ async function brewSlice() {
 
     renderValueRewrite(fallback);
     generatedLabel = renderTimeSliceLabel(fallback);
+    renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
   } finally {
@@ -1569,6 +1684,7 @@ renderSignals();
 renderIdentities();
 renderStrengths();
 renderServeStyles();
+renderDevLabel50x70Preview();
 renderCodeCupVisual();
 
 window.addEventListener("load", () => {
