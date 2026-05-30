@@ -61,13 +61,13 @@ export async function slide01(presentation, ctx) {
   const slide = presentation.slides.add();
   bg(slide, ctx, C.paper);
   await ctx.addImage(slide, {
-    path: asset(ctx, "cover-coffee-label.png"),
+    path: asset(ctx, "cover-coffee-pickup-clean.png"),
     x: 0,
     y: 0,
     w: ctx.W,
     h: ctx.H,
     fit: "cover",
-    alt: "Fictional Time Slice Coffee cup with information label",
+    alt: "Premium coffee pickup atmosphere with blank takeaway cup",
   });
   rect(slide, ctx, 0, 0, 620, ctx.H, "#F8F0E6EE");
   rect(slide, ctx, 0, 0, 80, ctx.H, "#F8F0E6");
