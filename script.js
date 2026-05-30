@@ -19,6 +19,7 @@ const valuePanel = document.querySelector("#value-panel");
 const productPreview = document.querySelector("#product-preview");
 const printLabel = document.querySelector("#print-label");
 const devLabel50x70Current = document.querySelector("#label-50x70-current");
+const devLabel50x70CurrentMeta = document.querySelector("#label-50x70-current-meta");
 const printButton = document.querySelector("#print-button");
 const resetButton = document.querySelector("#reset-button");
 const brewButton = document.querySelector("#brew-button");
@@ -1313,11 +1314,26 @@ function getDevLabel50x70Markup(label) {
   `;
 }
 
+function getDevLabel50x70MetaMarkup(label, hasGeneratedLabel) {
+  const mode = hasGeneratedLabel ? label.intensity.toUpperCase() : "SAMPLE";
+  const identity = cleanLabelCopy(label.identity).toUpperCase() || "READER";
+  const serve = normalizeLabelServeStyle(label.serveStyle).toUpperCase();
+
+  return `
+    <span>CURRENT MODE: ${escapeHtml(mode)}</span>
+    <span>IDENTITY: ${escapeHtml(identity)}</span>
+    <span>SERVE: ${escapeHtml(serve)}</span>
+  `;
+}
+
 function renderDevLabel50x70Preview(label = generatedLabel) {
   if (!devLabel50x70Current) return;
 
   const hasGeneratedLabel = Boolean(label);
   const safeLabel = normalizeDevLabel50x70(label);
+  if (devLabel50x70CurrentMeta) {
+    devLabel50x70CurrentMeta.innerHTML = getDevLabel50x70MetaMarkup(safeLabel, hasGeneratedLabel);
+  }
   devLabel50x70Current.innerHTML = getDevLabel50x70Markup(safeLabel);
 
   if (hasGeneratedLabel) {
