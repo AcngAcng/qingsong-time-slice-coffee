@@ -91,32 +91,32 @@ const serveStyles = [
 const identityIntentDisplay = {
   student: {
     option: "Learn / 学点什么",
-    description: "看见今天该更新的能力。",
+    description: "一杯清醒点的",
     forLabel: "FOR LEARNING",
   },
   builder: {
     option: "Build / 做点东西",
-    description: "看见它如何改变做事方式。",
+    description: "一杯能动手的",
     forLabel: "FOR BUILDING",
   },
   designer: {
     option: "Create / 创作表达",
-    description: "看见它如何改变表达与判断。",
+    description: "一杯有灵感的",
     forLabel: "FOR CREATING",
   },
   founder: {
     option: "Spot Opportunity / 找机会",
-    description: "看见它能否变成产品机会。",
+    description: "一杯看见机会的",
     forLabel: "FOR OPPORTUNITY",
   },
   vc: {
     option: "Make a Decision / 做判断",
-    description: "看见它是否值得投入与关注。",
+    description: "一杯帮你定下来的",
     forLabel: "FOR DECIDING",
   },
   everyday: {
     option: "Ease FOMO / 少焦虑一点",
-    description: "今天只带走真正相关的一条。",
+    description: "一杯少点噪音的",
     forLabel: "FOR LESS FOMO",
   },
 };
@@ -714,7 +714,7 @@ function renderIdentities() {
         const intentDisplay = getIdentityIntentDisplay(identity.id);
         return `
         <button class="identity-card${identity.id === selectedIdentity?.id ? " is-selected" : ""}" data-identity-id="${identity.id}" type="button">
-          <span>Today&apos;s Intent</span>
+          <span>Today&apos;s Cup</span>
           <strong>${escapeHtml(intentDisplay.option)}</strong>
           <small>${escapeHtml(intentDisplay.description)}</small>
         </button>
