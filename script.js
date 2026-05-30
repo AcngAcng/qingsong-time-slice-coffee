@@ -1430,39 +1430,39 @@ function getPrintFrame50x70Styles() {
       flex-direction: column !important;
       gap: 0.7mm !important;
       padding-bottom: 1.1mm !important;
-      border-bottom: 0.15mm solid #000000 !important;
+      border-bottom: 0.5px solid #000000 !important;
     }
 
     .label-test-header strong {
       font-size: 7.2pt !important;
-      font-weight: 900 !important;
-      line-height: 1 !important;
+      font-weight: 700 !important;
+      line-height: 1.12 !important;
       letter-spacing: 0 !important;
     }
 
     .label-test-header span {
       font-size: 5.6pt !important;
-      font-weight: 800 !important;
-      line-height: 1.1 !important;
+      font-weight: 700 !important;
+      line-height: 1.16 !important;
       letter-spacing: 0 !important;
     }
 
     h3 {
-      font-size: 12.4pt !important;
-      line-height: 1.05 !important;
+      font-size: 11.8pt !important;
+      line-height: 1.1 !important;
       margin: 2.2mm 0 2mm !important;
-      font-weight: 900 !important;
+      font-weight: 700 !important;
       letter-spacing: 0 !important;
     }
 
     .label-paper-light h3 {
-      font-size: 13.5pt !important;
+      font-size: 12.8pt !important;
       margin: 3.4mm 0 2.4mm !important;
     }
 
     .label-paper-double h3 {
-      font-size: 11.2pt !important;
-      line-height: 1.05 !important;
+      font-size: 10.8pt !important;
+      line-height: 1.08 !important;
       margin: 1.8mm 0 1.5mm !important;
     }
 
@@ -1471,22 +1471,22 @@ function getPrintFrame50x70Styles() {
       flex-direction: column !important;
       gap: 0.9mm !important;
       padding-top: 1.4mm !important;
-      border-top: 0.15mm solid #000000 !important;
+      border-top: 0.5px solid #000000 !important;
     }
 
     .label-test-body span,
     .label-test-focus span {
       font-size: 5.6pt !important;
-      font-weight: 900 !important;
-      line-height: 1.1 !important;
+      font-weight: 700 !important;
+      line-height: 1.16 !important;
       letter-spacing: 0 !important;
     }
 
     .label-test-body p {
       margin: 0 !important;
       font-size: 7.2pt !important;
-      font-weight: 800 !important;
-      line-height: 1.25 !important;
+      font-weight: 700 !important;
+      line-height: 1.28 !important;
       letter-spacing: 0 !important;
     }
 
@@ -1496,34 +1496,34 @@ function getPrintFrame50x70Styles() {
       gap: 0.7mm !important;
       margin-top: 1.4mm !important;
       padding-left: 1.2mm !important;
-      border-left: 0.25mm solid #000000 !important;
+      border-left: 0.5px solid #000000 !important;
     }
 
     .label-test-focus p {
       margin: 0 !important;
       font-size: 6.8pt !important;
-      font-weight: 800 !important;
-      line-height: 1.2 !important;
+      font-weight: 700 !important;
+      line-height: 1.24 !important;
       letter-spacing: 0 !important;
     }
 
     .label-test-brew {
       margin-top: auto !important;
       padding-top: 1.1mm !important;
-      border-top: 0.15mm solid #000000 !important;
+      border-top: 0.5px solid #000000 !important;
       font-size: 5.8pt !important;
-      font-weight: 900 !important;
-      line-height: 1.1 !important;
+      font-weight: 700 !important;
+      line-height: 1.16 !important;
       letter-spacing: 0 !important;
     }
 
     footer {
       margin-top: 1.1mm !important;
       padding-top: 1.1mm !important;
-      border-top: 0.15mm solid #000000 !important;
+      border-top: 0.5px solid #000000 !important;
       font-size: 6.1pt !important;
-      font-weight: 900 !important;
-      line-height: 1.1 !important;
+      font-weight: 700 !important;
+      line-height: 1.16 !important;
       letter-spacing: 0 !important;
     }
   `;
