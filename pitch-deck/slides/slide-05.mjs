@@ -16,6 +16,7 @@ export async function slide05(presentation, ctx) {
   rect(slide, ctx, 0, 0, 86, ctx.H, "#F8F0E6A8");
   kicker(slide, ctx, "WORKFLOW", 72, 42, false, "05");
   title(slide, ctx, "From Raw Signal\nto Brew Result", "从原始信号到一杯信息咖啡", 72, 86, 620, false);
+  rect(slide, ctx, 68, 240, 846, 36, "#F8F0E6D8");
   txt(slide, ctx, "Raw Signal → Extracted Slice → Persona → Density → Served Mode → Brew Result → Label", 74, 248, 820, 30, {
     size: 18,
     color: C.espresso,
