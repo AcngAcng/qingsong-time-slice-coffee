@@ -12,9 +12,9 @@ export async function slide07(presentation, ctx) {
 
   rect(slide, ctx, 94, 378, 440, 174, "#241913", "#5F5147", 1.2);
   rect(slide, ctx, 94, 378, 12, 174, C.red);
-  txt(slide, ctx, "Plan B / Stable Demo", 126, 404, 256, 30, { size: 24, color: C.paper, bold: true, face: "Georgia" });
-  chip(slide, ctx, "Preloaded xAI / Grok signal bank", 126, 454, 322, true, C.red);
-  chip(slide, ctx, "6 shelves × 9 raw signals", 126, 494, 260, true, C.cyan);
+  txt(slide, ctx, "Plan B /\nStable Demo", 126, 402, 256, 58, { size: 23, color: C.paper, bold: true, face: "Georgia" });
+  chip(slide, ctx, "Preloaded xAI / Grok signal bank", 126, 468, 322, true, C.red);
+  chip(slide, ctx, "6 shelves × 9 raw signals", 126, 508, 260, true, C.cyan);
 
   rect(slide, ctx, 660, 120, 452, 432, "#F8F0E6", "#5F5147", 1.5);
   rect(slide, ctx, 660, 120, 452, 58, "#FFF9EF", C.creamLine, 1);
@@ -25,9 +25,8 @@ export async function slide07(presentation, ctx) {
     txt(slide, ctx, s, 722, 222 + i * 52, 260, 18, { size: 14, color: C.espresso, bold: true, face: "Aptos Mono" });
   });
   rect(slide, ctx, 848, 424, 2, 46, C.creamLine);
-  txt(slide, ctx, "Plan A / Real-Time Future", 690, 484, 280, 24, { size: 20, color: C.espresso, bold: true, face: "Georgia" });
-  txt(slide, ctx, "Future Grok / X API\nFuture 50×70mm label printing module", 690, 516, 330, 40, { size: 14, color: C.taupe, face: "Aptos" });
+  txt(slide, ctx, "Plan A / Real-Time Future", 690, 474, 306, 24, { size: 20, color: C.espresso, bold: true, face: "Georgia" });
+  txt(slide, ctx, "Future Grok / X API\nFuture 50×70mm label printing module", 690, 506, 330, 42, { size: 13, color: C.taupe, face: "Aptos" });
   footer(slide, ctx, 7, true);
   return slide;
 }
-

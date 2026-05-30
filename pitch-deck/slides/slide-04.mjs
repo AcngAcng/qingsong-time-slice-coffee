@@ -1,10 +1,26 @@
-import { C, bg, chip, coreLine, footer, kicker, rect, title, txt } from "./common.mjs";
+import { C, bg, chip, coreLine, footer, kicker, rect, txt } from "./common.mjs";
 
 export async function slide04(presentation, ctx) {
   const slide = presentation.slides.add();
   bg(slide, ctx, C.espresso);
   kicker(slide, ctx, "PRODUCT", 72, 54, true, "04");
-  title(slide, ctx, "An Information\nCoffee Bar\nfor the AI Age", "AI 时代的信息咖啡吧", 72, 116, 438, true);
+  txt(slide, ctx, "An Information\nCoffee Bar", 72, 116, 438, 112, {
+    size: 42,
+    color: C.paper,
+    bold: true,
+    face: "Georgia",
+  });
+  txt(slide, ctx, "for the AI Age", 72, 242, 438, 52, {
+    size: 42,
+    color: C.paper,
+    bold: true,
+    face: "Georgia",
+  });
+  txt(slide, ctx, "AI 时代的信息咖啡吧", 76, 314, 380, 28, {
+    size: 21,
+    color: "#D8CDBE",
+    bold: true,
+  });
   coreLine(slide, ctx, "Time Slice Coffee 把真实信息流中的重要变化，\n萃取成不同身份可理解、可带走的时代信息切片咖啡。", 76, 392, 486, true);
   txt(slide, ctx, "We turn reading information into ordering a cup.", 78, 526, 420, 34, {
     size: 20,
@@ -43,4 +59,3 @@ export async function slide04(presentation, ctx) {
   footer(slide, ctx, 4, true);
   return slide;
 }
-
