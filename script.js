@@ -665,7 +665,7 @@ function renderServeStyles() {
 
 function getCupPreviewMarkup(serveStyle, labelData) {
   const styleClass = serveStyle === "iced" ? "cup-preview-iced" : "cup-preview-hot";
-  const src = serveStyle === "iced" ? "public/images/cup-iced-clean.png" : "public/images/cup-hot-clean.png";
+  const src = serveStyle === "iced" ? "/public/images/cup-iced-clean.png" : "/public/images/cup-hot-clean.png";
   const alt = serveStyle === "iced" ? "Time Slice Coffee iced clear cup" : "Time Slice Coffee hot paper cup";
   const shouldShowOverlay = labelData.showOverlayLabel ?? SHOW_CUP_OVERLAY_LABEL;
 
