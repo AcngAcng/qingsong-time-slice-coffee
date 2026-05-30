@@ -1270,6 +1270,240 @@ h2 {
   margin-top: 30px;
 }
 
+.label-50x70-test {
+  border-top: 1px solid rgba(23, 23, 23, 0.14);
+  display: grid;
+  gap: 28px;
+  justify-items: center;
+  margin: 96px auto 0;
+  max-width: 920px;
+  padding-top: 42px;
+  width: 100%;
+}
+
+.label-50x70-heading {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+}
+
+.label-50x70-heading h3 {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.95;
+  margin: 0;
+}
+
+.label-50x70-grid {
+  align-items: start;
+  display: grid;
+  gap: 30px;
+  grid-template-columns: repeat(3, max-content);
+  justify-content: center;
+  width: 100%;
+}
+
+.label-test-sample {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.label-test-caption {
+  color: rgba(23, 23, 23, 0.58);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.label-paper-50x70 {
+  background:
+    repeating-linear-gradient(90deg, rgba(23, 23, 23, 0.018) 0 0.2mm, transparent 0.2mm 2.6mm),
+    var(--white);
+  border: 0.25mm solid var(--ink);
+  color: var(--ink);
+  height: 70mm;
+  overflow: hidden;
+  width: 50mm;
+}
+
+.label-safe-area {
+  display: flex;
+  flex-direction: column;
+  height: 66mm;
+  margin: 2mm auto;
+  max-width: 48mm;
+  overflow: hidden;
+  width: 46mm;
+}
+
+.label-safe-area * {
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+}
+
+.label-test-header {
+  border-bottom: 0.2mm solid rgba(23, 23, 23, 0.14);
+  display: grid;
+  gap: 1.1mm;
+  padding-bottom: 1.8mm;
+}
+
+.label-test-header strong {
+  font-size: 7.6pt;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.label-test-header span {
+  color: rgba(23, 23, 23, 0.56);
+  font-size: 5.4pt;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+}
+
+.label-safe-area h3 {
+  font-size: 15pt;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.08;
+  margin: 3.6mm 0 3mm;
+}
+
+.label-test-body {
+  border-top: 0.2mm solid rgba(23, 23, 23, 0.12);
+  display: grid;
+  gap: 1.4mm;
+  padding-top: 2.4mm;
+}
+
+.label-test-body span {
+  color: rgba(23, 23, 23, 0.6);
+  font-size: 5.6pt;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.label-test-body p {
+  color: rgba(23, 23, 23, 0.84);
+  font-size: 7.8pt;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.label-test-focus {
+  border-left: 0.35mm solid rgba(23, 23, 23, 0.22);
+  display: grid;
+  gap: 1.1mm;
+  margin-top: 2.6mm;
+  padding-left: 1.8mm;
+}
+
+.label-test-focus span,
+.label-test-brew {
+  color: rgba(23, 23, 23, 0.58);
+  font-size: 5.4pt;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
+.label-test-focus p {
+  color: rgba(23, 23, 23, 0.76);
+  font-size: 7.2pt;
+  font-weight: 800;
+  line-height: 1.28;
+  margin: 0;
+}
+
+.label-test-brew {
+  border-top: 0.2mm solid rgba(23, 23, 23, 0.12);
+  line-height: 1.15;
+  margin-top: auto;
+  padding-top: 1.8mm;
+}
+
+.label-safe-area footer {
+  border-top: 0.2mm solid rgba(23, 23, 23, 0.16);
+  color: rgba(23, 23, 23, 0.68);
+  display: block;
+  font-size: 6.2pt;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  margin-top: 2mm;
+  padding: 2mm 0 0;
+}
+
+.label-paper-light .label-test-header {
+  border-bottom-color: rgba(23, 23, 23, 0.1);
+}
+
+.label-paper-light h3 {
+  font-size: 17pt;
+  line-height: 1.04;
+  margin: 6.4mm 0 4mm;
+}
+
+.label-paper-light .label-test-body {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.label-paper-light .label-test-body p {
+  color: rgba(23, 23, 23, 0.72);
+  font-size: 7.4pt;
+  line-height: 1.32;
+}
+
+.label-paper-light .label-test-brew {
+  border-top-color: rgba(23, 23, 23, 0.1);
+}
+
+.label-paper-regular h3 {
+  font-size: 15pt;
+}
+
+.label-paper-double .label-test-header {
+  gap: 0.9mm;
+  padding-bottom: 1.5mm;
+}
+
+.label-paper-double .label-test-header span {
+  font-size: 5.1pt;
+}
+
+.label-paper-double h3 {
+  font-size: 13.6pt;
+  line-height: 1.06;
+  margin: 3mm 0 2.4mm;
+}
+
+.label-paper-double .label-test-body {
+  gap: 1.1mm;
+  padding-top: 2mm;
+}
+
+.label-paper-double .label-test-body p {
+  font-size: 7.2pt;
+  line-height: 1.25;
+}
+
+.label-paper-double .label-test-brew {
+  margin-top: auto;
+}
+
+.label-paper-double footer {
+  font-size: 5.9pt;
+  margin-top: 1.5mm;
+  padding-top: 1.6mm;
+}
+
 .product-preview {
   min-height: 460px;
 }
@@ -1612,6 +1846,10 @@ footer {
   .print-label,
   .print-label * {
     visibility: visible;
+  }
+
+  .label-50x70-test {
+    display: none !important;
   }
 
   .print-label {
