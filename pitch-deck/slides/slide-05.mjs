@@ -1,4 +1,4 @@
-import { C, asset, bg, footer, kicker, labelSticker, rect, title, txt } from "./common.mjs";
+import { C, asset, bg, footer, kicker, receiptStep, rect, timeSliceLabel, title, txt } from "./common.mjs";
 
 export async function slide05(presentation, ctx) {
   const slide = presentation.slides.add();
@@ -23,6 +23,14 @@ export async function slide05(presentation, ctx) {
     bold: true,
     face: "Aptos Mono",
   });
+  txt(slide, ctx, "Extraction + identity translation + concentration control + serving mode + packaging", 74, 282, 650, 22, {
+    size: 13.5,
+    color: C.ink,
+    face: "Aptos Mono",
+  });
+  receiptStep(slide, ctx, "PERSONA", 456, 322, 112, C.cyan);
+  receiptStep(slide, ctx, "DENSITY", 596, 322, 112, C.red);
+  receiptStep(slide, ctx, "SERVED MODE", 736, 322, 136, C.cyanDark);
 
   const tags = [
     ["RAW SIGNAL", 120, 548, C.red],
@@ -35,15 +43,17 @@ export async function slide05(presentation, ctx) {
     rect(slide, ctx, x, y, 6, 36, accent);
     txt(slide, ctx, label, x + 16, y + 9, 138, 18, { size: 12, color: C.espresso, bold: true, face: "Aptos Mono" });
   });
-  labelSticker(slide, ctx, 948, 302, 198, 214, {
-    brand: "TODAY'S\nSLICE",
-    no: false,
+  timeSliceLabel(slide, ctx, 948, 302, 198, 214, {
+    no: "TS-042",
     fill: "#FFF9EF",
     rows: [
-      ["FOCUS", "WHAT CHANGED"],
-      ["VALUE", "FOR ME"],
-      ["MARK", "TAKE AWAY"],
+      ["EXTRACTED SLICE", "What changed"],
+      ["PERSONA", "Builder"],
+      ["DENSITY", "Regular"],
+      ["SERVED", "Hot"],
+      ["BREW RESULT", "For you"],
     ],
+    boldValues: true,
   });
   footer(slide, ctx, 5);
   return slide;

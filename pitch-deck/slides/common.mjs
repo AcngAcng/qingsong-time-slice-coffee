@@ -163,6 +163,122 @@ export function labelSticker(slide, ctx, x, y, w, h, opts = {}) {
   rect(slide, ctx, x + w - 44, y + h - 38, 18, 26, C.red);
 }
 
+export function timeSliceLabel(slide, ctx, x, y, w, h, opts = {}) {
+  const titleText = opts.title || "TIME SLICE COFFEE";
+  const labelNo = opts.no || "TS-001";
+  const rows = opts.rows || [
+    ["SHELF", "AI Frontier"],
+    ["RAW SIGNAL", "Today's important change"],
+    ["EXTRACTED SLICE", "What changed"],
+    ["PERSONA", "Builder"],
+    ["DENSITY", "Regular"],
+    ["SERVED", "Hot"],
+    ["BREW RESULT", "What this means for you"],
+    ["TAKEAWAY", "Carry the slice away"],
+  ];
+  const top = opts.compact ? 34 : 42;
+  const bottom = opts.compact ? 24 : 34;
+  const rowH = (h - top - bottom) / rows.length;
+  rect(slide, ctx, x, y, w, h, opts.fill || C.milk, opts.line || C.espresso, 1.3);
+  rect(slide, ctx, x, y, w, top, C.espresso);
+  txt(slide, ctx, titleText, x + 12, y + 8, w * 0.58, top - 12, {
+    size: opts.compact ? 10 : 13,
+    color: C.paper,
+    bold: true,
+    face: "Aptos Mono",
+  });
+  rect(slide, ctx, x + w - 36, y + 9, 18, 18, opts.accent || C.red);
+  txt(slide, ctx, labelNo, x + w * 0.58, y + 9, w * 0.32, 18, {
+    size: opts.compact ? 9 : 11,
+    color: C.paper,
+    bold: true,
+    face: "Aptos Mono",
+    align: "right",
+  });
+  rows.forEach((row, i) => {
+    const ry = y + top + i * rowH;
+    rect(slide, ctx, x, ry, w, 1, C.creamLine);
+    txt(slide, ctx, row[0], x + 12, ry + rowH * 0.28, w * 0.35, rowH * 0.46, {
+      size: opts.compact ? 6.8 : 8.2,
+      color: C.taupe,
+      bold: true,
+      face: "Aptos Mono",
+      valign: "middle",
+    });
+    txt(slide, ctx, row[1], x + w * 0.38, ry + rowH * 0.2, w * 0.55, rowH * 0.56, {
+      size: opts.compact ? 8.4 : 10.2,
+      color: C.espresso,
+      bold: Boolean(opts.boldValues),
+      face: "Aptos",
+      valign: "middle",
+    });
+  });
+  const by = y + h - bottom + 8;
+  for (let i = 0; i < 16; i += 1) {
+    rect(slide, ctx, x + 12 + i * 5.5, by, i % 4 === 0 ? 3.4 : 1.8, bottom - 14, C.espresso);
+  }
+  rect(slide, ctx, x + w - 34, y + h - bottom + 7, 14, bottom - 13, opts.accent || C.red);
+}
+
+export function miniPersonaLabel(slide, ctx, x, y, w, h, persona, value, accent = C.red) {
+  rect(slide, ctx, x, y, w, h, C.milk, C.espresso, 1);
+  rect(slide, ctx, x, y, w, 28, C.espresso);
+  txt(slide, ctx, "TIME SLICE", x + 10, y + 8, w * 0.5, 12, {
+    size: 8,
+    color: C.paper,
+    bold: true,
+    face: "Aptos Mono",
+  });
+  txt(slide, ctx, persona.toUpperCase().slice(0, 3), x + w - 48, y + 8, 30, 12, {
+    size: 8,
+    color: C.paper,
+    bold: true,
+    face: "Aptos Mono",
+    align: "right",
+  });
+  rect(slide, ctx, x + w - 16, y + 8, 8, 12, accent);
+  rect(slide, ctx, x, y + 28, w, 1, C.creamLine);
+  txt(slide, ctx, "PERSONA", x + 10, y + 38, 60, 12, {
+    size: 7,
+    color: C.taupe,
+    bold: true,
+    face: "Aptos Mono",
+  });
+  txt(slide, ctx, persona, x + 80, y + 34, w - 94, 18, {
+    size: 12,
+    color: C.espresso,
+    bold: true,
+    face: "Aptos",
+  });
+  rect(slide, ctx, x, y + 58, w, 1, C.creamLine);
+  txt(slide, ctx, "VALUE", x + 10, y + 70, 60, 12, {
+    size: 7,
+    color: C.taupe,
+    bold: true,
+    face: "Aptos Mono",
+  });
+  txt(slide, ctx, value, x + 84, y + 64, w - 96, h - 70, {
+    size: 10.2,
+    color: C.espresso,
+    bold: true,
+    face: "Aptos",
+  });
+  rect(slide, ctx, x + 10, y + h - 16, 40, 6, C.espresso);
+  rect(slide, ctx, x + w - 24, y + h - 18, 10, 12, accent);
+}
+
+export function receiptStep(slide, ctx, text, x, y, w, accent = C.red) {
+  rect(slide, ctx, x, y, w, 24, "#FFF9EF", C.creamLine, 1);
+  rect(slide, ctx, x, y, 4, 24, accent);
+  txt(slide, ctx, text, x + 10, y + 5, w - 16, 14, {
+    size: 9,
+    color: C.espresso,
+    bold: true,
+    face: "Aptos Mono",
+    valign: "middle",
+  });
+}
+
 export function chip(slide, ctx, text, x, y, w, dark = false, accent = C.red) {
   rect(slide, ctx, x, y, w, 30, dark ? "#2A211B" : "#FFF8EE", dark ? "#5F5147" : C.creamLine, 1);
   rect(slide, ctx, x, y, 4, 30, accent);

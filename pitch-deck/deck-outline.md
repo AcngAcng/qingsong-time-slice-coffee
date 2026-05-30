@@ -60,7 +60,7 @@ Chinese title: AI 时代的信息咖啡吧
 
 Core line: Time Slice Coffee 把真实信息流中的重要变化，萃取成不同身份可理解、可带走的时代信息切片咖啡。
 
-Visual: Coffee menu with 6 information shelves, persona, density, and served mode.
+Visual: Coffee menu with 6 information shelves plus a receipt-style order label: Shelf -> Raw Signal -> Persona -> Density -> Served Mode -> Brew Result.
 
 Claim: Reading information becomes ordering a cup.
 
@@ -72,7 +72,7 @@ Chinese title: 从原始信号到一杯信息咖啡
 
 Core flow: Raw Signal -> Extracted Slice -> Persona -> Density -> Served Mode -> Brew Result -> Label
 
-Visual: Horizontal coffee-making process using beans, extraction, lens, strength, hot/iced, brew, and takeaway label metaphors.
+Visual: Horizontal coffee-making process with visible intermediate labels for Persona, Density, Served Mode, Brew Result, and final Time Slice Label.
 
 Claim: The value is not summarization; it is extraction, identity translation, concentration control, and consumer packaging.
 
@@ -84,7 +84,7 @@ Chinese title: 同一条信号，六种不同价值
 
 Core line: 同一条 Raw Signal，对 Student、Builder、Designer、Founder、VC、Everyday Person 会产生完全不同的意义。
 
-Visual: One raw signal branching into six labeled cups.
+Visual: One raw signal in the center branching into six persona mini labels.
 
 Claim: The same change becomes different personal meanings for different identities.
 
@@ -96,7 +96,7 @@ Chinese title: 今天稳定演示，未来实时接入
 
 Core line: 当前采用预置 xAI / Grok signal bank 保证现场演示稳定，未来可接入实时 Grok / X API。
 
-Visual: Two-column plan: stable demo today and real-time future tomorrow.
+Visual: Two-column plan: Plan B stable demo today and Plan A real-time tomorrow.
 
 Claim: The demo is stable now, while the architecture points toward real-time information coffee menus.
 
@@ -108,7 +108,6 @@ Chinese title: 不要只是阅读时代，把它喝下去
 
 Core line: Time Slice Coffee 让人们不只是刷到信息，而是点单、萃取、理解，并带走一杯属于自己的时代切片。
 
-Visual: Final pickup page and coffee cup label close-up.
+Visual: Final pickup page with a full Pick Up Label schema.
 
 Closing line: 你今日 fo 了 mo？
-

@@ -1,39 +1,46 @@
-import { C, bg, coffeeCup, coreLine, footer, kicker, rect, title, txt } from "./common.mjs";
+import { C, bg, footer, kicker, miniPersonaLabel, rect, title, txt } from "./common.mjs";
 
 export async function slide06(presentation, ctx) {
   const slide = presentation.slides.add();
   bg(slide, ctx, C.paper);
   kicker(slide, ctx, "DEMO", 72, 50, false, "06");
   title(slide, ctx, "One Signal,\nSix Different Values", "同一条信号，六种不同价值", 72, 96, 560, false);
-  coreLine(slide, ctx, "同一条 Raw Signal，对六种身份产生六种不同价值。", 74, 250, 660, false);
+  txt(slide, ctx, "同一条 Raw Signal，被翻译成六种可带走的个人意义。", 74, 250, 660, 34, {
+    size: 22,
+    color: C.ink,
+  });
 
-  rect(slide, ctx, 84, 366, 318, 142, C.espresso, C.espresso, 1);
-  txt(slide, ctx, "RAW SIGNAL", 108, 392, 120, 20, { size: 13, color: C.red, bold: true, face: "Aptos Mono" });
-  txt(slide, ctx, "A new model or workflow shift changes what people can learn, build, fund, design, or use.", 108, 428, 246, 60, {
-    size: 18,
+  rect(slide, ctx, 430, 336, 420, 142, C.espresso, C.espresso, 1);
+  txt(slide, ctx, "RAW SIGNAL", 458, 364, 120, 20, { size: 13, color: C.red, bold: true, face: "Aptos Mono" });
+  txt(slide, ctx, "A new model or workflow shift changes what people can learn, build, fund, design, or use.", 458, 400, 314, 52, {
+    size: 20,
     color: C.paper,
     bold: true,
     face: "Aptos",
   });
-  rect(slide, ctx, 386, 434, 108, 3, C.red);
+  rect(slide, ctx, 398, 405, 32, 2, C.red);
+  rect(slide, ctx, 850, 405, 32, 2, C.red);
 
-  const cups = [
-    ["Student", "What should I learn?", C.cyan],
-    ["Builder", "What can I build?", C.red],
-    ["Designer", "How does experience change?", C.cyanDark],
-    ["Founder", "Where is the opportunity?", C.redDark],
-    ["VC", "How is structure changing?", C.espresso],
-    ["Everyday", "What changes in life?", C.red],
+  const labels = [
+    ["Student", "What should I learn next?", C.cyan, 72, 306],
+    ["Designer", "How will experience change?", C.cyanDark, 72, 424],
+    ["Founder", "Where is the opportunity?", C.redDark, 72, 542],
+    ["Builder", "What can I build with this?", C.red, 948, 306],
+    ["VC", "What market shift is happening?", C.espresso, 948, 424],
+    ["Everyday Person", "What does this mean for my life?", C.red, 948, 542],
   ];
-  cups.forEach((c, i) => {
-    const col = i % 3;
-    const row = Math.floor(i / 3);
-    const x = 548 + col * 200;
-    const y = 306 + row * 152;
-    coffeeCup(slide, ctx, x, y, 96, 94, c[0], c[2]);
+  labels.forEach((label) => {
+    miniPersonaLabel(slide, ctx, label[3], label[4], 260, 94, label[0], label[1], label[2]);
   });
-  txt(slide, ctx, "The value is not making information shorter. It is translating the same change into different personal meanings.", 76, 610, 840, 28, {
-    size: 15,
+  rect(slide, ctx, 378, 518, 524, 56, "#FFF9EF", C.creamLine, 1);
+  txt(slide, ctx, "Not shorter information.", 402, 530, 210, 18, {
+    size: 14,
+    color: C.red,
+    bold: true,
+    face: "Aptos Mono",
+  });
+  txt(slide, ctx, "The value is translating the same change into different personal meanings.", 402, 552, 456, 18, {
+    size: 13,
     color: C.ink,
     face: "Aptos",
   });

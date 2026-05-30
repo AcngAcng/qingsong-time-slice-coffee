@@ -1,4 +1,4 @@
-import { C, asset, bg, coreLine, footer, kicker, labelSticker, rect, txt } from "./common.mjs";
+import { C, asset, bg, coreLine, footer, kicker, rect, timeSliceLabel, txt } from "./common.mjs";
 
 export async function slide01(presentation, ctx) {
   const slide = presentation.slides.add();
@@ -15,27 +15,31 @@ export async function slide01(presentation, ctx) {
   rect(slide, ctx, 0, 0, 620, ctx.H, "#F8F0E6E8");
   rect(slide, ctx, 0, 0, 80, ctx.H, "#F8F0E6");
   kicker(slide, ctx, "HACKATHON PITCH", 72, 58, false, "01");
-  txt(slide, ctx, "Time Slice\nCoffee", 72, 126, 500, 142, {
-    size: 62,
+  txt(slide, ctx, "Time Slice\nCoffee", 72, 112, 500, 132, {
+    size: 58,
     color: C.espresso,
     bold: true,
     face: "Georgia",
   });
-  txt(slide, ctx, "你今日 fo 了 mo？", 74, 304, 500, 54, {
-    size: 35,
+  txt(slide, ctx, "你今日 fo 了 mo？", 74, 278, 500, 66, {
+    size: 44,
     color: C.red,
     bold: true,
   });
-  coreLine(slide, ctx, "把今天真正重要的一则变化，\n装进一杯咖啡里。", 76, 382, 492, false);
-  labelSticker(slide, ctx, 78, 494, 280, 116, {
-    brand: "TODAY'S\nINFORMATION SLICE",
+  coreLine(slide, ctx, "把今天真正重要的一则变化，\n装进一杯咖啡里。", 76, 360, 492, false);
+  timeSliceLabel(slide, ctx, 78, 476, 330, 142, {
+    compact: true,
     no: "TS-001",
     rows: [
-      ["SHELF", "AI FRONTIER"],
-      ["IDENTITY", "BUILDER"],
+      ["SHELF", "AI Frontier"],
+      ["PERSONA", "Builder"],
+      ["DENSITY", "Regular"],
+      ["SERVED", "Hot"],
+      ["TODAY'S SLICE", "What changed"],
     ],
+    boldValues: true,
   });
-  txt(slide, ctx, "Not another AI SaaS.\nAn information consumer product for the AI age.", 390, 510, 186, 74, {
+  txt(slide, ctx, "An information consumer product\nfor the AI age.", 428, 514, 150, 58, {
     size: 14,
     color: C.ink,
     face: "Aptos",
@@ -43,4 +47,3 @@ export async function slide01(presentation, ctx) {
   footer(slide, ctx, 1);
   return slide;
 }
-

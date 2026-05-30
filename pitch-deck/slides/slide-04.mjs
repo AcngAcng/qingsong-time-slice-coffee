@@ -1,4 +1,4 @@
-import { C, bg, chip, coreLine, footer, kicker, rect, txt } from "./common.mjs";
+import { C, bg, coreLine, footer, kicker, receiptStep, rect, txt } from "./common.mjs";
 
 export async function slide04(presentation, ctx) {
   const slide = presentation.slides.add();
@@ -52,10 +52,27 @@ export async function slide04(presentation, ctx) {
     txt(slide, ctx, s[1], x + 15, y + 28, 186, 16, { size: 11, color: C.taupe });
   });
 
-  txt(slide, ctx, "ORDER LAYERS", 628, 424, 160, 18, { size: 12, color: C.red, bold: true, face: "Aptos Mono" });
-  chip(slide, ctx, "Student / Builder / Designer / Founder / VC / Everyday", 628, 454, 468, false, C.red);
-  chip(slide, ctx, "Light / Regular / Double", 628, 494, 230, false, C.cyan);
-  chip(slide, ctx, "Served Hot / Served Iced", 874, 494, 222, false, C.red);
+  rect(slide, ctx, 628, 414, 468, 140, "#FFF9EF", C.creamLine, 1);
+  txt(slide, ctx, "ORDER RECEIPT", 650, 432, 140, 18, { size: 12, color: C.red, bold: true, face: "Aptos Mono" });
+  txt(slide, ctx, "Information coffee is ordered as a label schema.", 808, 432, 254, 18, {
+    size: 11,
+    color: C.taupe,
+    face: "Aptos",
+    align: "right",
+  });
+  const steps = [
+    "SHELF",
+    "RAW SIGNAL",
+    "PERSONA",
+    "DENSITY",
+    "SERVED MODE",
+    "BREW RESULT",
+  ];
+  steps.forEach((step, i) => {
+    const col = i % 2;
+    const row = Math.floor(i / 2);
+    receiptStep(slide, ctx, `${String(i + 1).padStart(2, "0")}  ${step}`, 650 + col * 214, 466 + row * 30, 188, i % 2 ? C.cyan : C.red);
+  });
   footer(slide, ctx, 4, true);
   return slide;
 }

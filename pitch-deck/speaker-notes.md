@@ -48,7 +48,7 @@ Raw Signal 像咖啡豆，Extracted Slice 像萃取，Persona 是身份镜头，
 
 ## Slide 6 - Demo
 
-同一条信息，对不同人并不产生同一种价值。
+同一条信息，对不同人并不产生同一种价值。这里我们把六个输出做成六张 mini label，而不是六个普通分类名。
 
 Student 会问：我该学什么？
 Builder 会问：我能构建什么？
@@ -57,7 +57,7 @@ Founder 会问：机会在哪里？
 VC 会问：市场结构如何变化？
 Everyday Person 会问：这和我的生活有什么关系？
 
-我们的价值不是把信息变短，而是把同一则变化翻译成不同身份能带走的意义。
+我们的价值不是把信息变短，而是把同一则变化翻译成不同身份能带走的意义。标签本身就是产品输出。
 
 ## Slide 7 - Technology
 
@@ -86,4 +86,3 @@ Time Slice Coffee 让人们不只是刷到信息，而是点单、萃取、理�
 你今日 fo 了 mo？
 
 Don’t read the age. Drink it.
-

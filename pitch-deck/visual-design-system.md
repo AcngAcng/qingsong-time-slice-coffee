@@ -85,12 +85,23 @@ Avoid default rounded cards unless the shape is clearly behaving like a physical
 
 ## Data Label System
 
-A Time Slice label should include:
+A Time Slice label is the visible product system, not decoration. It should make this framework readable:
+
+`Raw Signal → Extracted Slice → Persona → Density → Served Mode → Brew Result → Label / Pick Up`
+
+A reusable Time Slice label should include:
 
 - Top espresso header band.
 - Small mono metadata fields.
-- A label number.
-- Shelf / source / identity / density / serve style fields.
+- A label number such as `TS-001`.
+- `SHELF`
+- `RAW SIGNAL`
+- `EXTRACTED SLICE`
+- `PERSONA`
+- `DENSITY`
+- `SERVED`
+- `BREW RESULT`
+- `TAKEAWAY`
 - Barcode-like marks.
 - One small roast-red accent strip.
 
@@ -117,4 +128,3 @@ Use generated images only for selected visual assets:
 - Pickup / label mood visual.
 
 Do not rasterize the entire deck. Titles, body text, labels, diagrams, arrows, and simple shapes remain editable in PowerPoint.
-

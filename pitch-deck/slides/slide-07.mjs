@@ -5,28 +5,45 @@ export async function slide07(presentation, ctx) {
   bg(slide, ctx, C.espresso);
   kicker(slide, ctx, "TECHNOLOGY", 72, 50, true, "07");
   title(slide, ctx, "Stable Today,\nReal-Time Tomorrow", "今天稳定演示，未来实时接入", 72, 100, 540, true);
-  txt(slide, ctx, "当前采用预置 xAI / Grok signal bank 保证现场演示稳定，未来可接入实时 Grok / X API。", 76, 254, 560, 62, {
-    size: 23,
+  txt(slide, ctx, "The demo is stable today; the architecture points toward real-time information coffee menus.", 76, 254, 560, 48, {
+    size: 22,
     color: C.paper,
+    face: "Aptos",
   });
 
-  rect(slide, ctx, 94, 378, 440, 174, "#241913", "#5F5147", 1.2);
-  rect(slide, ctx, 94, 378, 12, 174, C.red);
-  txt(slide, ctx, "Plan B /\nStable Demo", 126, 402, 256, 58, { size: 23, color: C.paper, bold: true, face: "Georgia" });
-  chip(slide, ctx, "Preloaded xAI / Grok signal bank", 126, 468, 322, true, C.red);
-  chip(slide, ctx, "6 shelves × 9 raw signals", 126, 508, 260, true, C.cyan);
-
-  rect(slide, ctx, 660, 120, 452, 432, "#F8F0E6", "#5F5147", 1.5);
-  rect(slide, ctx, 660, 120, 452, 58, "#FFF9EF", C.creamLine, 1);
-  txt(slide, ctx, "DEMO STACK", 690, 140, 160, 20, { size: 13, color: C.red, bold: true, face: "Aptos Mono" });
-  const stack = ["Extracted Slice", "Persona / Density / Hot-Iced", "Brew Result", "Label / Pick Up page"];
-  stack.forEach((s, i) => {
-    rect(slide, ctx, 702, 214 + i * 52, 300, 34, i % 2 ? "#FFF9EF" : "#EEE4D6", C.creamLine, 1);
-    txt(slide, ctx, s, 722, 222 + i * 52, 260, 18, { size: 14, color: C.espresso, bold: true, face: "Aptos Mono" });
+  const columns = [
+    {
+      x: 94,
+      title: "Plan B: Stable Demo Today",
+      marker: C.red,
+      rows: ["Preloaded xAI / Grok signal bank", "6 shelves × 9 raw signals", "Full demo flow already works"],
+    },
+    {
+      x: 686,
+      title: "Plan A: Real-Time Tomorrow",
+      marker: C.cyan,
+      rows: ["Grok / X API integration", "Dynamic daily signal menu", "Future 50×70mm label printing module"],
+    },
+  ];
+  columns.forEach((col) => {
+    rect(slide, ctx, col.x, 358, 500, 214, "#F8F0E6", "#5F5147", 1.5);
+    rect(slide, ctx, col.x, 358, 12, 214, col.marker);
+    rect(slide, ctx, col.x, 358, 500, 54, "#FFF9EF", C.creamLine, 1);
+    txt(slide, ctx, col.title, col.x + 32, 376, 390, 24, {
+      size: 20,
+      color: C.espresso,
+      bold: true,
+      face: "Georgia",
+    });
+    col.rows.forEach((row, i) => {
+      chip(slide, ctx, row, col.x + 32, 442 + i * 38, 390, false, i % 2 ? C.cyan : C.red);
+    });
   });
-  rect(slide, ctx, 848, 424, 2, 46, C.creamLine);
-  txt(slide, ctx, "Plan A / Real-Time Future", 690, 474, 306, 24, { size: 20, color: C.espresso, bold: true, face: "Georgia" });
-  txt(slide, ctx, "Future Grok / X API\nFuture 50×70mm label printing module", 690, 506, 330, 42, { size: 13, color: C.taupe, face: "Aptos" });
+  txt(slide, ctx, "Hackathon-safe now. Menu-native later.", 78, 606, 520, 24, {
+    size: 18,
+    color: "#D8CDBE",
+    face: "Aptos",
+  });
   footer(slide, ctx, 7, true);
   return slide;
 }

@@ -1,4 +1,4 @@
-import { C, asset, bg, coreLine, footer, kicker, rect, txt } from "./common.mjs";
+import { C, asset, bg, footer, kicker, rect, timeSliceLabel, txt } from "./common.mjs";
 
 export async function slide08(presentation, ctx) {
   const slide = presentation.slides.add();
@@ -22,10 +22,29 @@ export async function slide08(presentation, ctx) {
     face: "Georgia",
   });
   txt(slide, ctx, "不要只是阅读时代，把它喝下去", 76, 344, 498, 32, { size: 24, color: C.red, bold: true });
-  coreLine(slide, ctx, "Time Slice Coffee 让人们不只是刷到信息，\n而是点单、萃取、理解，并带走一杯属于自己的时代切片。", 76, 416, 520, false);
-  txt(slide, ctx, "你今日 fo 了 mo？", 78, 552, 420, 44, { size: 34, color: C.red, bold: true });
-  txt(slide, ctx, "Don’t read the age. Drink it.", 80, 606, 330, 24, { size: 18, color: C.ink, face: "Aptos" });
+  txt(slide, ctx, "order → extract → personalize → brew → label → pick up", 76, 406, 310, 44, {
+    size: 18,
+    color: C.ink,
+    bold: true,
+    face: "Aptos Mono",
+  });
+  txt(slide, ctx, "Time Slice Coffee 让人们不只是刷到信息，而是带走一杯属于自己的时代切片。", 76, 470, 300, 64, {
+    size: 18,
+    color: C.ink,
+  });
+  timeSliceLabel(slide, ctx, 410, 394, 214, 226, {
+    no: "PICK UP",
+    rows: [
+      ["SHELF", "AI Frontier"],
+      ["PERSONA", "Builder"],
+      ["DENSITY", "Regular"],
+      ["SERVED", "Iced"],
+      ["BREW RESULT", "What it means"],
+      ["TAKEAWAY", "Carry it away"],
+    ],
+    boldValues: true,
+  });
+  txt(slide, ctx, "你今日 fo 了\nmo？", 78, 548, 310, 82, { size: 34, color: C.red, bold: true });
   footer(slide, ctx, 8);
   return slide;
 }
-
