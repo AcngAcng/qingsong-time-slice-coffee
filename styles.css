@@ -1266,8 +1266,29 @@ h2 {
   align-items: center;
   display: grid;
   gap: 28px;
-  grid-template-columns: minmax(260px, 360px) minmax(280px, 440px) minmax(220px, 1fr);
+  grid-template-columns: minmax(260px, 360px) minmax(220px, 320px) minmax(220px, 1fr);
   margin-top: 30px;
+}
+
+.label-main-preview {
+  display: grid;
+  justify-items: center;
+  min-height: 70mm;
+  width: 100%;
+}
+
+.pickup-50x70-preview {
+  display: grid;
+  justify-items: center;
+  width: max-content;
+}
+
+.legacy-label-debug {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  width: 100%;
 }
 
 .label-50x70-test {
@@ -1307,7 +1328,7 @@ h2 {
 
 .label-50x70-current {
   border-bottom: 1px solid rgba(23, 23, 23, 0.12);
-  display: grid;
+  display: none;
   gap: 14px;
   justify-items: center;
   padding-bottom: 34px;
@@ -1885,6 +1906,12 @@ footer {
 
   .label-50x70-test {
     display: none !important;
+  }
+
+  .legacy-label-debug {
+    max-height: none;
+    opacity: 1;
+    overflow: visible;
   }
 
   .print-label {

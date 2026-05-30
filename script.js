@@ -18,6 +18,7 @@ const valueTitle = document.querySelector("#value-title");
 const valuePanel = document.querySelector("#value-panel");
 const productPreview = document.querySelector("#product-preview");
 const printLabel = document.querySelector("#print-label");
+const pickupLabel50x70Preview = document.querySelector("#pickup-50x70-label");
 const devLabel50x70Current = document.querySelector("#label-50x70-current");
 const devLabel50x70CurrentMeta = document.querySelector("#label-50x70-current-meta");
 const printButton = document.querySelector("#print-button");
@@ -1348,6 +1349,13 @@ function renderDevLabel50x70Preview(label = generatedLabel) {
   }
 }
 
+function renderPickup50x70LabelPreview(label = generatedLabel) {
+  if (!pickupLabel50x70Preview) return;
+
+  const safeLabel = normalizeDevLabel50x70(label);
+  pickupLabel50x70Preview.innerHTML = getDevLabel50x70Markup(safeLabel);
+}
+
 async function fetchAiRewrite({ signal } = {}) {
   const response = await fetch("/api/rewrite", {
     method: "POST",
@@ -1474,6 +1482,7 @@ function selectStrength(strengthId) {
   if (activeRewrite) {
     renderValueRewrite(activeRewrite);
     renderTimeSliceLabel(activeRewrite);
+    renderPickup50x70LabelPreview();
     renderDevLabel50x70Preview();
   }
 }
@@ -1485,6 +1494,7 @@ function selectServeStyle(serveId) {
 
   if (activeRewrite) {
     renderTimeSliceLabel(activeRewrite);
+    renderPickup50x70LabelPreview();
     renderDevLabel50x70Preview();
   }
 }
@@ -1494,6 +1504,7 @@ function showGeneratedLabel() {
 
   enableSection(labelSection);
   generatedLabel = renderTimeSliceLabel(activeRewrite);
+  renderPickup50x70LabelPreview(generatedLabel);
   renderDevLabel50x70Preview(generatedLabel);
   console.log("generatedLabel", generatedLabel);
   scrollAfterRender(labelSection);
@@ -1527,6 +1538,7 @@ async function brewSlice() {
 
     renderValueRewrite(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
     generatedLabel = renderTimeSliceLabel(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
+    renderPickup50x70LabelPreview(generatedLabel);
     renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
@@ -1556,6 +1568,7 @@ async function brewSlice() {
 
     renderValueRewrite(fallback);
     generatedLabel = renderTimeSliceLabel(fallback);
+    renderPickup50x70LabelPreview(generatedLabel);
     renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
@@ -1700,6 +1713,7 @@ renderSignals();
 renderIdentities();
 renderStrengths();
 renderServeStyles();
+renderPickup50x70LabelPreview();
 renderDevLabel50x70Preview();
 renderCodeCupVisual();
 

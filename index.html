@@ -138,7 +138,12 @@
 
         <div class="label-workbench">
           <div class="product-preview" id="product-preview" aria-label="杯型预览"></div>
-          <article class="print-label" id="print-label" aria-live="polite"></article>
+          <div class="label-main-preview">
+            <div class="pickup-50x70-preview" id="pickup-50x70-label" aria-live="polite"></div>
+            <div class="legacy-label-debug" aria-label="Legacy Label Preview Debug">
+              <article class="print-label" id="print-label" aria-live="polite"></article>
+            </div>
+          </div>
           <div class="label-actions">
             <button class="button primary" id="print-button" type="button">Print Label / 打印杯贴</button>
             <button class="button ghost" id="reset-button" type="button">Start Again</button>
