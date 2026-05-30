@@ -12,11 +12,11 @@ export async function slide05(presentation, ctx) {
     fit: "cover",
     alt: "Raw signal cards being brewed into a coffee cup with data label",
   });
-  rect(slide, ctx, 0, 0, ctx.W, 210, "#F8F0E6EA");
+  rect(slide, ctx, 0, 0, ctx.W, 228, "#F8F0E6EA");
   rect(slide, ctx, 0, 0, 86, ctx.H, "#F8F0E6A8");
   kicker(slide, ctx, "WORKFLOW", 72, 42, false, "05");
   title(slide, ctx, "From Raw Signal\nto Brew Result", "从原始信号到一杯信息咖啡", 72, 86, 620, false);
-  txt(slide, ctx, "Raw Signal → Extracted Slice → Persona → Density → Served Mode → Brew Result → Label", 74, 234, 820, 30, {
+  txt(slide, ctx, "Raw Signal → Extracted Slice → Persona → Density → Served Mode → Brew Result → Label", 74, 248, 820, 30, {
     size: 18,
     color: C.espresso,
     bold: true,
@@ -34,10 +34,10 @@ export async function slide05(presentation, ctx) {
     rect(slide, ctx, x, y, 6, 36, accent);
     txt(slide, ctx, label, x + 16, y + 9, 138, 18, { size: 12, color: C.espresso, bold: true, face: "Aptos Mono" });
   });
-  labelSticker(slide, ctx, 970, 302, 172, 214, {
+  labelSticker(slide, ctx, 948, 302, 198, 214, {
     brand: "TODAY'S\nSLICE",
-    no: "LABEL",
-    fill: "#FFF9EFE8",
+    no: false,
+    fill: "#FFF9EF",
     rows: [
       ["FOCUS", "WHAT CHANGED"],
       ["VALUE", "FOR ME"],
@@ -47,4 +47,3 @@ export async function slide05(presentation, ctx) {
   footer(slide, ctx, 5);
   return slide;
 }
-

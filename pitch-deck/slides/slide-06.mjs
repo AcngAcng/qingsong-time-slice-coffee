@@ -31,7 +31,6 @@ export async function slide06(presentation, ctx) {
     const x = 548 + col * 200;
     const y = 306 + row * 152;
     coffeeCup(slide, ctx, x, y, 96, 94, c[0], c[2]);
-    txt(slide, ctx, c[1], x - 18, y + 126, 132, 24, { size: 10, color: C.taupe, align: "center", face: "Aptos" });
   });
   txt(slide, ctx, "The value is not making information shorter. It is translating the same change into different personal meanings.", 76, 610, 840, 28, {
     size: 15,

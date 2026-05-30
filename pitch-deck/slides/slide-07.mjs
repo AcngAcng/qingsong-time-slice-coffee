@@ -4,7 +4,7 @@ export async function slide07(presentation, ctx) {
   const slide = presentation.slides.add();
   bg(slide, ctx, C.espresso);
   kicker(slide, ctx, "TECHNOLOGY", 72, 50, true, "07");
-  title(slide, ctx, "Stable Today,\nReal-Time Tomorrow", "今天稳定演示，未来实时接入", 72, 100, 620, true);
+  title(slide, ctx, "Stable Today,\nReal-Time Tomorrow", "今天稳定演示，未来实时接入", 72, 100, 540, true);
   txt(slide, ctx, "当前采用预置 xAI / Grok signal bank 保证现场演示稳定，未来可接入实时 Grok / X API。", 76, 254, 560, 62, {
     size: 23,
     color: C.paper,

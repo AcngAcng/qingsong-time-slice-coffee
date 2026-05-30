@@ -60,7 +60,7 @@ export function txt(slide, ctx, text, x, y, w, h, opts = {}) {
 }
 
 export function kicker(slide, ctx, label, x = 72, y = 44, dark = false, id = "01") {
-  rect(slide, ctx, x, y + 8, 28, 3, C.red, "#00000000", 0, `kicker-${id}-marker`);
+  rect(slide, ctx, x, y + 10.5, 28, 3, C.red, "#00000000", 0, `kicker-${id}-marker`);
   txt(slide, ctx, label, x + 40, y, 360, 24, {
     size: 12,
     color: dark ? C.paper : C.espresso,
@@ -79,7 +79,7 @@ export function title(slide, ctx, english, chinese, x = 72, y = 76, w = 720, dar
     face: "Georgia",
   });
   if (chinese) {
-    txt(slide, ctx, chinese, x + 2, y + 104, w, 34, {
+    txt(slide, ctx, chinese, x + 2, y + 112, w, 34, {
       size: 21,
       color: dark ? "#D8CDBE" : C.red,
       bold: true,
@@ -114,6 +114,7 @@ export function footer(slide, ctx, n, dark = false) {
 
 export function labelSticker(slide, ctx, x, y, w, h, opts = {}) {
   const top = Math.max(42, h * 0.22);
+  const bottomReserved = h < 150 ? 26 : 54;
   rect(slide, ctx, x, y, w, h, opts.fill || C.milk, C.espresso, 1.4);
   rect(slide, ctx, x, y, w, top, C.espresso);
   txt(slide, ctx, opts.brand || "TIME SLICE\nCOFFEE", x + 16, y + 10, w * 0.62, top - 12, {
@@ -123,20 +124,22 @@ export function labelSticker(slide, ctx, x, y, w, h, opts = {}) {
     face: "Aptos",
   });
   rect(slide, ctx, x + w - 50, y + 12, 26, 26, C.red);
-  txt(slide, ctx, opts.no || "TS-042", x + w - 108, y + top + 10, 88, 20, {
+  if (opts.no !== false) {
+    txt(slide, ctx, opts.no || "TS-042", x + w - 116, y + top - 28, 92, 18, {
     size: 11,
-    color: C.red,
+    color: C.paper,
     bold: true,
     face: "Aptos Mono",
     align: "right",
-  });
+    });
+  }
   const rows = opts.rows || [
     ["SHELF", "AI FRONTIER"],
     ["IDENTITY", "BUILDER"],
     ["DENSITY", "REGULAR"],
     ["SERVE", "HOT"],
   ];
-  const rowH = (h - top - 54) / rows.length;
+  const rowH = (h - top - bottomReserved) / rows.length;
   rows.forEach((row, i) => {
     const ry = y + top + i * rowH;
     rect(slide, ctx, x, ry, w, 1, C.creamLine);
@@ -187,4 +190,3 @@ export function coffeeCup(slide, ctx, x, y, w, h, label, accent = C.red) {
     align: "center",
   });
 }
-

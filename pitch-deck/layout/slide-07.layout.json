@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/nf4wcf",
-    "id": "nf4wcf",
+    "aid": "sl/ieyy4o",
+    "id": "ieyy4o",
     "slide": 7,
-    "layoutId": "bbea7d5e-ee39-4b5c-94ab-842e7dd6fd8f",
+    "layoutId": "14792930-6822-4a2e-b9de-57eb059c32d5",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "782b78d1-0131-436f-942d-9db7a1060343",
+    "masterLayoutId": "2958490e-b101-44d4-af81-2536654f6764",
     "masterLayoutName": "Master",
     "frame": {
       "left": 0,
@@ -47,15 +47,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "bbea7d5e-ee39-4b5c-94ab-842e7dd6fd8f",
+      "id": "14792930-6822-4a2e-b9de-57eb059c32d5",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "782b78d1-0131-436f-942d-9db7a1060343",
+      "parentLayoutId": "2958490e-b101-44d4-af81-2536654f6764",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "782b78d1-0131-436f-942d-9db7a1060343",
+      "id": "2958490e-b101-44d4-af81-2536654f6764",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -66,7 +66,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/yhgn29gr",
+      "aid": "sh/dg7adsji",
       "id": "1",
       "bbox": [
         0,
@@ -83,12 +83,12 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/58z25kb6",
+      "aid": "sh/6tovahoz",
       "id": "2",
       "name": "kicker-07-marker",
       "bbox": [
         72,
-        58,
+        60.5,
         28,
         3
       ],
@@ -101,7 +101,7 @@
       "order": 3,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gn29gr2p",
+      "aid": "sh/vahoza1g",
       "id": "3",
       "name": "kicker-07-label",
       "bbox": [
@@ -170,12 +170,12 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nuxc3ylc",
+      "aid": "sh/onyd0z61",
       "id": "4",
       "bbox": [
         72,
         100,
-        620,
+        540,
         112
       ],
       "geometry": "rect",
@@ -264,12 +264,12 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/y90je9cv",
+      "aid": "sh/d8v6psfi",
       "id": "5",
       "bbox": [
         74,
-        204,
-        620,
+        212,
+        540,
         34
       ],
       "geometry": "rect",
@@ -332,7 +332,7 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/5wjudg7a",
+      "aid": "sh/6hcrmhk3",
       "id": "6",
       "bbox": [
         76,
@@ -401,7 +401,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gbq1oryt",
+      "aid": "sh/z25kb6xk",
       "id": "7",
       "bbox": [
         94,
@@ -418,7 +418,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nqxs72x4",
+      "aid": "sh/oj2t83it",
       "id": "8",
       "bbox": [
         94,
@@ -435,21 +435,21 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/u54zidon",
+      "aid": "sh/d4vmtwra",
       "id": "9",
       "bbox": [
         126,
-        404,
+        402,
         256,
-        30
+        58
       ],
       "geometry": "rect",
-      "text": "Plan B / Stable Demo",
-      "textPreview": "Plan B / Stable Demo",
-      "resolvedFontSize": 24,
+      "text": "Plan B /\nStable Demo",
+      "textPreview": "Plan B / | Stable Demo",
+      "resolvedFontSize": 23,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 24,
+        "fontSize": 23,
         "typeface": "Georgia",
         "color": "#F8F0E6",
         "bold": true,
@@ -467,20 +467,20 @@
         "lines": [
           {
             "index": 1,
-            "text": "Plan B / Stable"
+            "text": "Plan B /"
           },
           {
             "index": 2,
-            "text": "Demo"
+            "text": "Stable Demo"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Plan B / Stable Demo",
+          "text": "Plan B /",
           "resolvedTextStyle": {
-            "fontSize": 24,
+            "fontSize": 23,
             "typeface": "Georgia",
             "color": "#F8F0E6",
             "bold": true,
@@ -489,8 +489,30 @@
           "runs": [
             {
               "index": 1,
-              "text": "Plan B / Stable Demo",
-              "fontSize": 24,
+              "text": "Plan B /",
+              "fontSize": 23,
+              "typeface": "Georgia",
+              "color": "#F8F0E6",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Stable Demo",
+          "resolvedTextStyle": {
+            "fontSize": 23,
+            "typeface": "Georgia",
+            "color": "#F8F0E6",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Stable Demo",
+              "fontSize": 23,
               "typeface": "Georgia",
               "color": "#F8F0E6",
               "bold": true
@@ -507,11 +529,11 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/cbulwval",
+      "aid": "sh/h4byhgn2",
       "id": "10",
       "bbox": [
         126,
-        454,
+        468,
         322,
         30
       ],
@@ -524,11 +546,11 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/5sneloj2",
+      "aid": "sh/sji5snel",
       "id": "11",
       "bbox": [
         126,
-        454,
+        468,
         4,
         30
       ],
@@ -541,11 +563,11 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/u54zidon",
+      "aid": "sh/3ylc7u54",
       "id": "12",
       "bbox": [
         138,
-        460,
+        474,
         304,
         18
       ],
@@ -609,11 +631,11 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nqxs72x4",
+      "aid": "sh/adsji5sn",
       "id": "13",
       "bbox": [
         126,
-        494,
+        508,
         260,
         30
       ],
@@ -626,11 +648,11 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/czed8v6p",
+      "aid": "sh/lszqtcj6",
       "id": "14",
       "bbox": [
         126,
-        494,
+        508,
         4,
         30
       ],
@@ -643,11 +665,11 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/5kb6xkf6",
+      "aid": "sh/s72x4nap",
       "id": "15",
       "bbox": [
         138,
-        500,
+        514,
         242,
         18
       ],
@@ -711,7 +733,7 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ytsvu9kn",
+      "aid": "sh/3m94fu18",
       "id": "16",
       "bbox": [
         660,
@@ -728,7 +750,7 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/neloj2t8",
+      "aid": "sh/a5gbq1or",
       "id": "17",
       "bbox": [
         660,
@@ -745,7 +767,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gn29gr2p",
+      "aid": "sh/hoza1gvy",
       "id": "18",
       "bbox": [
         690,
@@ -813,7 +835,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/58z25kb6",
+      "aid": "sh/s36hcrmh",
       "id": "19",
       "bbox": [
         702,
@@ -830,7 +852,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tcj6tova",
+      "aid": "sh/4zidonyd",
       "id": "20",
       "bbox": [
         722,
@@ -898,7 +920,7 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0rqd4vmt",
+      "aid": "sh/xkf6dcbu",
       "id": "21",
       "bbox": [
         702,
@@ -915,7 +937,7 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/b6xkf6dc",
+      "aid": "sh/mtwra5gb",
       "id": "22",
       "bbox": [
         722,
@@ -983,7 +1005,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/il0rqd4v",
+      "aid": "sh/fepkzupw",
       "id": "23",
       "bbox": [
         702,
@@ -1000,7 +1022,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/t47y1kre",
+      "aid": "sh/4r65wjud",
       "id": "24",
       "bbox": [
         722,
@@ -1068,7 +1090,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0je9cvix",
+      "aid": "sh/xc3ylc7u",
       "id": "25",
       "bbox": [
         702,
@@ -1085,7 +1107,7 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/byhgn29g",
+      "aid": "sh/mlkjm1cf",
       "id": "26",
       "bbox": [
         722,
@@ -1153,7 +1175,7 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/idonyd0z",
+      "aid": "sh/f6dcbulw",
       "id": "27",
       "bbox": [
         848,
@@ -1170,12 +1192,12 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/p0bi9s36",
+      "aid": "sh/4fu18jqh",
       "id": "28",
       "bbox": [
         690,
-        484,
-        280,
+        474,
+        306,
         24
       ],
       "geometry": "rect",
@@ -1238,21 +1260,21 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0fepkzup",
+      "aid": "sh/x0nuxc3y",
       "id": "29",
       "bbox": [
         690,
-        516,
+        506,
         330,
-        40
+        42
       ],
       "geometry": "rect",
       "text": "Future Grok / X API\nFuture 50×70mm label printing module",
       "textPreview": "Future Grok / X API | Future 50×70mm label printing module",
-      "resolvedFontSize": 14,
+      "resolvedFontSize": 13,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 14,
+        "fontSize": 13,
         "typeface": "Aptos",
         "color": "#8C8175",
         "alignment": "left",
@@ -1282,7 +1304,7 @@
           "index": 1,
           "text": "Future Grok / X API",
           "resolvedTextStyle": {
-            "fontSize": 14,
+            "fontSize": 13,
             "typeface": "Aptos",
             "color": "#8C8175",
             "alignment": "left"
@@ -1291,7 +1313,7 @@
             {
               "index": 1,
               "text": "Future Grok / X API",
-              "fontSize": 14,
+              "fontSize": 13,
               "typeface": "Aptos",
               "color": "#8C8175"
             }
@@ -1302,7 +1324,7 @@
           "index": 2,
           "text": "Future 50×70mm label printing module",
           "resolvedTextStyle": {
-            "fontSize": 14,
+            "fontSize": 13,
             "typeface": "Aptos",
             "color": "#8C8175",
             "alignment": "left"
@@ -1311,7 +1333,7 @@
             {
               "index": 1,
               "text": "Future 50×70mm label printing module",
-              "fontSize": 14,
+              "fontSize": 13,
               "typeface": "Aptos",
               "color": "#8C8175"
             }
@@ -1327,7 +1349,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/e9cvixcz",
+      "aid": "sh/nuxc3ylc",
       "id": "30",
       "bbox": [
         72,
@@ -1344,7 +1366,7 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/3q5o7qpg",
+      "aid": "sh/y90je9cv",
       "id": "31",
       "bbox": [
         116,
@@ -1412,7 +1434,7 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wb2hwfyx",
+      "aid": "sh/5wjudg7a",
       "id": "32",
       "bbox": [
         1136,
