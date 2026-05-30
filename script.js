@@ -1350,15 +1350,6 @@ function renderDevLabel50x70Preview(label = generatedLabel) {
   }
 }
 
-function logPrintRootLabelCount() {
-  console.log("PRINT ROOT LABEL COUNT", {
-    rootCount: document.querySelectorAll("#print-only-50x70-root").length,
-    printRootChildren: document.querySelectorAll('#print-only-50x70-root [data-print-label="true"]').length,
-    pickupLabels: document.querySelectorAll("#pickup-50x70-label .label-paper-50x70").length,
-    allLabelPapers: document.querySelectorAll(".label-paper-50x70").length,
-  });
-}
-
 function renderPickup50x70LabelPreview(label = generatedLabel) {
   if (!pickupLabel50x70Preview) return;
 
@@ -1367,36 +1358,242 @@ function renderPickup50x70LabelPreview(label = generatedLabel) {
   pickupLabel50x70Preview.innerHTML = getDevLabel50x70Markup(safeLabel);
 }
 
-function getPrintOnly50x70Root() {
-  document.querySelectorAll("#print-only-50x70-root").forEach((node) => node.remove());
-  const root = document.createElement("div");
-  root.id = "print-only-50x70-root";
-  root.setAttribute("aria-hidden", "true");
-  root.style.display = "none";
-  document.body.appendChild(root);
+function getPrintFrame50x70Styles() {
+  return `
+    @page {
+      size: 50mm 70mm;
+      margin: 0;
+    }
 
-  return root;
+    html,
+    body {
+      width: 50mm;
+      height: 70mm;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: block;
+      font-family: Inter, "Arial", "Microsoft YaHei", sans-serif;
+    }
+
+    .label-paper-50x70 {
+      width: 50mm !important;
+      height: 70mm !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      position: fixed !important;
+      left: 0 !important;
+      top: 0 !important;
+      overflow: hidden !important;
+      background: #ffffff !important;
+      border: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+      page-break-before: avoid !important;
+      page-break-after: avoid !important;
+      break-before: avoid !important;
+      break-after: avoid !important;
+    }
+
+    .label-paper-50x70,
+    .label-paper-50x70 * {
+      color: #000000 !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: #000000 !important;
+    }
+
+    .label-paper-50x70 * {
+      border-color: #000000 !important;
+    }
+
+    .label-safe-area {
+      width: 42mm !important;
+      max-width: 42mm !important;
+      height: 60mm !important;
+      margin: 4mm auto 6mm !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+
+    .label-test-header {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.7mm !important;
+      padding-bottom: 1.1mm !important;
+      border-bottom: 0.15mm solid #000000 !important;
+    }
+
+    .label-test-header strong {
+      font-size: 7.2pt !important;
+      font-weight: 900 !important;
+      line-height: 1 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .label-test-header span {
+      font-size: 5.6pt !important;
+      font-weight: 800 !important;
+      line-height: 1.1 !important;
+      letter-spacing: 0 !important;
+    }
+
+    h3 {
+      font-size: 12.4pt !important;
+      line-height: 1.05 !important;
+      margin: 2.2mm 0 2mm !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .label-paper-light h3 {
+      font-size: 13.5pt !important;
+      margin: 3.4mm 0 2.4mm !important;
+    }
+
+    .label-paper-double h3 {
+      font-size: 11.2pt !important;
+      line-height: 1.05 !important;
+      margin: 1.8mm 0 1.5mm !important;
+    }
+
+    .label-test-body {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.9mm !important;
+      padding-top: 1.4mm !important;
+      border-top: 0.15mm solid #000000 !important;
+    }
+
+    .label-test-body span,
+    .label-test-focus span {
+      font-size: 5.6pt !important;
+      font-weight: 900 !important;
+      line-height: 1.1 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .label-test-body p {
+      margin: 0 !important;
+      font-size: 7.2pt !important;
+      font-weight: 800 !important;
+      line-height: 1.25 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .label-test-focus {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.7mm !important;
+      margin-top: 1.4mm !important;
+      padding-left: 1.2mm !important;
+      border-left: 0.25mm solid #000000 !important;
+    }
+
+    .label-test-focus p {
+      margin: 0 !important;
+      font-size: 6.8pt !important;
+      font-weight: 800 !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .label-test-brew {
+      margin-top: auto !important;
+      padding-top: 1.1mm !important;
+      border-top: 0.15mm solid #000000 !important;
+      font-size: 5.8pt !important;
+      font-weight: 900 !important;
+      line-height: 1.1 !important;
+      letter-spacing: 0 !important;
+    }
+
+    footer {
+      margin-top: 1.1mm !important;
+      padding-top: 1.1mm !important;
+      border-top: 0.15mm solid #000000 !important;
+      font-size: 6.1pt !important;
+      font-weight: 900 !important;
+      line-height: 1.1 !important;
+      letter-spacing: 0 !important;
+    }
+  `;
 }
 
-function preparePrintOnly50x70Label() {
-  const currentLabel = pickupLabel50x70Preview?.querySelector(".label-paper-50x70");
-  const root = getPrintOnly50x70Root();
+function printCurrent50x70Label() {
+  const source = document.querySelector("#pickup-50x70-label .label-paper-50x70");
 
-  if (!currentLabel || !root) {
-    console.warn("print-only 50x70 label target not found");
-    return false;
+  if (!source) {
+    console.warn("current 50x70 label not found");
+    return;
   }
 
-  root.replaceChildren();
-  const printLabelClone = currentLabel.cloneNode(true);
-  printLabelClone.setAttribute("data-print-label", "true");
-  root.replaceChildren(printLabelClone);
-  logPrintRootLabelCount();
-  return true;
-}
+  console.log("IFRAME PRINT 50X70", {
+    sourceLabels: document.querySelectorAll("#pickup-50x70-label .label-paper-50x70").length,
+    framesBefore: document.querySelectorAll("#print-frame-50x70").length,
+  });
 
-function clearPrintOnly50x70Root() {
-  document.querySelectorAll("#print-only-50x70-root").forEach((node) => node.remove());
+  document.querySelectorAll("#print-frame-50x70").forEach((frame) => frame.remove());
+
+  const iframe = document.createElement("iframe");
+  iframe.id = "print-frame-50x70";
+  iframe.style.position = "fixed";
+  iframe.style.right = "0";
+  iframe.style.bottom = "0";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
+  iframe.style.visibility = "hidden";
+  document.body.appendChild(iframe);
+
+  const labelClone = source.cloneNode(true);
+  labelClone.setAttribute("data-print-label", "true");
+
+  const printDocument = iframe.contentDocument;
+  const printWindow = iframe.contentWindow;
+
+  if (!printDocument || !printWindow) {
+    console.warn("50x70 print frame not available");
+    iframe.remove();
+    return;
+  }
+
+  printDocument.open();
+  printDocument.write(`<!doctype html>
+    <html lang="zh-CN">
+      <head>
+        <meta charset="UTF-8" />
+        <style>${getPrintFrame50x70Styles()}</style>
+      </head>
+      <body></body>
+    </html>`);
+  printDocument.close();
+  printDocument.body.replaceChildren(labelClone);
+
+  console.log("IFRAME PRINT READY", {
+    iframeLabels: printDocument.querySelectorAll(".label-paper-50x70").length,
+  });
+
+  printWindow.addEventListener("afterprint", () => {
+    iframe.remove();
+  }, { once: true });
+
+  window.setTimeout(() => {
+    printWindow.focus();
+    printWindow.print();
+    window.setTimeout(() => {
+      if (iframe.isConnected) iframe.remove();
+    }, 30000);
+  }, 50);
 }
 
 async function fetchAiRewrite({ signal } = {}) {
@@ -1739,14 +1936,7 @@ window.addEventListener("resize", () => {
   window.codeCupResizeTimer = window.setTimeout(renderCodeCupVisual, 160);
 });
 
-function handlePrintLabelClick() {
-  console.log("PRINT HANDLER FIRED");
-  if (!preparePrintOnly50x70Label()) return;
-  window.print();
-}
-
-printButton.onclick = handlePrintLabelClick;
-window.addEventListener("afterprint", clearPrintOnly50x70Root);
+printButton.onclick = printCurrent50x70Label;
 
 resetButton.addEventListener("click", () => {
   window.history.replaceState(null, "", window.location.pathname);
