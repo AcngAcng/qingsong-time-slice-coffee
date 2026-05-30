@@ -31,15 +31,18 @@ const DEFAULT_HEADER_OFFSET = 72;
 const DEFAULT_SCROLL_EXTRA_OFFSET = 40;
 const sectionScrollOffsets = {
   top: 0,
-  signals: 40,
-  "signal-bean-stage": 480,
-  "selected-signal-panel": 96,
-  "identity-section": 96,
-  "brew-section": 96,
-  "serve-section": 96,
-  "value-section": -132,
-  "label-section": 118,
+  signals: -210,
+  "signal-flow-anchor": 84,
+  "signal-bean-stage": 560,
+  "selected-signal-panel": 88,
+  "identity-section": 88,
+  "brew-section": 88,
+  "serve-section": 76,
+  "value-section": 16,
+  "label-section": 56,
 };
+const signalsIntroOffset = 84;
+const signalsActiveOffset = 64;
 
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
@@ -92,6 +95,7 @@ let activeSignals = preparedSignals;
 let isPreparingSignals = false;
 let signalRoundIndex = 0;
 let generatedLabel = null;
+let hasVisitedSignals = false;
 
 const signalMarkByShelf = {
   "ai-frontier": "ai-frontier",
@@ -303,6 +307,42 @@ function scrollAfterRender(element, options = {}) {
   }, 0);
 }
 
+function waitForSignalsLayout(callback) {
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      window.setTimeout(callback, 140);
+    });
+  });
+}
+
+function ensureSignalsIntroRendered() {
+  selectedShelfId = null;
+  selectedSignal = null;
+  renderShelves();
+  renderSignals();
+}
+
+function scrollToSignalsIntro() {
+  ensureSignalsIntroRendered();
+  waitForSignalsLayout(() => {
+    scrollToSection("#signal-flow-anchor", { offset: signalsIntroOffset });
+  });
+}
+
+function scrollToSignalsActive() {
+  scrollToSection("#signal-flow-anchor", { offset: signalsActiveOffset });
+}
+
+function enterSignalsShelf() {
+  if (!hasVisitedSignals) {
+    hasVisitedSignals = true;
+    scrollToSignalsIntro();
+    return;
+  }
+
+  scrollToSignalsActive();
+}
+
 function resetPagePositionOnLoad() {
   if (window.location.hash) {
     window.history.replaceState(null, "", window.location.pathname);
@@ -387,9 +427,9 @@ function resetSignalFlowAfterRefresh(nextSignals) {
   activeSignals = normalizedSignals.length ? normalizedSignals : normalizeSignalList(preparedSignals);
   selectedSignal = null;
   selectedIdentity = null;
-  selectedShelfId = getSignalCountForShelf(selectedShelfId, activeSignals)
+  selectedShelfId = selectedShelfId && getSignalCountForShelf(selectedShelfId, activeSignals)
     ? selectedShelfId
-    : getFirstShelfIdWithSignals(activeSignals);
+    : null;
 
   renderShelves();
   renderSignals();
@@ -1105,6 +1145,7 @@ function resetDemoFlow({ render = true } = {}) {
   selectedServeStyle = serveStyles[0];
   activeRewrite = null;
   signalRoundIndex = 0;
+  hasVisitedSignals = false;
   heroCodeCup?.classList.remove("is-brewing", "is-ordering", "is-complete");
   identitySection.classList.add("is-disabled");
   brewSection.classList.add("is-disabled");
@@ -1134,6 +1175,7 @@ function selectSignal(signalId) {
 }
 
 function selectShelf(shelfId) {
+  hasVisitedSignals = true;
   selectedShelfId = shelfId;
   selectedSignal = null;
   selectedIdentity = null;
@@ -1144,7 +1186,7 @@ function selectShelf(shelfId) {
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
-  scrollAfterRender(signalBeanStage);
+  waitForSignalsLayout(scrollToSignalsActive);
 }
 
 function continueToLens() {
@@ -1357,6 +1399,11 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
     if (hash === "#top") {
       scrollToSection("top", { offset: 0 });
+      return;
+    }
+
+    if (hash === "#signals" || hash === "#signal-flow-anchor") {
+      enterSignalsShelf();
       return;
     }
 
