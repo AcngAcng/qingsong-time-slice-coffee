@@ -1295,7 +1295,7 @@ function getDevLabel50x70Markup(label) {
     : "";
 
   return `
-    <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)}">
+    <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)}" data-print-label="true">
       <div class="label-safe-area">
         <header class="label-test-header">
           <strong>TIME SLICE COFFEE</strong>
