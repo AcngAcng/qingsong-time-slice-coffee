@@ -1274,10 +1274,11 @@ function normalizeDevLabel50x70(label) {
   };
 }
 
-function getDevLabel50x70Markup(label) {
+function getDevLabel50x70Markup(label, { printable = false } = {}) {
   const shelfShort = getLabelShelfShort(label.shelf);
   const brewLine = `BREW ${label.intensity.toUpperCase()} / ${shelfShort}`;
   const serveLine = getDevLabelServeFooter(label.serveStyle);
+  const printAttribute = printable ? ` data-print-label="true"` : "";
   const headerMeta = label.intensity === "light"
     ? ""
     : `<span>${escapeHtml(label.source)} &middot; ${escapeHtml(label.date)}</span>`;
@@ -1295,7 +1296,7 @@ function getDevLabel50x70Markup(label) {
     : "";
 
   return `
-    <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)}" data-print-label="true">
+    <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)}"${printAttribute}>
       <div class="label-safe-area">
         <header class="label-test-header">
           <strong>TIME SLICE COFFEE</strong>
@@ -1349,11 +1350,53 @@ function renderDevLabel50x70Preview(label = generatedLabel) {
   }
 }
 
+function logPrintRootLabelCount() {
+  console.log("PRINT ROOT LABEL COUNT", {
+    rootCount: document.querySelectorAll("#print-only-50x70-root").length,
+    printRootChildren: document.querySelectorAll('#print-only-50x70-root [data-print-label="true"]').length,
+    pickupLabels: document.querySelectorAll("#pickup-50x70-label .label-paper-50x70").length,
+    allLabelPapers: document.querySelectorAll(".label-paper-50x70").length,
+  });
+}
+
 function renderPickup50x70LabelPreview(label = generatedLabel) {
   if (!pickupLabel50x70Preview) return;
 
   const safeLabel = normalizeDevLabel50x70(label);
+  pickupLabel50x70Preview.innerHTML = "";
   pickupLabel50x70Preview.innerHTML = getDevLabel50x70Markup(safeLabel);
+}
+
+function getPrintOnly50x70Root() {
+  document.querySelectorAll("#print-only-50x70-root").forEach((node) => node.remove());
+  const root = document.createElement("div");
+  root.id = "print-only-50x70-root";
+  root.setAttribute("aria-hidden", "true");
+  root.style.display = "none";
+  document.body.appendChild(root);
+
+  return root;
+}
+
+function preparePrintOnly50x70Label() {
+  const currentLabel = pickupLabel50x70Preview?.querySelector(".label-paper-50x70");
+  const root = getPrintOnly50x70Root();
+
+  if (!currentLabel || !root) {
+    console.warn("print-only 50x70 label target not found");
+    return false;
+  }
+
+  root.replaceChildren();
+  const printLabelClone = currentLabel.cloneNode(true);
+  printLabelClone.setAttribute("data-print-label", "true");
+  root.replaceChildren(printLabelClone);
+  logPrintRootLabelCount();
+  return true;
+}
+
+function clearPrintOnly50x70Root() {
+  document.querySelectorAll("#print-only-50x70-root").forEach((node) => node.remove());
 }
 
 async function fetchAiRewrite({ signal } = {}) {
@@ -1696,9 +1739,14 @@ window.addEventListener("resize", () => {
   window.codeCupResizeTimer = window.setTimeout(renderCodeCupVisual, 160);
 });
 
-printButton.addEventListener("click", () => {
+function handlePrintLabelClick() {
+  console.log("PRINT HANDLER FIRED");
+  if (!preparePrintOnly50x70Label()) return;
   window.print();
-});
+}
+
+printButton.onclick = handlePrintLabelClick;
+window.addEventListener("afterprint", clearPrintOnly50x70Root);
 
 resetButton.addEventListener("click", () => {
   window.history.replaceState(null, "", window.location.pathname);
