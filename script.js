@@ -29,6 +29,7 @@ const signalRefreshStatus = document.querySelector("#signal-refresh-status");
 const heroCodeCup = document.querySelector("#hero-code-cup");
 const codeCupField = document.querySelector("#code-cup-field");
 const heroOrderButton = document.querySelector(".hero-actions .primary");
+const sliceReceiptPreview = document.createElement("aside");
 const SHOW_CUP_OVERLAY_LABEL = true;
 const DEFAULT_HEADER_OFFSET = 72;
 const DEFAULT_SCROLL_EXTRA_OFFSET = 40;
@@ -137,6 +138,19 @@ const legacyIdentityForLabel = {
   "LESS FOMO": "FOR LESS FOMO",
 };
 
+const receiptChoiceLabels = {
+  student: "学点什么",
+  builder: "做点东西",
+  designer: "创作表达",
+  founder: "找机会",
+  vc: "做判断",
+  everyday: "少焦虑一点",
+};
+
+sliceReceiptPreview.id = "slice-receipt-preview";
+sliceReceiptPreview.className = "slice-receipt-preview";
+sliceReceiptPreview.setAttribute("aria-live", "polite");
+
 let selectedSignal = null;
 let selectedShelfId = null;
 let selectedIdentity = null;
@@ -148,6 +162,8 @@ let isPreparingSignals = false;
 let signalRoundIndex = 0;
 let generatedLabel = null;
 let hasVisitedSignals = false;
+let hasSelectedStrength = false;
+let hasSelectedServeStyle = false;
 
 const signalMarkByShelf = {
   "ai-frontier": "ai-frontier",
@@ -545,6 +561,10 @@ function getSignalRawTitle(signal) {
   return signal?.rawTitle || signal?.rawTitleZh || "";
 }
 
+function getRawSignalHeadline(signal = selectedSignal) {
+  return signal?.rawTitleZh || signal?.rawTitle || getSignalRawTitle(signal) || "今天发生了一条值得看的变化。";
+}
+
 function getSignalRawSummary(signal) {
   return signal?.rawSummary || signal?.rawSummaryZh || signal?.whyWorthWatching || signal?.whyWorthWatchingZh || "";
 }
@@ -673,6 +693,7 @@ function renderSelectedSignal() {
   const rawSummary = getSignalRawSummary(selectedSignal);
   const whyWorthWatching = getSignalWorthWatching(selectedSignal);
   const rawUrl = selectedSignal.rawUrl || "No public URL attached";
+  const structuralSliceTitle = getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle);
 
   selectedSignalPanel.innerHTML = `
     <article class="selected-signal-card">
@@ -693,7 +714,7 @@ function renderSelectedSignal() {
           <span>EXTRACTED SLICE / 已萃取时代切片</span>
           <span>${escapeHtml(selectedSignal.relation)}</span>
         </div>
-        <h4>${escapeHtml(selectedSignal.sliceTitle)}</h4>
+        <h4>${escapeHtml(structuralSliceTitle)}</h4>
         <p>${escapeHtml(selectedSignal.sliceReason)}</p>
         <div class="selected-signal-meta">
           <span>Shelf / ${escapeHtml(selectedSignal.shelfTitle)}</span>
@@ -757,7 +778,7 @@ function renderServeStyles() {
           <div class="serve-card-preview">
             ${getCupPreviewMarkup(serveStyle.id, {
               number: selectedSignal.id,
-              title: selectedSignal.sliceTitle,
+              title: getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle),
               persona: getIdentityForLabel(),
               coreLine: selectedSignal.coreJudgment,
               variant: "small",
@@ -883,9 +904,102 @@ function getLabelRelationNoun(signal) {
   return relationBySignalShelf[signal?.shelfId] || "关键变化";
 }
 
+function getSignalPurposeSubject(signal, maxLength = 10) {
+  const source =
+    signal?.rawTitleZh ||
+    signal?.sliceTitle ||
+    signal?.rawTitle ||
+    signal?.rawSummaryZh ||
+    signal?.rawSummary ||
+    signal?.shelfTitle ||
+    getLabelRelationNoun(signal);
+  const firstClause = cleanLabelCopy(source).split(/[。！？!?，,：:]/)[0];
+
+  return trimLabelCopy(firstClause, maxLength) || getLabelRelationNoun(signal);
+}
+
+function getSignalContextText(signal, candidateTitle = "") {
+  return [
+    candidateTitle,
+    signal?.sliceTitle,
+    signal?.coreJudgment,
+    signal?.sliceReason,
+    signal?.rawTitleZh,
+    signal?.rawTitle,
+    signal?.rawSummaryZh,
+    signal?.rawSummary,
+    signal?.whyWorthWatchingZh,
+    signal?.whyWorthWatching,
+    signal?.shelfTitle,
+  ].map(cleanLabelCopy).filter(Boolean).join(" ");
+}
+
+function isInvalidSliceTitle(title) {
+  const text = cleanLabelCopy(title);
+  if (!text) return true;
+
+  return [
+    "值不值得继续看",
+    "机会可能在这里",
+    "今天学会这一点",
+    "今天先带走这一点",
+    "看见新的做法",
+    "找到一个表达角度",
+    "该不该跟进",
+    "先理解这一点",
+    "AI 基础设施开始决定谁能更快行动",
+  ].some((phrase) => text.includes(phrase));
+}
+
+function isStructuralSliceTitle(title) {
+  const text = cleanLabelCopy(title);
+  if (isInvalidSliceTitle(text)) return false;
+
+  return /(正在|开始|进入|走向|从.+到|从.+走向|接手|分流|交付|流程|场景|能力|关系|工单|客服|验证|入口)/.test(text);
+}
+
+function getStructuralSliceTitle(signal, candidateTitle = "") {
+  const context = getSignalContextText(signal, candidateTitle);
+
+  if (/客服|工单/.test(context) && /agent|Agent|AI/.test(context)) {
+    return "AI agent 正在进入客服工单流程。";
+  }
+
+  if (/Claude Code|Claude|代码|编程|开发|IDE/.test(context) && /验证|交付|测试|运行|agent|Agent|AI|补全/.test(context)) {
+    return "AI 编程正在从补全代码走向交付验证。";
+  }
+
+  if (/视频|影像|剪辑|成片|短片/.test(context) && /AI|生成|模型|创作/.test(context)) {
+    return "AI 视频创作正在从成片生成走向过程证明。";
+  }
+
+  if (/设计|视觉稿|Figma|交付|创作流程/.test(context)) {
+    return "设计交付正在从视觉稿走向可追溯流程。";
+  }
+
+  if (isStructuralSliceTitle(candidateTitle)) {
+    return ensureLabelSentence(candidateTitle);
+  }
+
+  if (isStructuralSliceTitle(signal?.sliceTitle)) {
+    return ensureLabelSentence(signal.sliceTitle);
+  }
+
+  const fallbackByShelf = {
+    "ai-frontier": "AI 能力正在进入具体业务流程。",
+    "build-workflow": "工具正在进入连续交付流程。",
+    "design-creation": "内容生产正在从生成走向判断。",
+    "market-capital": "市场信号正在从热度走向定价。",
+    "self-upgrade": "学习方式正在从答案走向判断。",
+    "life-signals": "日常选择正在被系统重新分流。",
+  };
+
+  return fallbackByShelf[signal?.shelfId] || "一个具体流程正在发生变化。";
+}
+
 function buildLabelSliceTitle(signal, intensity, candidateTitle) {
   const limits = getLabelCopyLimits(intensity);
-  const source = candidateTitle || signal?.sliceTitle || signal?.coreJudgment || signal?.sliceReason;
+  const source = getStructuralSliceTitle(signal, candidateTitle);
   const firstSentence = cleanLabelCopy(source).split(/[。！？!?]/)[0];
   const compact = firstSentence
     .replace("模型和 Agent 正在把技术边界往外推", "模型和 Agent 正在外推边界")
@@ -902,14 +1016,14 @@ function buildLabelSliceTitle(signal, intensity, candidateTitle) {
 }
 
 function buildLabelIdentityFallback(identity, signal) {
-  const relation = getLabelRelationNoun(signal);
+  const subject = getSignalPurposeSubject(signal, 10);
   const lines = {
-    student: `判断这条${relation}会改变哪项能力。`,
-    builder: `判断哪些${relation}仍需要人来定义。`,
-    designer: `判断哪些${relation}仍需要人来完成。`,
-    founder: `判断这条${relation}能否进入真实场景。`,
-    vc: `判断这条${relation}是机会还是噪音。`,
-    everyday: `判断这条${relation}会影响哪个选择。`,
+    student: `理解${subject}带来的关键变化。`,
+    builder: `从${subject}影响的流程开始调整。`,
+    designer: `把${subject}转成一个表达入口。`,
+    founder: `看${subject}对应的需求场景。`,
+    vc: `用${subject}判断是否继续跟进。`,
+    everyday: `记住${subject}，其余先放下。`,
   };
 
   return lines[identity?.id] || "先判断这条变化与你有什么关系。";
@@ -917,15 +1031,254 @@ function buildLabelIdentityFallback(identity, signal) {
 
 function buildLabelFocusFallback(identity) {
   const lines = {
-    student: "找出一个要练习的问题。",
-    builder: "找出一个需人工确认的环节。",
-    designer: "标出一个不能外包的判断。",
+    student: "记下一个要理解的问题。",
+    builder: "找一个新的做法。",
+    designer: "换一个表达角度。",
     founder: "选一个可测试的入口。",
-    vc: "留下一个可验证信号。",
-    everyday: "保留一个真实判断。",
+    vc: "先看一个判断依据。",
+    everyday: "其他噪音先放下。",
   };
 
   return lines[identity?.id] || "保留一个真实判断。";
+}
+
+function getPurposeBrewCopy(identity, signal, label) {
+  const subject = getSignalPurposeSubject(signal, 14);
+  const identityValue = buildLabelIdentityFallback(identity, signal);
+  const todayFocus = buildLabelFocusFallback(identity);
+  const copyByIdentity = {
+    student: {
+      title: "先理解这一点",
+      whyImportant: `从${subject}里看今天该学什么。`,
+      relationToYou: identityValue,
+      focusNow: todayFocus,
+      keywords: ["Learn", "Skill", "Signal"],
+    },
+    builder: {
+      title: "看见新的做法",
+      whyImportant: `从${subject}里看下一步怎么做。`,
+      relationToYou: identityValue,
+      focusNow: todayFocus,
+      keywords: ["Build", "Workflow", "Action"],
+    },
+    designer: {
+      title: "找到一个表达角度",
+      whyImportant: `从${subject}里看表达可以怎么变。`,
+      relationToYou: identityValue,
+      focusNow: todayFocus,
+      keywords: ["Create", "Taste", "Judgment"],
+    },
+    founder: {
+      title: "机会可能在这里",
+      whyImportant: `从${subject}里看需求入口在哪里。`,
+      relationToYou: identityValue,
+      focusNow: todayFocus,
+      keywords: ["Opportunity", "Need", "Entry"],
+    },
+    vc: {
+      title: "值不值得继续看",
+      whyImportant: `从${subject}里看是否值得跟进。`,
+      relationToYou: identityValue,
+      focusNow: todayFocus,
+      keywords: ["Decision", "Risk", "Follow"],
+    },
+    everyday: {
+      title: "今天先带走这一点",
+      whyImportant: `从${subject}里只留真正相关的一点。`,
+      relationToYou: identityValue,
+      focusNow: todayFocus,
+      keywords: ["FOMO", "Focus", "Calm"],
+    },
+  };
+
+  return {
+    ...(copyByIdentity[identity?.id] || copyByIdentity.everyday),
+    coreLine: label?.sliceTitle || signal?.coreJudgment || signal?.sliceTitle || "",
+  };
+}
+
+function trimSentenceEnd(value) {
+  return cleanLabelCopy(value).replace(/[。.!?！？]+$/g, "");
+}
+
+function getReceiptSelectionParts({ forceComplete = false } = {}) {
+  const parts = [];
+  if (selectedIdentity) parts.push(receiptChoiceLabels[selectedIdentity.id]);
+  if (hasSelectedStrength || forceComplete) parts.push(selectedStrength?.label);
+  if (hasSelectedServeStyle || forceComplete) parts.push(selectedServeStyle?.id === "iced" ? "Iced" : "Hot");
+
+  return parts.filter(Boolean);
+}
+
+function getReceiptPurposeDirection(identityId) {
+  const directionByIdentity = {
+    student: "将从关键变化和需要理解的问题来萃取。",
+    builder: "将从流程、工具和执行方式来萃取。",
+    designer: "将从表达、创作和判断方式来萃取。",
+    founder: "将从需求入口和产品场景来萃取。",
+    vc: "将从证据、风险和跟进价值来萃取。",
+    everyday: "将从真正相关的一点来萃取。",
+  };
+
+  return directionByIdentity[identityId] || directionByIdentity.everyday;
+}
+
+function getReceiptResultLines({ forceComplete = false } = {}) {
+  if (!selectedSignal) return null;
+
+  const structuralTitle = getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle);
+  const structuralCore = trimSentenceEnd(structuralTitle);
+  const subject = getSignalPurposeSubject(selectedSignal, 12);
+  const identityId = selectedIdentity?.id || "everyday";
+  const serveStyle = normalizeLabelServeStyle(selectedServeStyle?.id);
+  const intensity = normalizeLabelIntensity(selectedStrength?.id);
+  const canShowStrength = hasSelectedStrength || forceComplete;
+  const canShowServe = hasSelectedServeStyle || forceComplete;
+  const hotTone = canShowServe && serveStyle === "hot";
+  const copyByIdentity = {
+    student: {
+      core: hotTone ? `先带走：${structuralCore}。` : `今天值得理解的是：${structuralCore}。`,
+      reason: `从${subject}里看今天该学什么。`,
+      detail: "记下一个要理解的问题。",
+    },
+    builder: {
+      core: hotTone ? `下一步可以这样做：从${subject}影响的流程开始。` : `它可能改变的做事方式是：从${subject}影响的流程开始调整。`,
+      reason: hotTone ? "先找一个新的做法。" : "看清哪一步会被工具、协作或执行方式改变。",
+      detail: "选一个步骤做小测试。",
+    },
+    designer: {
+      core: hotTone ? `可以带走一个表达入口：${subject}。` : `它给创作表达带来的变化是：把${subject}转成表达入口。`,
+      reason: "看表达、取舍和内容生产方式怎么变。",
+      detail: "留下一个不能外包的判断。",
+    },
+    founder: {
+      core: hotTone ? `机会可能落在：${subject}对应的需求场景。` : `机会可能落在：${subject}背后的需求、场景或产品入口。`,
+      reason: "先看谁会因为它更省事、更快或更确定。",
+      detail: "选一个可测试的入口。",
+    },
+    vc: {
+      core: hotTone ? `先判断：${subject}是否值得继续跟进。` : `判断它值不值得跟进，要看：${subject}是否形成持续需求。`,
+      reason: "看证据、成本变化和真实使用，不只看热度。",
+      detail: "留下一个跟进依据。",
+    },
+    everyday: {
+      core: hotTone ? `今天只需要带走：${subject}。` : `今天只需要带走：${subject}这个重点。`,
+      reason: "其他噪音可以先不用追。",
+      detail: "只保留一个真实判断。",
+    },
+  };
+  const copy = copyByIdentity[identityId] || copyByIdentity.everyday;
+
+  if (!canShowStrength) return [];
+  if (intensity === "light") return [copy.core];
+  if (intensity === "double") return [copy.core, copy.reason, copy.detail];
+
+  return [copy.core, copy.reason];
+}
+
+function buildSliceReceiptCopy({ forceComplete = false } = {}) {
+  if (!selectedSignal) return null;
+  const rawHeadline = getRawSignalHeadline(selectedSignal);
+  const structuralTitle = getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle);
+  const selectionParts = getReceiptSelectionParts({ forceComplete });
+  const resultLines = getReceiptResultLines({ forceComplete }) || [];
+  const meta = [`#${selectedSignal.id || "000"}`, getLabelShelfShort(getLabelShelf(selectedSignal) || selectedSignal.shelfTitle)].filter(Boolean).join(" · ");
+
+  return {
+    rawHeadline,
+    structuralTitle,
+    meta,
+    selectionParts,
+    purposeDirection: selectedIdentity ? getReceiptPurposeDirection(selectedIdentity.id) : "",
+    resultLines,
+  };
+}
+
+function mountSliceReceiptPreview(stage = "raw") {
+  const anchor = stage === "raw"
+    ? selectedSignalPanel
+    : stage === "serve"
+    ? serveGrid
+    : stage === "brew"
+      ? strengthGrid
+      : identityGrid;
+
+  if (!anchor) return;
+  anchor.insertAdjacentElement("afterend", sliceReceiptPreview);
+}
+
+function renderSliceReceiptPreview(stage = "raw") {
+  if (!selectedSignal) {
+    sliceReceiptPreview.remove();
+    return;
+  }
+
+  mountSliceReceiptPreview(stage);
+  const receipt = buildSliceReceiptCopy();
+
+  sliceReceiptPreview.innerHTML = `
+    <div class="slice-receipt-title">当前切片预览</div>
+    <div class="slice-receipt-kicker">TIME SLICE RECEIPT</div>
+    <div class="slice-receipt-meta">
+      <span>${escapeHtml(receipt.meta)}</span>
+      <span>Raw Signal selected</span>
+    </div>
+    <h3>${escapeHtml(receipt.rawHeadline)}</h3>
+    <div class="slice-receipt-layer">
+      <span>提炼切片</span>
+      <p>${escapeHtml(receipt.structuralTitle)}</p>
+    </div>
+    ${receipt.selectionParts.length ? `
+      <div class="slice-receipt-order">
+        ${selectedIdentity ? `<span>Cup: ${escapeHtml(receiptChoiceLabels[selectedIdentity.id])}</span>` : ""}
+        ${hasSelectedStrength ? `<span>Strength: ${escapeHtml(selectedStrength.label)}</span>` : ""}
+        ${hasSelectedServeStyle ? `<span>Serve: ${escapeHtml(selectedServeStyle.label.replace("Served ", ""))}</span>` : ""}
+      </div>
+    ` : ""}
+    ${receipt.purposeDirection ? `<p class="slice-receipt-note">${escapeHtml(receipt.purposeDirection)}</p>` : ""}
+    ${receipt.resultLines.length ? `
+      <div class="slice-receipt-result">
+        ${receipt.resultLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+      </div>
+    ` : ""}
+  `;
+}
+
+function getReceiptCompletionMeta(receipt) {
+  return [
+    receipt.meta,
+    selectedIdentity ? receiptChoiceLabels[selectedIdentity.id] : "",
+    selectedStrength?.label || "",
+    selectedServeStyle?.id === "iced" ? "Iced" : "Hot",
+  ].filter(Boolean).join(" · ");
+}
+
+function getReceiptCompletionMarkup(value) {
+  const receipt = buildSliceReceiptCopy({ forceComplete: true });
+  const resultLines = receipt.resultLines.length
+    ? receipt.resultLines
+    : [value.relationToYou || value.whyImportant || value.coreLine].filter(Boolean);
+
+  return `
+    <article class="slice-receipt-complete">
+      <div class="slice-receipt-kicker">TIME SLICE RECEIPT</div>
+      <div class="slice-receipt-meta">
+        <span>${escapeHtml(getReceiptCompletionMeta(receipt))}</span>
+      </div>
+      <h4>${escapeHtml(receipt.rawHeadline)}</h4>
+      <div class="slice-receipt-layer">
+        <span>提炼切片</span>
+        <p>${escapeHtml(receipt.structuralTitle)}</p>
+      </div>
+      <div class="slice-receipt-result">
+        ${resultLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+      </div>
+      <div class="keyword-row">${value.keywords.map((keyword) => `<b>${escapeHtml(keyword)}</b>`).join("")}</div>
+      <div class="value-actions">
+        <button class="button primary" id="generate-label-button" type="button">Generate Label / 生成杯贴</button>
+      </div>
+    </article>
+  `;
 }
 
 function buildLabelIdentityValue(base, identity, signal, intensity) {
@@ -1120,12 +1473,14 @@ function buildMockTimeSliceLabel() {
 function getMockValueRewrite() {
   const base = valueRewrites[selectedIdentity.id];
   const timeSliceLabel = buildMockTimeSliceLabel();
+  const purposeCopy = getPurposeBrewCopy(selectedIdentity, selectedSignal, timeSliceLabel);
 
   return {
     ...base,
+    ...purposeCopy,
     todayChange: selectedSignal.sliceReason,
-    keywords: selectedSignal.keywords,
-    coreLine: selectedSignal.coreJudgment,
+    keywords: purposeCopy.keywords || selectedSignal.keywords,
+    coreLine: purposeCopy.coreLine || selectedSignal.coreJudgment,
     timeSliceLabel,
   };
 }
@@ -1133,6 +1488,8 @@ function getMockValueRewrite() {
 function normalizeTimeSliceLabel(rewrite) {
   const fallback = buildMockTimeSliceLabel();
   const candidate = rewrite?.timeSliceLabel || rewrite;
+  const purposeIdentityValue = buildLabelIdentityValue(null, selectedIdentity, selectedSignal, fallback.intensity);
+  const purposeTodayFocus = buildLabelTodayFocus(selectedIdentity, selectedSignal, fallback.intensity, fallback.serveStyle);
   const candidateMatchesCurrent =
     candidate?.identity === fallback.identity &&
     candidate?.intensity === fallback.intensity &&
@@ -1146,8 +1503,8 @@ function normalizeTimeSliceLabel(rewrite) {
     sourceSignal: fallback.sourceSignal,
     sliceTitle: candidateMatchesCurrent && candidate?.sliceTitle ? candidate.sliceTitle : fallback.sliceTitle,
     identity: fallback.identity,
-    identityValue: candidateMatchesCurrent && candidate?.identityValue ? candidate.identityValue : fallback.identityValue,
-    todayFocus: candidateMatchesCurrent && candidate?.todayFocus ? candidate.todayFocus : fallback.todayFocus,
+    identityValue: purposeIdentityValue || (candidateMatchesCurrent && candidate?.identityValue ? candidate.identityValue : fallback.identityValue),
+    todayFocus: purposeTodayFocus || (candidateMatchesCurrent && candidate?.todayFocus ? candidate.todayFocus : fallback.todayFocus),
     intensity: fallback.intensity,
     serveStyle: fallback.serveStyle,
     signalMark: fallback.signalMark,
@@ -1157,15 +1514,16 @@ function normalizeTimeSliceLabel(rewrite) {
 function normalizeRewrite(rewrite) {
   const fallback = getMockValueRewrite();
   const timeSliceLabel = normalizeTimeSliceLabel(rewrite);
+  const purposeCopy = getPurposeBrewCopy(selectedIdentity, selectedSignal, timeSliceLabel);
 
   return {
-    title: rewrite?.title || fallback.title,
+    title: purposeCopy.title || rewrite?.title || fallback.title,
     todayChange: rewrite?.todayChange || selectedSignal?.sliceReason || fallback.todayChange,
-    whyImportant: rewrite?.whyImportant || timeSliceLabel.identityValue || fallback.whyImportant,
-    relationToYou: rewrite?.relationToYou || timeSliceLabel.identityValue || fallback.relationToYou,
-    focusNow: rewrite?.focusNow || timeSliceLabel.todayFocus || fallback.focusNow,
-    keywords: Array.isArray(rewrite?.keywords) && rewrite.keywords.length ? rewrite.keywords.slice(0, 3) : fallback.keywords,
-    coreLine: rewrite?.coreLine || timeSliceLabel.sliceTitle || fallback.coreLine,
+    whyImportant: purposeCopy.whyImportant || rewrite?.whyImportant || timeSliceLabel.identityValue || fallback.whyImportant,
+    relationToYou: purposeCopy.relationToYou || rewrite?.relationToYou || timeSliceLabel.identityValue || fallback.relationToYou,
+    focusNow: purposeCopy.focusNow || rewrite?.focusNow || timeSliceLabel.todayFocus || fallback.focusNow,
+    keywords: purposeCopy.keywords || (Array.isArray(rewrite?.keywords) && rewrite.keywords.length ? rewrite.keywords.slice(0, 3) : fallback.keywords),
+    coreLine: purposeCopy.coreLine || rewrite?.coreLine || timeSliceLabel.sliceTitle || fallback.coreLine,
     timeSliceLabel,
   };
 }
@@ -1175,7 +1533,7 @@ function getVisibleRows(value) {
     ["标题", value.title],
     ["今日变化", value.todayChange],
     ["为什么重要", value.whyImportant],
-    ["与你的关系", value.relationToYou],
+    ["你可以带走什么", value.relationToYou],
   ];
 }
 
@@ -1195,29 +1553,10 @@ function renderLoading() {
 
 function renderValueRewrite(rewrite) {
   const value = normalizeRewrite(rewrite);
-  const rows = getVisibleRows(value);
+  const receipt = buildSliceReceiptCopy({ forceComplete: true });
   activeRewrite = value;
-  valueTitle.textContent = "这杯信息咖啡的味道";
-
-  valuePanel.innerHTML = `
-    ${rows
-      .map(
-        ([label, text]) => `
-          <div class="value-row">
-            <span>${label}</span>
-            <p>${text}</p>
-          </div>
-        `,
-      )
-      .join("")}
-    <div class="value-row">
-      <span>关键词</span>
-      <div class="keyword-row">${value.keywords.map((keyword) => `<b>${keyword}</b>`).join("")}</div>
-    </div>
-    <div class="value-actions">
-      <button class="button primary" id="generate-label-button" type="button">Generate Label / 生成杯贴</button>
-    </div>
-  `;
+  valueTitle.textContent = receipt?.rawHeadline || getRawSignalHeadline(selectedSignal);
+  valuePanel.innerHTML = getReceiptCompletionMarkup(value);
 }
 
 function renderTimeSliceLabel(rewrite = activeRewrite) {
@@ -1731,17 +2070,23 @@ function resetDemoFlow({ render = true } = {}) {
   renderIdentities();
   renderStrengths();
   renderServeStyles();
+  hasSelectedStrength = false;
+  hasSelectedServeStyle = false;
+  sliceReceiptPreview.remove();
 }
 
 function selectSignal(signalId) {
   selectedSignal = getRoundSignals().find((signal) => signal.id === signalId) || activeSignals.find((signal) => signal.id === signalId);
   selectedIdentity = null;
+  hasSelectedStrength = false;
+  hasSelectedServeStyle = false;
   renderSignals();
   renderIdentities();
   identitySection.classList.add("is-disabled");
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
+  renderSliceReceiptPreview("raw");
   scrollAfterRender(selectedSignalPanel);
 }
 
@@ -1750,6 +2095,8 @@ function selectShelf(shelfId) {
   selectedShelfId = shelfId;
   selectedSignal = null;
   selectedIdentity = null;
+  hasSelectedStrength = false;
+  hasSelectedServeStyle = false;
   renderShelves();
   renderSignals();
   renderIdentities();
@@ -1757,6 +2104,7 @@ function selectShelf(shelfId) {
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
   resetBrewResult();
+  sliceReceiptPreview.remove();
   waitForSignalsLayout(scrollToSignalsActive);
 }
 
@@ -1764,26 +2112,33 @@ function continueToLens() {
   if (!selectedSignal) return;
 
   enableSection(identitySection);
+  renderSliceReceiptPreview("identity");
   scrollToSection(identitySection);
 }
 
 function selectIdentity(identityId) {
   selectedIdentity = identities.find((identity) => identity.id === identityId);
+  hasSelectedStrength = false;
+  hasSelectedServeStyle = false;
   renderIdentities();
   renderStrengths();
   renderServeStyles();
   enableSection(brewSection);
   enableSection(serveSection);
   resetBrewResult();
+  renderSliceReceiptPreview("brew");
   scrollToSection(brewSection);
 }
 
 function selectStrength(strengthId) {
   selectedStrength = strengths.find((strength) => strength.id === strengthId);
+  hasSelectedStrength = true;
+  hasSelectedServeStyle = false;
   renderStrengths();
   renderServeStyles();
   enableSection(serveSection);
   labelSection.classList.add("is-disabled");
+  renderSliceReceiptPreview("serve");
   scrollToSection(serveSection);
 
   if (activeRewrite) {
@@ -1796,14 +2151,11 @@ function selectStrength(strengthId) {
 
 function selectServeStyle(serveId) {
   selectedServeStyle = serveStyles.find((serveStyle) => serveStyle.id === serveId);
+  hasSelectedServeStyle = true;
   renderServeStyles();
   labelSection.classList.add("is-disabled");
-
-  if (activeRewrite) {
-    renderTimeSliceLabel(activeRewrite);
-    renderPickup50x70LabelPreview();
-    renderDevLabel50x70Preview();
-  }
+  renderSliceReceiptPreview("serve");
+  brewSlice();
 }
 
 function showGeneratedLabel() {

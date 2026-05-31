@@ -1130,6 +1130,121 @@ h2 {
   justify-content: center;
 }
 
+.slice-receipt-preview,
+.slice-receipt-complete {
+  background: rgba(255, 254, 251, 0.78);
+  border: 1px solid #d8d0c4;
+  box-shadow: 8px 8px 0 rgba(17, 17, 17, 0.04);
+  color: var(--ink);
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  max-width: 760px;
+  padding: 22px 24px;
+}
+
+.slice-receipt-complete {
+  margin-top: 0;
+}
+
+.value-panel .slice-receipt-complete {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  margin-top: 0;
+  max-width: none;
+  padding: 0;
+}
+
+.slice-receipt-title {
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.slice-receipt-kicker {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.slice-receipt-meta,
+.slice-receipt-order {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.slice-receipt-meta span,
+.slice-receipt-order span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.slice-receipt-preview h3,
+.slice-receipt-complete h3,
+.slice-receipt-complete h4 {
+  color: var(--ink);
+  line-height: 1.12;
+  margin: 0;
+}
+
+.slice-receipt-preview h3 {
+  font-size: clamp(30px, 3.4vw, 46px);
+  max-width: 680px;
+}
+
+.slice-receipt-complete h3 {
+  font-size: clamp(28px, 3vw, 42px);
+}
+
+.slice-receipt-complete h4 {
+  font-size: clamp(24px, 2.4vw, 34px);
+}
+
+.slice-receipt-layer {
+  display: grid;
+  gap: 6px;
+}
+
+.slice-receipt-layer span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.slice-receipt-layer p {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 750;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.slice-receipt-note,
+.slice-receipt-result p {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.slice-receipt-note {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.slice-receipt-result {
+  display: grid;
+  gap: 8px;
+  padding-top: 4px;
+}
+
 .identity-card span,
 .strength-card span,
 .serve-copy span,
