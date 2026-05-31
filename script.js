@@ -997,22 +997,68 @@ function getStructuralSliceTitle(signal, candidateTitle = "") {
   return fallbackByShelf[signal?.shelfId] || "一个具体流程正在发生变化。";
 }
 
-function buildLabelSliceTitle(signal, intensity, candidateTitle) {
-  const limits = getLabelCopyLimits(intensity);
-  const source = getStructuralSliceTitle(signal, candidateTitle);
-  const firstSentence = cleanLabelCopy(source).split(/[。！？!?]/)[0];
-  const compact = firstSentence
-    .replace("模型和 Agent 正在把技术边界往外推", "模型和 Agent 正在外推边界")
-    .replace("技术前沿正在从能力演示走向真实场景", "技术正在走向真实场景")
-    .replace("AI 基础设施开始决定谁能更快行动", "AI 基建决定行动速度")
-    .replace("工具开始接手流程里的中间步骤", "工具开始接手中间步骤")
-    .replace("会安排工具，正在比会使用工具更重要", "会安排工具更重要")
-    .replace("生成变快之后，取舍变得更贵", "生成变快，取舍更贵")
-    .replace("市场开始给 AI 变化重新定价", "市场正重估 AI 变化")
-    .replace("答案越容易得到，问题越需要被判断", "答案易得，问题更要判断")
-    .replace("看见信息，不等于理解信息", "看见信息不等于理解信息");
+function safeLabelTitleForPrint(title, signal) {
+  const isBrokenTitle = (value) => {
+    const text = cleanLabelCopy(value);
+    if (!text || /undefined|null/i.test(text)) return true;
+    if (/[、,，:：;；]$/.test(text)) return true;
+    if (/[、,，]\s*[A-Z](?:[。.]|$)/.test(text)) return true;
+    if (/(?:与|和|比较)\s*[A-Z](?:[。.]|$)/.test(text)) return true;
 
-  return fitLabelSentence(compact, limits.sliceTitle, "今天只看一条关键变化。");
+    return [
+      "市场正重估 AI 变化",
+      "值不值得继续看",
+      "机会可能在这里",
+      "今天学会这一点",
+      "该不该跟进",
+      "看见新的做法",
+      "判断是否继续跟进",
+    ].some((phrase) => text.includes(phrase));
+  };
+
+  const pickSafeClause = (value) => {
+    const text = cleanLabelCopy(value)
+      .replace(/[。.!?！？]+$/g, "")
+      .replace(/账号|用户|帖子|博主/g, "")
+      .trim();
+
+    if (!text) return "";
+    if (/AI infra.*比较.*OpenAI.*Anthropic/i.test(text)) return "AI infra 比较模型路线";
+
+    const firstSentence = text.split(/[。！？!?]/)[0].trim();
+    if (!firstSentence || isBrokenTitle(firstSentence)) return "";
+
+    const clauses = firstSentence
+      .split(/[，,：:；;]/)
+      .map((clause) => clause.trim())
+      .filter(Boolean);
+    const safeClause = clauses.find((clause) => clause.length >= 6 && clause.length <= 24 && !isBrokenTitle(clause));
+    if (safeClause) return safeClause;
+    if (firstSentence.length <= 28 && !isBrokenTitle(firstSentence)) return firstSentence;
+
+    return "";
+  };
+
+  const candidates = [
+    signal?.extractionNotes?.labelPotential,
+    signal?.labelPotential,
+    signal?.rawTitleZh,
+    signal?.rawTitle,
+    signal?.rawSummaryZh,
+    signal?.rawSummary,
+    title,
+  ];
+
+  for (const candidate of candidates) {
+    const safeTitle = pickSafeClause(candidate);
+    if (safeTitle) return ensureLabelSentence(safeTitle);
+  }
+
+  return "今日 AI 信号更新。";
+}
+
+function buildLabelSliceTitle(signal, intensity, candidateTitle) {
+  return safeLabelTitleForPrint(candidateTitle, signal);
 }
 
 function buildLabelIdentityFallback(identity, signal) {
