@@ -1,4 +1,5 @@
 import { preparedSignals } from "./data/prepared-signals.js";
+import { candidateSignalsExpanded } from "./data/candidate-signals-expanded.js";
 import { signalShelves } from "./data/signal-shelves.js";
 import { identities, valueRewrites } from "./data/signals.js";
 
@@ -30,6 +31,8 @@ const heroCodeCup = document.querySelector("#hero-code-cup");
 const codeCupField = document.querySelector("#code-cup-field");
 const heroOrderButton = document.querySelector(".hero-actions .primary");
 const sliceReceiptPreview = document.createElement("aside");
+const isCandidateSignalMode = new URLSearchParams(window.location.search).get("signals") === "candidate";
+const baseSignalSource = isCandidateSignalMode ? candidateSignalsExpanded : preparedSignals;
 const SHOW_CUP_OVERLAY_LABEL = true;
 const DEFAULT_HEADER_OFFSET = 72;
 const DEFAULT_SCROLL_EXTRA_OFFSET = 40;
@@ -157,7 +160,7 @@ let selectedIdentity = null;
 let selectedStrength = strengths[1];
 let selectedServeStyle = serveStyles[0];
 let activeRewrite = null;
-let activeSignals = preparedSignals;
+let activeSignals = baseSignalSource;
 let isPreparingSignals = false;
 let signalRoundIndex = 0;
 let generatedLabel = null;
@@ -492,7 +495,7 @@ function setSignalRefreshState(isLoading, message = "") {
 
 function resetSignalFlowAfterRefresh(nextSignals) {
   const normalizedSignals = normalizeSignalList(nextSignals);
-  activeSignals = normalizedSignals.length ? normalizedSignals : normalizeSignalList(preparedSignals);
+  activeSignals = normalizedSignals.length ? normalizedSignals : normalizeSignalList(baseSignalSource);
   selectedSignal = null;
   selectedIdentity = null;
   selectedShelfId = selectedShelfId && getSignalCountForShelf(selectedShelfId, activeSignals)
@@ -2288,6 +2291,15 @@ async function refreshPreparedSignals() {
   if (isPreparingSignals) return;
 
   signalRoundIndex += 1;
+
+  if (isCandidateSignalMode) {
+    setSignalRefreshState(true, "Candidate signal beans: showing next group...");
+    await wait(160);
+    resetSignalFlowAfterRefresh(candidateSignalsExpanded);
+    setSignalRefreshState(false, "Candidate signal beans loaded.");
+    return;
+  }
+
   setSignalRefreshState(true, "正在更新今日信息货架... Refreshing today’s signal shelf...");
 
   try {
