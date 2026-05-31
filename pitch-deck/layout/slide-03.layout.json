@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/avja8f",
-    "id": "avja8f",
-    "slide": 3,
-    "layoutId": "2bb7f4a8-d2af-4f19-bbc7-a1c5ca7fb207",
+    "aid": "sl/s72x4nap",
+    "id": "s72x4nap",
+    "slide": 4,
+    "layoutId": "/ppt/slideLayouts/slideLayout2.xml",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "fa126527-d87e-419b-96aa-cf544177a194",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
     "masterLayoutName": "Master",
     "frame": {
       "left": 0,
@@ -26,10 +26,6 @@
       "accent4": "#0F9ED5",
       "accent5": "#A02B93",
       "accent6": "#4EA72E",
-      "bg1": "#FFFFFF",
-      "bg2": "#000000",
-      "tx1": "#1F1F1F",
-      "tx2": "#FFFFFF",
       "dk1": "#000000",
       "lt1": "#FFFFFF",
       "dk2": "#0E2841",
@@ -37,9 +33,24 @@
       "hlink": "#467886",
       "folHlink": "#96607D"
     },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Calibri Light",
+        "eastAsianTypeface": "Calibri Light",
+        "complexScriptTypeface": "Calibri Light"
+      },
+      "minorFont": {
+        "latinTypeface": "Calibri",
+        "eastAsianTypeface": "Calibri",
+        "complexScriptTypeface": "Calibri"
+      }
+    },
     "typefaces": [
       "Aptos",
       "Aptos Mono",
+      "Calibri",
+      "Calibri Light",
       "Georgia",
       "Microsoft YaHei UI"
     ]
@@ -47,15 +58,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "2bb7f4a8-d2af-4f19-bbc7-a1c5ca7fb207",
+      "id": "/ppt/slideLayouts/slideLayout2.xml",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "fa126527-d87e-419b-96aa-cf544177a194",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "fa126527-d87e-419b-96aa-cf544177a194",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -66,7 +77,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/qd4vmtwr",
+      "aid": "sh/vmtwra5g",
       "id": "1",
       "bbox": [
         0,
@@ -83,7 +94,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/x4nap4r6",
+      "aid": "sh/o7qpg3ex",
       "id": "2",
       "name": "kicker-03-marker",
       "bbox": [
@@ -101,7 +112,7 @@
       "order": 3,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/8jqh0fep",
+      "aid": "sh/dsji5sne",
       "id": "3",
       "name": "kicker-03-label",
       "bbox": [
@@ -113,13 +124,12 @@
       "geometry": "rect",
       "text": "INSIGHT",
       "textPreview": "INSIGHT",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -159,6 +169,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -170,7 +181,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/fa9w3m94",
+      "aid": "sh/6dcbulwv",
       "id": "4",
       "bbox": [
         72,
@@ -181,13 +192,12 @@
       "geometry": "rect",
       "text": "Understanding\nBecomes a Product",
       "textPreview": "Understanding | Becomes a Product",
-      "resolvedFontSize": 44,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 44,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -231,6 +241,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
@@ -253,6 +264,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -264,7 +276,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/qpg3ex0n",
+      "aid": "sh/vy90je9c",
       "id": "5",
       "bbox": [
         74,
@@ -275,13 +287,12 @@
       "geometry": "rect",
       "text": "理解，正在变成一种消费品",
       "textPreview": "理解，正在变成一种消费品",
-      "resolvedFontSize": 21,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 21,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#B5482E",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -321,6 +332,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -332,24 +344,23 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/xczed8v6",
+      "aid": "sh/oj2t83it",
       "id": "6",
       "bbox": [
         76,
-        300,
-        444,
-        266
+        282,
+        454,
+        342
       ],
       "geometry": "rect",
-      "text": "过去，\n人们买水是为了解渴。\n\n后来，\n人们购买品牌、身份和生活方式。\n\n而 AI 时代，\n人们开始购买：\n对这个时代的理解。",
-      "textPreview": "过去， | 人们买水是为了解渴。 |  | 后来， | 人们购买品牌、身份和生活方式。 |  | 而 AI 时代， | 人们开始购买： | 对这个时代的理解。",
-      "resolvedFontSize": 27,
+      "text": "过去，\n人们买水是为了解渴。\n\n后来，\n人们购买品牌，\n购买身份，\n购买一种生活方式。\n\n而 AI 时代，\n人们开始购买：\n对这个时代的理解。\n\n于是，\n我们把今天真正重要的一则变化，\n装进了一杯咖啡里。",
+      "textPreview": "过去， | 人们买水是为了解渴。 |  | 后来， | 人们购买品牌， | 购买身份， | 购买一种生活方式。 |  | 而 AI 时代， | 人们开始购买： | 对这个时代的理解。 |  | 于是， | 我们把今天真正重要的一则变化， | 装进了一杯咖啡里。",
+      "resolvedFontSize": 16.51,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 27,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 16.51,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -360,7 +371,7 @@
         }
       },
       "textLayout": {
-        "lineCount": 9,
+        "lineCount": 15,
         "lines": [
           {
             "index": 1,
@@ -380,23 +391,47 @@
           },
           {
             "index": 5,
-            "text": "人们购买品牌、身份和生活方式。"
+            "text": "人们购买品牌，"
           },
           {
             "index": 6,
-            "text": ""
+            "text": "购买身份，"
           },
           {
             "index": 7,
-            "text": "而 AI 时代，"
+            "text": "购买一种生活方式。"
           },
           {
             "index": 8,
-            "text": "人们开始购买："
+            "text": ""
           },
           {
             "index": 9,
+            "text": "而 AI 时代，"
+          },
+          {
+            "index": 10,
+            "text": "人们开始购买："
+          },
+          {
+            "index": 11,
             "text": "对这个时代的理解。"
+          },
+          {
+            "index": 12,
+            "text": ""
+          },
+          {
+            "index": 13,
+            "text": "于是，"
+          },
+          {
+            "index": 14,
+            "text": "我们把今天真正重要的一则变化，"
+          },
+          {
+            "index": 15,
+            "text": "装进了一杯咖啡里。"
           }
         ]
       },
@@ -415,12 +450,13 @@
             {
               "index": 1,
               "text": "过去，",
-              "fontSize": 27,
+              "fontSize": 16.51,
               "typeface": "Microsoft YaHei UI",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
@@ -437,12 +473,13 @@
             {
               "index": 1,
               "text": "人们买水是为了解渴。",
-              "fontSize": 27,
+              "fontSize": 16.51,
               "typeface": "Microsoft YaHei UI",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
@@ -459,17 +496,18 @@
             {
               "index": 1,
               "text": "后来，",
-              "fontSize": 27,
+              "fontSize": 16.51,
               "typeface": "Microsoft YaHei UI",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
           "index": 5,
-          "text": "人们购买品牌、身份和生活方式。",
+          "text": "人们购买品牌，",
           "resolvedTextStyle": {
             "fontSize": 27,
             "typeface": "Microsoft YaHei UI",
@@ -480,17 +518,54 @@
           "runs": [
             {
               "index": 1,
-              "text": "人们购买品牌、身份和生活方式。",
-              "fontSize": 27,
+              "text": "人们购买品牌，",
+              "fontSize": 16.51,
               "typeface": "Microsoft YaHei UI",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 6,
+          "text": "购买身份，",
+          "runs": [
+            {
+              "index": 1,
+              "text": "购买身份，",
+              "fontSize": 16.51
+            }
+          ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
           "index": 7,
+          "text": "购买一种生活方式。",
+          "resolvedTextStyle": {
+            "fontSize": 27,
+            "typeface": "Microsoft YaHei UI",
+            "color": "#15100D",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "购买一种生活方式。",
+              "fontSize": 16.51,
+              "typeface": "Microsoft YaHei UI",
+              "color": "#15100D",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 9,
           "text": "而 AI 时代，",
           "resolvedTextStyle": {
             "fontSize": 27,
@@ -503,16 +578,17 @@
             {
               "index": 1,
               "text": "而 AI 时代，",
-              "fontSize": 27,
+              "fontSize": 16.51,
               "typeface": "Microsoft YaHei UI",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
-          "index": 8,
+          "index": 10,
           "text": "人们开始购买：",
           "resolvedTextStyle": {
             "fontSize": 27,
@@ -525,16 +601,17 @@
             {
               "index": 1,
               "text": "人们开始购买：",
-              "fontSize": 27,
+              "fontSize": 16.51,
               "typeface": "Microsoft YaHei UI",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
-          "index": 9,
+          "index": 11,
           "text": "对这个时代的理解。",
           "resolvedTextStyle": {
             "fontSize": 27,
@@ -547,12 +624,82 @@
             {
               "index": 1,
               "text": "对这个时代的理解。",
-              "fontSize": 27,
+              "fontSize": 16.51,
               "typeface": "Microsoft YaHei UI",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 13,
+          "text": "于是，",
+          "resolvedTextStyle": {
+            "fontSize": 27,
+            "typeface": "Microsoft YaHei UI",
+            "color": "#15100D",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "于是，",
+              "fontSize": 16.51,
+              "typeface": "Microsoft YaHei UI",
+              "color": "#15100D",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 14,
+          "text": "我们把今天真正重要的一则变化，",
+          "resolvedTextStyle": {
+            "fontSize": 27,
+            "typeface": "Microsoft YaHei UI",
+            "color": "#15100D",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "我们把今天真正重要的一则变化，",
+              "fontSize": 16.51,
+              "typeface": "Microsoft YaHei UI",
+              "color": "#15100D",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 15,
+          "text": "装进了一杯咖啡里。",
+          "resolvedTextStyle": {
+            "fontSize": 27,
+            "typeface": "Microsoft YaHei UI",
+            "color": "#15100D",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "装进了一杯咖啡里。",
+              "fontSize": 16.51,
+              "typeface": "Microsoft YaHei UI",
+              "color": "#15100D",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -564,7 +711,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/8v6psfil",
+      "aid": "sh/d4vmtwra",
       "id": "7",
       "bbox": [
         552,
@@ -581,7 +728,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/je9cvixc",
+      "aid": "sh/6hcrmhk3",
       "id": "8",
       "bbox": [
         578,
@@ -598,7 +745,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/qtcj6tov",
+      "aid": "sh/z25kb6xk",
       "id": "9",
       "bbox": [
         596,
@@ -615,7 +762,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/svu9knih",
+      "aid": "sh/vy90je9c",
       "id": "10",
       "bbox": [
         608,
@@ -626,14 +773,13 @@
       "geometry": "rect",
       "text": "1",
       "textPreview": "1",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#FFF9EF",
-        "bold": true,
-        "alignment": "center",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -672,6 +818,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -683,7 +830,7 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hgn29gr2",
+      "aid": "sh/6dcbulwv",
       "id": "11",
       "bbox": [
         596,
@@ -694,13 +841,12 @@
       "geometry": "rect",
       "text": "Water",
       "textPreview": "Water",
-      "resolvedFontSize": 18,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 18,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -740,6 +886,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -751,7 +898,7 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ap4r65wj",
+      "aid": "sh/d4vmtwra",
       "id": "12",
       "bbox": [
         596,
@@ -762,12 +909,12 @@
       "geometry": "rect",
       "text": "解渴",
       "textPreview": "解渴",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 12,
-        "typeface": "Aptos",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -805,6 +952,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -816,7 +964,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/za1gvy90",
+      "aid": "sh/oj2t83it",
       "id": "13",
       "bbox": [
         756,
@@ -833,7 +981,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/s36hcrmh",
+      "aid": "sh/vmtwra5g",
       "id": "14",
       "bbox": [
         774,
@@ -850,7 +998,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hoza1gvy",
+      "aid": "sh/61032lsz",
       "id": "15",
       "bbox": [
         786,
@@ -861,14 +1009,13 @@
       "geometry": "rect",
       "text": "2",
       "textPreview": "2",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#FFF9EF",
-        "bold": true,
-        "alignment": "center",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -907,6 +1054,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -918,7 +1066,7 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/a1gvy90j",
+      "aid": "sh/dsji5sne",
       "id": "16",
       "bbox": [
         774,
@@ -929,13 +1077,12 @@
       "geometry": "rect",
       "text": "Brand",
       "textPreview": "Brand",
-      "resolvedFontSize": 18,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 18,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -975,6 +1122,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -986,7 +1134,7 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zidonyd0",
+      "aid": "sh/o7qpg3ex",
       "id": "17",
       "bbox": [
         774,
@@ -997,12 +1145,12 @@
       "geometry": "rect",
       "text": "身份",
       "textPreview": "身份",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 12,
-        "typeface": "Aptos",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1040,6 +1188,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1051,7 +1200,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/s72x4nap",
+      "aid": "sh/vahoza1g",
       "id": "18",
       "bbox": [
         934,
@@ -1068,7 +1217,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lszqtcj6",
+      "aid": "sh/6tovahoz",
       "id": "19",
       "bbox": [
         952,
@@ -1085,7 +1234,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/pg3ex0nu",
+      "aid": "sh/epkzupwb",
       "id": "20",
       "bbox": [
         964,
@@ -1096,14 +1245,13 @@
       "geometry": "rect",
       "text": "3",
       "textPreview": "3",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#FFF9EF",
-        "bold": true,
-        "alignment": "center",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -1142,6 +1290,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1153,7 +1302,7 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wval87ed",
+      "aid": "sh/7adsji5s",
       "id": "21",
       "bbox": [
         952,
@@ -1164,13 +1313,12 @@
       "geometry": "rect",
       "text": "Coffee",
       "textPreview": "Coffee",
-      "resolvedFontSize": 18,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 18,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1210,6 +1358,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1221,7 +1370,7 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7adsji5s",
+      "aid": "sh/wval87ed",
       "id": "22",
       "bbox": [
         952,
@@ -1232,12 +1381,12 @@
       "geometry": "rect",
       "text": "生活方式",
       "textPreview": "生活方式",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 12,
-        "typeface": "Aptos",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1275,6 +1424,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1286,7 +1436,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/epkzupwb",
+      "aid": "sh/pg3ex0nu",
       "id": "23",
       "bbox": [
         736,
@@ -1303,7 +1453,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/psfil0rq",
+      "aid": "sh/e1w7mp0b",
       "id": "24",
       "bbox": [
         736,
@@ -1320,7 +1470,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/w7mp0bi9",
+      "aid": "sh/7mp0bi9s",
       "id": "25",
       "bbox": [
         754,
@@ -1331,13 +1481,12 @@
       "geometry": "rect",
       "text": "NEW CATEGORY",
       "textPreview": "NEW CATEGORY",
-      "resolvedFontSize": 9,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#F8F0E6",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1377,6 +1526,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1388,7 +1538,7 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7mp0bi9s",
+      "aid": "sh/w7mp0bi9",
       "id": "26",
       "bbox": [
         754,
@@ -1405,7 +1555,7 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/e1w7mp0b",
+      "aid": "sh/psfil0rq",
       "id": "27",
       "bbox": [
         766,
@@ -1416,14 +1566,13 @@
       "geometry": "rect",
       "text": "4",
       "textPreview": "4",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#FFF9EF",
-        "bold": true,
-        "alignment": "center",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -1462,6 +1611,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1473,7 +1623,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/l0rqd4vm",
+      "aid": "sh/ed8bat47",
       "id": "28",
       "bbox": [
         754,
@@ -1484,13 +1634,12 @@
       "geometry": "rect",
       "text": "Info Coffee",
       "textPreview": "Info Coffee",
-      "resolvedFontSize": 21,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 21,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1530,6 +1679,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1541,7 +1691,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wfyxobm5",
+      "aid": "sh/7u54zido",
       "id": "29",
       "bbox": [
         754,
@@ -1552,13 +1702,12 @@
       "geometry": "rect",
       "text": "时代理解",
       "textPreview": "时代理解",
-      "resolvedFontSize": 13,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 13,
-        "typeface": "Aptos",
-        "color": "#B5482E",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1598,6 +1747,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1609,7 +1759,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/a9w3m94f",
+      "aid": "sh/twra5gbq",
       "id": "30",
       "bbox": [
         1096,
@@ -1626,7 +1776,7 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zupwb2hw",
+      "aid": "sh/4byhgn29",
       "id": "31",
       "bbox": [
         1096,
@@ -1643,7 +1793,7 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/sfil0rqd",
+      "aid": "sh/bq1oryts",
       "id": "32",
       "bbox": [
         578,
@@ -1652,14 +1802,14 @@
         26
       ],
       "geometry": "rect",
-      "text": "Packaged understanding becomes a product.",
-      "textPreview": "Packaged understanding becomes a product.",
-      "resolvedFontSize": 18,
+      "text": "Packaged understanding becomes a take-away product.",
+      "textPreview": "Packaged understanding becomes a take-away product.",
+      "resolvedFontSize": 16,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 18,
-        "typeface": "Aptos",
-        "color": "#241913",
+        "fontSize": 16,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1674,14 +1824,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Packaged understanding becomes a product."
+            "text": "Packaged understanding becomes a take-away product."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Packaged understanding becomes a product.",
+          "text": "Packaged understanding becomes a take-away product.",
           "resolvedTextStyle": {
             "fontSize": 18,
             "typeface": "Aptos",
@@ -1691,12 +1841,13 @@
           "runs": [
             {
               "index": 1,
-              "text": "Packaged understanding becomes a product.",
-              "fontSize": 18,
+              "text": "Packaged understanding becomes a take-away product.",
+              "fontSize": 16,
               "typeface": "Aptos",
               "color": "#241913"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1708,7 +1859,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/h0fepkzu",
+      "aid": "sh/m58z25kb",
       "id": "33",
       "bbox": [
         72,
@@ -1725,7 +1876,7 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/al87ed8b",
+      "aid": "sh/t83itgfm",
       "id": "34",
       "bbox": [
         116,
@@ -1736,13 +1887,12 @@
       "geometry": "rect",
       "text": "TIME SLICE COFFEE",
       "textPreview": "TIME SLICE COFFEE",
-      "resolvedFontSize": 10,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 10,
-        "typeface": "Aptos Mono",
-        "color": "#8C8175",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1782,6 +1932,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1793,7 +1944,7 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/z61032ls",
+      "aid": "sh/4nap4r65",
       "id": "35",
       "bbox": [
         1136,
@@ -1804,14 +1955,13 @@
       "geometry": "rect",
       "text": "03",
       "textPreview": "03",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#8C8175",
-        "bold": true,
-        "alignment": "right",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -1850,6 +2000,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],

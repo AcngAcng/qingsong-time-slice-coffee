@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/sya5ld",
-    "id": "sya5ld",
-    "slide": 4,
-    "layoutId": "2bb7f4a8-d2af-4f19-bbc7-a1c5ca7fb207",
+    "aid": "sl/val87ed8",
+    "id": "val87ed8",
+    "slide": 5,
+    "layoutId": "/ppt/slideLayouts/slideLayout2.xml",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "fa126527-d87e-419b-96aa-cf544177a194",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
     "masterLayoutName": "Master",
     "frame": {
       "left": 0,
@@ -26,10 +26,6 @@
       "accent4": "#0F9ED5",
       "accent5": "#A02B93",
       "accent6": "#4EA72E",
-      "bg1": "#FFFFFF",
-      "bg2": "#000000",
-      "tx1": "#1F1F1F",
-      "tx2": "#FFFFFF",
       "dk1": "#000000",
       "lt1": "#FFFFFF",
       "dk2": "#0E2841",
@@ -37,9 +33,24 @@
       "hlink": "#467886",
       "folHlink": "#96607D"
     },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Calibri Light",
+        "eastAsianTypeface": "Calibri Light",
+        "complexScriptTypeface": "Calibri Light"
+      },
+      "minorFont": {
+        "latinTypeface": "Calibri",
+        "eastAsianTypeface": "Calibri",
+        "complexScriptTypeface": "Calibri"
+      }
+    },
     "typefaces": [
       "Aptos",
       "Aptos Mono",
+      "Calibri",
+      "Calibri Light",
       "Georgia",
       "Microsoft YaHei UI"
     ]
@@ -47,15 +58,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "2bb7f4a8-d2af-4f19-bbc7-a1c5ca7fb207",
+      "id": "/ppt/slideLayouts/slideLayout2.xml",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "fa126527-d87e-419b-96aa-cf544177a194",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "fa126527-d87e-419b-96aa-cf544177a194",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -66,7 +77,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wra5gbq1",
+      "aid": "sh/1gvy90je",
       "id": "1",
       "bbox": [
         0,
@@ -83,7 +94,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/36hcrmhk",
+      "aid": "sh/qtcj6tov",
       "id": "2",
       "name": "kicker-04-marker",
       "bbox": [
@@ -101,7 +112,7 @@
       "order": 3,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/eloj2t83",
+      "aid": "sh/je9cvixc",
       "id": "3",
       "name": "kicker-04-label",
       "bbox": [
@@ -113,13 +124,12 @@
       "geometry": "rect",
       "text": "PRODUCT",
       "textPreview": "PRODUCT",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#F8F0E6",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -159,6 +169,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -170,7 +181,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/l0rqd4vm",
+      "aid": "sh/87ed8bat",
       "id": "4",
       "bbox": [
         72,
@@ -179,15 +190,14 @@
         112
       ],
       "geometry": "rect",
-      "text": "An Information\nCoffee Bar",
-      "textPreview": "An Information | Coffee Bar",
+      "text": "An Information\nCoffee Shop",
+      "textPreview": "An Information | Coffee Shop",
       "resolvedFontSize": 42,
       "resolvedTextStyle": {
         "anchor": 1,
         "fontSize": 42,
-        "typeface": "Georgia",
-        "color": "#F8F0E6",
-        "bold": true,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -206,7 +216,7 @@
           },
           {
             "index": 2,
-            "text": "Coffee Bar"
+            "text": "Coffee Shop"
           }
         ]
       },
@@ -231,11 +241,12 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
           "index": 2,
-          "text": "Coffee Bar",
+          "text": "Coffee Shop",
           "resolvedTextStyle": {
             "fontSize": 42,
             "typeface": "Georgia",
@@ -246,13 +257,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Coffee Bar",
+              "text": "Coffee Shop",
               "fontSize": 42,
               "typeface": "Georgia",
               "color": "#F8F0E6",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -264,7 +276,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wfyxobm5",
+      "aid": "sh/xs72x4na",
       "id": "5",
       "bbox": [
         72,
@@ -275,13 +287,12 @@
       "geometry": "rect",
       "text": "for the AI Age",
       "textPreview": "for the AI Age",
-      "resolvedFontSize": 42,
+      "resolvedFontSize": 31,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 42,
-        "typeface": "Georgia",
-        "color": "#F8F0E6",
-        "bold": true,
+        "fontSize": 31,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -315,12 +326,13 @@
             {
               "index": 1,
               "text": "for the AI Age",
-              "fontSize": 42,
+              "fontSize": 31,
               "typeface": "Georgia",
               "color": "#F8F0E6",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -332,7 +344,7 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7u54zido",
+      "aid": "sh/q1orytsv",
       "id": "6",
       "bbox": [
         76,
@@ -341,15 +353,14 @@
         28
       ],
       "geometry": "rect",
-      "text": "AI 时代的信息咖啡吧",
-      "textPreview": "AI 时代的信息咖啡吧",
-      "resolvedFontSize": 21,
+      "text": "AI 时代的信息咖啡店",
+      "textPreview": "AI 时代的信息咖啡店",
+      "resolvedFontSize": 20,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 21,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#D8CDBE",
-        "bold": true,
+        "fontSize": 20,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -364,14 +375,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "AI 时代的信息咖啡吧"
+            "text": "AI 时代的信息咖啡店"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "AI 时代的信息咖啡吧",
+          "text": "AI 时代的信息咖啡店",
           "resolvedTextStyle": {
             "fontSize": 21,
             "typeface": "Microsoft YaHei UI",
@@ -382,13 +393,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "AI 时代的信息咖啡吧",
-              "fontSize": 21,
+              "text": "AI 时代的信息咖啡店",
+              "fontSize": 20,
               "typeface": "Microsoft YaHei UI",
               "color": "#D8CDBE",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -400,23 +412,23 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ed8bat47",
+      "aid": "sh/fmlkjm1c",
       "id": "7",
       "bbox": [
         76,
-        392,
-        486,
-        82
+        382,
+        500,
+        126
       ],
       "geometry": "rect",
-      "text": "Time Slice Coffee 把真实信息流中的重要变化，\n萃取成不同身份可理解、可带走的时代信息切片咖啡。",
-      "textPreview": "Time Slice Coffee 把真实信息流中的重要变化， | 萃取成不同身份可理解、可带走的时代信息切片咖啡。",
-      "resolvedFontSize": 23,
+      "text": "用户表面上像买咖啡一样点单，\n系统背后完成一次高价值的信息提炼。\n\n咖啡是交互外壳，信息提炼才是发动机。",
+      "textPreview": "用户表面上像买咖啡一样点单， | 系统背后完成一次高价值的信息提炼。 |  | 咖啡是交互外壳，信息提炼才是发动机。",
+      "resolvedFontSize": 18,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 23,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#F8F0E6",
+        "fontSize": 18,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -431,26 +443,26 @@
         "lines": [
           {
             "index": 1,
-            "text": "Time Slice Coffee"
+            "text": "用户表面上像买咖啡一样点单，"
           },
           {
             "index": 2,
-            "text": "把真实信息流中的重要变化，"
+            "text": "系统背后完成一次高价值的信息提炼。"
           },
           {
             "index": 3,
-            "text": "萃取成不同身份可理解、可带走的时代信息切片"
+            "text": ""
           },
           {
             "index": 4,
-            "text": "咖啡。"
+            "text": "咖啡是交互外壳，信息提炼才是发动机。"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Time Slice Coffee 把真实信息流中的重要变化，",
+          "text": "用户表面上像买咖啡一样点单，",
           "resolvedTextStyle": {
             "fontSize": 23,
             "typeface": "Microsoft YaHei UI",
@@ -460,17 +472,18 @@
           "runs": [
             {
               "index": 1,
-              "text": "Time Slice Coffee 把真实信息流中的重要变化，",
-              "fontSize": 23,
+              "text": "用户表面上像买咖啡一样点单，",
+              "fontSize": 18,
               "typeface": "Microsoft YaHei UI",
               "color": "#F8F0E6"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
           "index": 2,
-          "text": "萃取成不同身份可理解、可带走的时代信息切片咖啡。",
+          "text": "系统背后完成一次高价值的信息提炼。",
           "resolvedTextStyle": {
             "fontSize": 23,
             "typeface": "Microsoft YaHei UI",
@@ -480,12 +493,34 @@
           "runs": [
             {
               "index": 1,
-              "text": "萃取成不同身份可理解、可带走的时代信息切片咖啡。",
-              "fontSize": 23,
+              "text": "系统背后完成一次高价值的信息提炼。",
+              "fontSize": 18,
               "typeface": "Microsoft YaHei UI",
               "color": "#F8F0E6"
             }
           ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "咖啡是交互外壳，信息提炼才是发动机。",
+          "resolvedTextStyle": {
+            "fontSize": 23,
+            "typeface": "Microsoft YaHei UI",
+            "color": "#F8F0E6",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "咖啡是交互外壳，信息提炼才是发动机。",
+              "fontSize": 18,
+              "typeface": "Microsoft YaHei UI",
+              "color": "#F8F0E6"
+            }
+          ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -497,7 +532,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/psfil0rq",
+      "aid": "sh/8jqh0fep",
       "id": "8",
       "bbox": [
         78,
@@ -506,14 +541,14 @@
         34
       ],
       "geometry": "rect",
-      "text": "We turn reading information into ordering a cup.",
-      "textPreview": "We turn reading information into ordering a cup.",
+      "text": "去噪 → 提炼 → 带走",
+      "textPreview": "去噪 → 提炼 → 带走",
       "resolvedFontSize": 20,
       "resolvedTextStyle": {
         "anchor": 1,
         "fontSize": 20,
-        "typeface": "Aptos",
-        "color": "#D8CDBE",
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -528,14 +563,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "We turn reading information into ordering a cup."
+            "text": "去噪 → 提炼 → 带走"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "We turn reading information into ordering a cup.",
+          "text": "去噪 → 提炼 → 带走",
           "resolvedTextStyle": {
             "fontSize": 20,
             "typeface": "Aptos",
@@ -545,12 +580,13 @@
           "runs": [
             {
               "index": 1,
-              "text": "We turn reading information into ordering a cup.",
+              "text": "去噪 → 提炼 → 带走",
               "fontSize": 20,
               "typeface": "Aptos",
               "color": "#D8CDBE"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -562,7 +598,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/w7mp0bi9",
+      "aid": "sh/x4nap4r6",
       "id": "9",
       "bbox": [
         594,
@@ -579,7 +615,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/eloj2t83",
+      "aid": "sh/1w7mp0bi",
       "id": "10",
       "bbox": [
         594,
@@ -596,7 +632,7 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/36hcrmhk",
+      "aid": "sh/8bat47y1",
       "id": "11",
       "bbox": [
         624,
@@ -607,13 +643,12 @@
       "geometry": "rect",
       "text": "TODAY'S MENU",
       "textPreview": "TODAY'S MENU",
-      "resolvedFontSize": 22,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 22,
-        "typeface": "Aptos Mono",
-        "color": "#F8F0E6",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -653,6 +688,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -664,7 +700,7 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wra5gbq1",
+      "aid": "sh/jqh0fepk",
       "id": "12",
       "bbox": [
         860,
@@ -673,15 +709,15 @@
         20
       ],
       "geometry": "rect",
-      "text": "6 shelves × identity × density × serve",
-      "textPreview": "6 shelves × identity × density × serve",
+      "text": "6 shelves × cup use × strength × serve",
+      "textPreview": "6 shelves × cup use × strength × serve",
       "resolvedFontSize": 12,
       "resolvedTextStyle": {
         "anchor": 1,
         "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#CDBFAE",
-        "alignment": "right",
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -695,14 +731,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "6 shelves × identity × density × serve"
+            "text": "6 shelves × cup use × strength × serve"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "6 shelves × identity × density × serve",
+          "text": "6 shelves × cup use × strength × serve",
           "resolvedTextStyle": {
             "fontSize": 12,
             "typeface": "Aptos Mono",
@@ -712,12 +748,13 @@
           "runs": [
             {
               "index": 1,
-              "text": "6 shelves × identity × density × serve",
+              "text": "6 shelves × cup use × strength × serve",
               "fontSize": 12,
               "typeface": "Aptos Mono",
               "color": "#CDBFAE"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -729,7 +766,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lc7u54zi",
+      "aid": "sh/q5o7qpg3",
       "id": "13",
       "bbox": [
         628,
@@ -746,7 +783,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ed8bat47",
+      "aid": "sh/18jqh0fe",
       "id": "14",
       "bbox": [
         628,
@@ -763,7 +800,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7u54zido",
+      "aid": "sh/8nqxs72x",
       "id": "15",
       "bbox": [
         643,
@@ -774,13 +811,12 @@
       "geometry": "rect",
       "text": "AI Frontier",
       "textPreview": "AI Frontier",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -820,6 +856,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -831,7 +868,7 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wfyxobm5",
+      "aid": "sh/j2t83itg",
       "id": "16",
       "bbox": [
         643,
@@ -842,12 +879,12 @@
       "geometry": "rect",
       "text": "AI 前沿",
       "textPreview": "AI 前沿",
-      "resolvedFontSize": 11,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 11,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -885,6 +922,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -896,7 +934,7 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/l0rqd4vm",
+      "aid": "sh/qh0fepkz",
       "id": "17",
       "bbox": [
         880,
@@ -913,7 +951,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/e1w7mp0b",
+      "aid": "sh/1cfa9w3m",
       "id": "18",
       "bbox": [
         880,
@@ -930,7 +968,7 @@
       "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7mp0bi9s",
+      "aid": "sh/crmhk3q5",
       "id": "19",
       "bbox": [
         895,
@@ -941,13 +979,12 @@
       "geometry": "rect",
       "text": "Build & Workflow",
       "textPreview": "Build & Workflow",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -987,6 +1024,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -998,7 +1036,7 @@
       "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zed8v6ps",
+      "aid": "sh/sfil0rqd",
       "id": "20",
       "bbox": [
         895,
@@ -1009,12 +1047,12 @@
       "geometry": "rect",
       "text": "构建工作流",
       "textPreview": "构建工作流",
-      "resolvedFontSize": 11,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 11,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1052,6 +1090,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1063,7 +1102,7 @@
       "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6xkf6dcb",
+      "aid": "sh/h0fepkzu",
       "id": "21",
       "bbox": [
         628,
@@ -1080,7 +1119,7 @@
       "order": 22,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hk3q5o7q",
+      "aid": "sh/a9w3m94f",
       "id": "22",
       "bbox": [
         628,
@@ -1097,7 +1136,7 @@
       "order": 23,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/oza1gvy9",
+      "aid": "sh/zupwb2hw",
       "id": "23",
       "bbox": [
         643,
@@ -1108,13 +1147,12 @@
       "geometry": "rect",
       "text": "Design & Creation",
       "textPreview": "Design & Creation",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1154,6 +1192,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1165,7 +1204,7 @@
       "order": 24,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zqtcj6to",
+      "aid": "sh/orytsvu9",
       "id": "24",
       "bbox": [
         643,
@@ -1176,12 +1215,12 @@
       "geometry": "rect",
       "text": "设计创作",
       "textPreview": "设计创作",
-      "resolvedFontSize": 11,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 11,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1219,6 +1258,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1230,7 +1270,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/65wjudg7",
+      "aid": "sh/hcrmhk3q",
       "id": "25",
       "bbox": [
         880,
@@ -1247,7 +1287,7 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hwfyxobm",
+      "aid": "sh/al87ed8b",
       "id": "26",
       "bbox": [
         880,
@@ -1264,7 +1304,7 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/obm58z25",
+      "aid": "sh/z61032ls",
       "id": "27",
       "bbox": [
         895,
@@ -1275,13 +1315,12 @@
       "geometry": "rect",
       "text": "Market & Capital",
       "textPreview": "Market & Capital",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1321,6 +1360,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1332,7 +1372,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zupwb2hw",
+      "aid": "sh/oza1gvy9",
       "id": "28",
       "bbox": [
         895,
@@ -1343,12 +1383,12 @@
       "geometry": "rect",
       "text": "市场资本",
       "textPreview": "市场资本",
-      "resolvedFontSize": 11,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 11,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1386,6 +1426,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1397,7 +1438,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/a9w3m94f",
+      "aid": "sh/hk3q5o7q",
       "id": "29",
       "bbox": [
         628,
@@ -1414,7 +1455,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0rqd4vmt",
+      "aid": "sh/7mp0bi9s",
       "id": "30",
       "bbox": [
         628,
@@ -1431,7 +1472,7 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tcj6tova",
+      "aid": "sh/e1w7mp0b",
       "id": "31",
       "bbox": [
         643,
@@ -1442,13 +1483,12 @@
       "geometry": "rect",
       "text": "Self Upgrade",
       "textPreview": "Self Upgrade",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1488,6 +1528,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1499,7 +1540,7 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/il0rqd4v",
+      "aid": "sh/psfil0rq",
       "id": "32",
       "bbox": [
         643,
@@ -1510,12 +1551,12 @@
       "geometry": "rect",
       "text": "自我升级",
       "textPreview": "自我升级",
-      "resolvedFontSize": 11,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 11,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1553,6 +1594,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1564,7 +1606,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/b6xkf6dc",
+      "aid": "sh/w7mp0bi9",
       "id": "33",
       "bbox": [
         880,
@@ -1581,7 +1623,7 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0je9cvix",
+      "aid": "sh/7adsji5s",
       "id": "34",
       "bbox": [
         880,
@@ -1598,7 +1640,7 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/t47y1kre",
+      "aid": "sh/epkzupwb",
       "id": "35",
       "bbox": [
         895,
@@ -1609,13 +1651,12 @@
       "geometry": "rect",
       "text": "Life Signals",
       "textPreview": "Life Signals",
-      "resolvedFontSize": 15,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1655,6 +1696,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1666,7 +1708,7 @@
       "order": 36,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/idonyd0z",
+      "aid": "sh/pg3ex0nu",
       "id": "36",
       "bbox": [
         895,
@@ -1677,12 +1719,12 @@
       "geometry": "rect",
       "text": "生活信号",
       "textPreview": "生活信号",
-      "resolvedFontSize": 11,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 11,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#8C8175",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1720,6 +1762,7 @@
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1731,7 +1774,7 @@
       "order": 37,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/byhgn29g",
+      "aid": "sh/wval87ed",
       "id": "37",
       "bbox": [
         628,
@@ -1748,7 +1791,7 @@
       "order": 38,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0fepkzup",
+      "aid": "sh/36hcrmhk",
       "id": "38",
       "bbox": [
         650,
@@ -1757,15 +1800,14 @@
         18
       ],
       "geometry": "rect",
-      "text": "ORDER RECEIPT",
-      "textPreview": "ORDER RECEIPT",
-      "resolvedFontSize": 12,
+      "text": "ORDER LAYERS",
+      "textPreview": "ORDER LAYERS",
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#B5482E",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1780,14 +1822,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "ORDER RECEIPT"
+            "text": "ORDER LAYERS"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "ORDER RECEIPT",
+          "text": "ORDER LAYERS",
           "resolvedTextStyle": {
             "fontSize": 12,
             "typeface": "Aptos Mono",
@@ -1798,13 +1840,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "ORDER RECEIPT",
+              "text": "ORDER LAYERS",
               "fontSize": 12,
               "typeface": "Aptos Mono",
               "color": "#B5482E",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1816,7 +1859,7 @@
       "order": 39,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/p0bi9s36",
+      "aid": "sh/eloj2t83",
       "id": "39",
       "bbox": [
         808,
@@ -1825,15 +1868,15 @@
         18
       ],
       "geometry": "rect",
-      "text": "Information coffee is ordered as a label schema.",
-      "textPreview": "Information coffee is ordered as a label schema.",
+      "text": "Information coffee is ordered as a lightweight extraction flow.",
+      "textPreview": "Information coffee is ordered as a lightweight extraction flow.",
       "resolvedFontSize": 11,
       "resolvedTextStyle": {
         "anchor": 1,
         "fontSize": 11,
-        "typeface": "Aptos",
-        "color": "#8C8175",
-        "alignment": "right",
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -1843,18 +1886,22 @@
         }
       },
       "textLayout": {
-        "lineCount": 1,
+        "lineCount": 2,
         "lines": [
           {
             "index": 1,
-            "text": "Information coffee is ordered as a label schema."
+            "text": "Information coffee is ordered as a lightweight extraction"
+          },
+          {
+            "index": 2,
+            "text": "flow."
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Information coffee is ordered as a label schema.",
+          "text": "Information coffee is ordered as a lightweight extraction flow.",
           "resolvedTextStyle": {
             "fontSize": 11,
             "typeface": "Aptos",
@@ -1864,12 +1911,13 @@
           "runs": [
             {
               "index": 1,
-              "text": "Information coffee is ordered as a label schema.",
+              "text": "Information coffee is ordered as a lightweight extraction flow.",
               "fontSize": 11,
               "typeface": "Aptos",
               "color": "#8C8175"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1881,7 +1929,7 @@
       "order": 40,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/loj2t83i",
+      "aid": "sh/yhgn29gr",
       "id": "40",
       "bbox": [
         650,
@@ -1898,7 +1946,7 @@
       "order": 41,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/w3m94fu1",
+      "aid": "sh/n29gr2p8",
       "id": "41",
       "bbox": [
         650,
@@ -1915,7 +1963,7 @@
       "order": 42,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/3itgfmlk",
+      "aid": "sh/gn29gr2p",
       "id": "42",
       "bbox": [
         660,
@@ -1924,15 +1972,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "01  SHELF",
-      "textPreview": "01  SHELF",
-      "resolvedFontSize": 9,
+      "text": "01  信息货架",
+      "textPreview": "01  信息货架",
+      "resolvedFontSize": 11,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 11,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1947,14 +1994,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "01  SHELF"
+            "text": "01  信息货架"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "01  SHELF",
+          "text": "01  信息货架",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -1965,13 +2012,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "01  SHELF",
-              "fontSize": 9,
+              "text": "01  信息货架",
+              "fontSize": 11,
               "typeface": "Aptos Mono",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1983,7 +2031,7 @@
       "order": 43,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ex0nuxc3",
+      "aid": "sh/58z25kb6",
       "id": "43",
       "bbox": [
         864,
@@ -2000,7 +2048,7 @@
       "order": 44,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lwval87e",
+      "aid": "sh/y90je9cv",
       "id": "44",
       "bbox": [
         864,
@@ -2017,7 +2065,7 @@
       "order": 45,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wb2hwfyx",
+      "aid": "sh/nuxc3ylc",
       "id": "45",
       "bbox": [
         874,
@@ -2026,15 +2074,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "02  RAW SIGNAL",
-      "textPreview": "02  RAW SIGNAL",
-      "resolvedFontSize": 9,
+      "text": "02  今日信息豆",
+      "textPreview": "02  今日信息豆",
+      "resolvedFontSize": 11,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 11,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2049,14 +2096,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "02  RAW SIGNAL"
+            "text": "02  今日信息豆"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "02  RAW SIGNAL",
+          "text": "02  今日信息豆",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -2067,13 +2114,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "02  RAW SIGNAL",
-              "fontSize": 9,
+              "text": "02  今日信息豆",
+              "fontSize": 11,
               "typeface": "Aptos Mono",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2085,7 +2133,7 @@
       "order": 46,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/3q5o7qpg",
+      "aid": "sh/gbq1oryt",
       "id": "46",
       "bbox": [
         650,
@@ -2102,7 +2150,7 @@
       "order": 47,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/e9cvixcz",
+      "aid": "sh/5wjudg7a",
       "id": "47",
       "bbox": [
         650,
@@ -2119,7 +2167,7 @@
       "order": 48,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/l87ed8ba",
+      "aid": "sh/u54zidon",
       "id": "48",
       "bbox": [
         660,
@@ -2128,15 +2176,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "03  PERSONA",
-      "textPreview": "03  PERSONA",
-      "resolvedFontSize": 9,
+      "text": "03  今日杯型",
+      "textPreview": "03  今日杯型",
+      "resolvedFontSize": 11,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 11,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2151,14 +2198,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "03  PERSONA"
+            "text": "03  今日杯型"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "03  PERSONA",
+          "text": "03  今日杯型",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -2169,13 +2216,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "03  PERSONA",
-              "fontSize": 9,
+              "text": "03  今日杯型",
+              "fontSize": 11,
               "typeface": "Aptos Mono",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2187,7 +2235,7 @@
       "order": 49,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/sneloj2t",
+      "aid": "sh/nqxs72x4",
       "id": "49",
       "bbox": [
         864,
@@ -2204,7 +2252,7 @@
       "order": 50,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6hcrmhk3",
+      "aid": "sh/donyd0z6",
       "id": "50",
       "bbox": [
         864,
@@ -2221,7 +2269,7 @@
       "order": 51,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/z25kb6xk",
+      "aid": "sh/k3q5o7qp",
       "id": "51",
       "bbox": [
         874,
@@ -2230,15 +2278,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "04  DENSITY",
-      "textPreview": "04  DENSITY",
-      "resolvedFontSize": 9,
+      "text": "04  信息浓度",
+      "textPreview": "04  信息浓度",
+      "resolvedFontSize": 11,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 11,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2253,14 +2300,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "04  DENSITY"
+            "text": "04  信息浓度"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "04  DENSITY",
+          "text": "04  信息浓度",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -2271,13 +2318,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "04  DENSITY",
-              "fontSize": 9,
+              "text": "04  信息浓度",
+              "fontSize": 11,
               "typeface": "Aptos Mono",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2289,7 +2337,7 @@
       "order": 52,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/onyd0z61",
+      "aid": "sh/vixczed8",
       "id": "52",
       "bbox": [
         650,
@@ -2306,7 +2354,7 @@
       "order": 53,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/d8v6psfi",
+      "aid": "sh/2x4nap4r",
       "id": "53",
       "bbox": [
         650,
@@ -2323,7 +2371,7 @@
       "order": 54,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6tovahoz",
+      "aid": "sh/dcbulwva",
       "id": "54",
       "bbox": [
         660,
@@ -2332,15 +2380,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "05  SERVED MODE",
-      "textPreview": "05  SERVED MODE",
-      "resolvedFontSize": 9,
+      "text": "05  HOT / ICED",
+      "textPreview": "05  HOT / ICED",
+      "resolvedFontSize": 11,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 11,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2355,14 +2402,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "05  SERVED MODE"
+            "text": "05  HOT / ICED"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "05  SERVED MODE",
+          "text": "05  HOT / ICED",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -2373,13 +2420,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "05  SERVED MODE",
-              "fontSize": 9,
+              "text": "05  HOT / ICED",
+              "fontSize": 11,
               "typeface": "Aptos Mono",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2391,7 +2439,7 @@
       "order": 55,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/vahoza1g",
+      "aid": "sh/kre1w7mp",
       "id": "55",
       "bbox": [
         864,
@@ -2408,7 +2456,7 @@
       "order": 56,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ovahoza1",
+      "aid": "sh/val87ed8",
       "id": "56",
       "bbox": [
         864,
@@ -2425,7 +2473,7 @@
       "order": 57,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/dg7adsji",
+      "aid": "sh/6psfil0r",
       "id": "57",
       "bbox": [
         874,
@@ -2434,15 +2482,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "06  BREW RESULT",
-      "textPreview": "06  BREW RESULT",
-      "resolvedFontSize": 9,
+      "text": "06  信息小票 → 50×70 标签",
+      "textPreview": "06  信息小票 → 50×70 标签",
+      "resolvedFontSize": 10.51,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10.51,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2457,14 +2504,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "06  BREW RESULT"
+            "text": "06  信息小票 → 50×70 标签"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "06  BREW RESULT",
+          "text": "06  信息小票 → 50×70 标签",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -2475,13 +2522,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "06  BREW RESULT",
-              "fontSize": 9,
+              "text": "06  信息小票 → 50×70 标签",
+              "fontSize": 10.51,
               "typeface": "Aptos Mono",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2493,7 +2541,7 @@
       "order": 58,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/61032lsz",
+      "aid": "sh/d8bat47y",
       "id": "58",
       "bbox": [
         72,
@@ -2510,7 +2558,7 @@
       "order": 59,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/vmtwra5g",
+      "aid": "sh/knih4byh",
       "id": "59",
       "bbox": [
         116,
@@ -2521,13 +2569,12 @@
       "geometry": "rect",
       "text": "TIME SLICE COFFEE",
       "textPreview": "TIME SLICE COFFEE",
-      "resolvedFontSize": 10,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 10,
-        "typeface": "Aptos Mono",
-        "color": "#BEB4A8",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -2567,6 +2614,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2578,7 +2626,7 @@
       "order": 60,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nqxs72x4",
+      "aid": "sh/wjudg7ad",
       "id": "60",
       "bbox": [
         1136,
@@ -2589,14 +2637,13 @@
       "geometry": "rect",
       "text": "04",
       "textPreview": "04",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#BEB4A8",
-        "bold": true,
-        "alignment": "right",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -2635,6 +2682,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],

@@ -2,13 +2,13 @@
   "schema": "openai.presentation.layout/v4",
   "unit": "px",
   "slide": {
-    "aid": "sl/ubm66h",
-    "id": "ubm66h",
-    "slide": 7,
-    "layoutId": "2bb7f4a8-d2af-4f19-bbc7-a1c5ca7fb207",
+    "aid": "sl/0z61032l",
+    "id": "0z61032l",
+    "slide": 8,
+    "layoutId": "/ppt/slideLayouts/slideLayout2.xml",
     "layoutName": "Title Slide",
     "layoutType": "title",
-    "masterLayoutId": "fa126527-d87e-419b-96aa-cf544177a194",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
     "masterLayoutName": "Master",
     "frame": {
       "left": 0,
@@ -26,10 +26,6 @@
       "accent4": "#0F9ED5",
       "accent5": "#A02B93",
       "accent6": "#4EA72E",
-      "bg1": "#FFFFFF",
-      "bg2": "#000000",
-      "tx1": "#1F1F1F",
-      "tx2": "#FFFFFF",
       "dk1": "#000000",
       "lt1": "#FFFFFF",
       "dk2": "#0E2841",
@@ -37,9 +33,24 @@
       "hlink": "#467886",
       "folHlink": "#96607D"
     },
+    "fontScheme": {
+      "name": "Office",
+      "majorFont": {
+        "latinTypeface": "Calibri Light",
+        "eastAsianTypeface": "Calibri Light",
+        "complexScriptTypeface": "Calibri Light"
+      },
+      "minorFont": {
+        "latinTypeface": "Calibri",
+        "eastAsianTypeface": "Calibri",
+        "complexScriptTypeface": "Calibri"
+      }
+    },
     "typefaces": [
       "Aptos",
       "Aptos Mono",
+      "Calibri",
+      "Calibri Light",
       "Georgia",
       "Microsoft YaHei UI"
     ]
@@ -47,15 +58,15 @@
   "inheritedLayers": [
     {
       "scope": "layout",
-      "id": "2bb7f4a8-d2af-4f19-bbc7-a1c5ca7fb207",
+      "id": "/ppt/slideLayouts/slideLayout2.xml",
       "name": "Title Slide",
       "type": "title",
-      "parentLayoutId": "fa126527-d87e-419b-96aa-cf544177a194",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
       "elements": []
     },
     {
       "scope": "master",
-      "id": "fa126527-d87e-419b-96aa-cf544177a194",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
       "name": "Master",
       "type": "master",
       "elements": []
@@ -66,7 +77,7 @@
       "order": 1,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gr2p8nqx",
+      "aid": "sh/qd4vmtwr",
       "id": "1",
       "bbox": [
         0,
@@ -83,7 +94,7 @@
       "order": 2,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/r65wjudg",
+      "aid": "sh/x4nap4r6",
       "id": "2",
       "name": "kicker-07-marker",
       "bbox": [
@@ -101,7 +112,7 @@
       "order": 3,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ylc7u54z",
+      "aid": "sh/8jqh0fep",
       "id": "3",
       "name": "kicker-07-label",
       "bbox": [
@@ -113,13 +124,12 @@
       "geometry": "rect",
       "text": "TECHNOLOGY",
       "textPreview": "TECHNOLOGY",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#F8F0E6",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -159,6 +169,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -170,7 +181,7 @@
       "order": 4,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/5o7qpg3e",
+      "aid": "sh/fa9w3m94",
       "id": "4",
       "bbox": [
         72,
@@ -179,15 +190,14 @@
         106
       ],
       "geometry": "rect",
-      "text": "Live Signal First,\nDemo-Safe Fallback",
-      "textPreview": "Live Signal First, | Demo-Safe Fallback",
-      "resolvedFontSize": 40,
+      "text": "Live Signals,\nExtractable Library",
+      "textPreview": "Live Signals, | Extractable Library",
+      "resolvedFontSize": 42,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 40,
-        "typeface": "Georgia",
-        "color": "#F8F0E6",
-        "bold": true,
+        "fontSize": 42,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -202,18 +212,18 @@
         "lines": [
           {
             "index": 1,
-            "text": "Live Signal First,"
+            "text": "Live Signals,"
           },
           {
             "index": 2,
-            "text": "Demo-Safe Fallback"
+            "text": "Extractable Library"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Live Signal First,",
+          "text": "Live Signals,",
           "resolvedTextStyle": {
             "fontSize": 40,
             "typeface": "Georgia",
@@ -224,18 +234,19 @@
           "runs": [
             {
               "index": 1,
-              "text": "Live Signal First,",
-              "fontSize": 40,
+              "text": "Live Signals,",
+              "fontSize": 42,
               "typeface": "Georgia",
               "color": "#F8F0E6",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
           "index": 2,
-          "text": "Demo-Safe Fallback",
+          "text": "Extractable Library",
           "resolvedTextStyle": {
             "fontSize": 40,
             "typeface": "Georgia",
@@ -246,13 +257,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Demo-Safe Fallback",
-              "fontSize": 40,
+              "text": "Extractable Library",
+              "fontSize": 42,
               "typeface": "Georgia",
               "color": "#F8F0E6",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -264,7 +276,7 @@
       "order": 5,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/g3ex0nux",
+      "aid": "sh/qpg3ex0n",
       "id": "5",
       "bbox": [
         76,
@@ -273,15 +285,14 @@
         28
       ],
       "geometry": "rect",
-      "text": "实时信号优先，演示稳定兜底",
-      "textPreview": "实时信号优先，演示稳定兜底",
-      "resolvedFontSize": 21,
+      "text": "实时信号优先，可萃取信息原料库",
+      "textPreview": "实时信号优先，可萃取信息原料库",
+      "resolvedFontSize": 20,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 21,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#D8CDBE",
-        "bold": true,
+        "fontSize": 20,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -296,14 +307,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "实时信号优先，演示稳定兜底"
+            "text": "实时信号优先，可萃取信息原料库"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "实时信号优先，演示稳定兜底",
+          "text": "实时信号优先，可萃取信息原料库",
           "resolvedTextStyle": {
             "fontSize": 21,
             "typeface": "Microsoft YaHei UI",
@@ -314,13 +325,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "实时信号优先，演示稳定兜底",
-              "fontSize": 21,
+              "text": "实时信号优先，可萃取信息原料库",
+              "fontSize": 20,
               "typeface": "Microsoft YaHei UI",
               "color": "#D8CDBE",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -332,23 +344,23 @@
       "order": 6,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/nih4byhg",
+      "aid": "sh/xczed8v6",
       "id": "6",
       "bbox": [
         76,
-        268,
-        560,
-        48
+        262,
+        590,
+        54
       ],
       "geometry": "rect",
-      "text": "Designed for real-time Grok / X signal ingestion.\nBacked by a curated xAI / Grok signal bank for stable hackathon demos.",
-      "textPreview": "Designed for real-time Grok / X signal ingestion. | Backed by a curated xAI / Grok signal bank for stable hackathon demos.",
+      "text": "Live Signal First, Demo-Safe Fallback.\n首选接入实时 Grok / X / AI 信息流；当前 demo 扩展为 72 条候选 signals。",
+      "textPreview": "Live Signal First, Demo-Safe Fallback. | 首选接入实时 Grok / X / AI 信息流；当前 demo 扩展为 72 条候选 signals。",
       "resolvedFontSize": 17,
       "resolvedTextStyle": {
         "anchor": 1,
         "fontSize": 17,
-        "typeface": "Aptos",
-        "color": "#F8F0E6",
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -363,18 +375,18 @@
         "lines": [
           {
             "index": 1,
-            "text": "Designed for real-time Grok / X signal ingestion."
+            "text": "Live Signal First, Demo-Safe Fallback."
           },
           {
             "index": 2,
-            "text": "Backed by a curated xAI / Grok signal bank for stable hackathon demos."
+            "text": "首选接入实时 Grok / X / AI 信息流；当前 demo 扩展为 72 条候选 signals。"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Designed for real-time Grok / X signal ingestion.",
+          "text": "Live Signal First, Demo-Safe Fallback.",
           "resolvedTextStyle": {
             "fontSize": 17,
             "typeface": "Aptos",
@@ -384,17 +396,18 @@
           "runs": [
             {
               "index": 1,
-              "text": "Designed for real-time Grok / X signal ingestion.",
+              "text": "Live Signal First, Demo-Safe Fallback.",
               "fontSize": 17,
               "typeface": "Aptos",
               "color": "#F8F0E6"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         },
         {
           "index": 2,
-          "text": "Backed by a curated xAI / Grok signal bank for stable hackathon demos.",
+          "text": "首选接入实时 Grok / X / AI 信息流；当前 demo 扩展为 72 条候选 signals。",
           "resolvedTextStyle": {
             "fontSize": 17,
             "typeface": "Aptos",
@@ -404,12 +417,13 @@
           "runs": [
             {
               "index": 1,
-              "text": "Backed by a curated xAI / Grok signal bank for stable hackathon demos.",
+              "text": "首选接入实时 Grok / X / AI 信息流；当前 demo 扩展为 72 条候选 signals。",
               "fontSize": 17,
               "typeface": "Aptos",
               "color": "#F8F0E6"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -421,7 +435,7 @@
       "order": 7,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/yxobm58z",
+      "aid": "sh/8v6psfil",
       "id": "7",
       "bbox": [
         76,
@@ -430,14 +444,14 @@
         24
       ],
       "geometry": "rect",
-      "text": "首选接入实时 Grok / X 信息流；现场演示使用预置 xAI / Grok signal bank 作为稳定兜底。",
-      "textPreview": "首选接入实时 Grok / X 信息流；现场演示使用预置 xAI / Grok signal bank 作为稳定兜底。",
-      "resolvedFontSize": 14,
+      "text": "这不是热点库，而是可萃取的信息原料库。",
+      "textPreview": "这不是热点库，而是可萃取的信息原料库。",
+      "resolvedFontSize": 15,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 14,
-        "typeface": "Microsoft YaHei UI",
-        "color": "#CDBFAE",
+        "fontSize": 15,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -448,22 +462,18 @@
         }
       },
       "textLayout": {
-        "lineCount": 2,
+        "lineCount": 1,
         "lines": [
           {
             "index": 1,
-            "text": "首选接入实时 Grok / X 信息流；现场演示使用预置 xAI / Grok signal bank"
-          },
-          {
-            "index": 2,
-            "text": "作为稳定兜底。"
+            "text": "这不是热点库，而是可萃取的信息原料库。"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "首选接入实时 Grok / X 信息流；现场演示使用预置 xAI / Grok signal bank 作为稳定兜底。",
+          "text": "这不是热点库，而是可萃取的信息原料库。",
           "resolvedTextStyle": {
             "fontSize": 14,
             "typeface": "Microsoft YaHei UI",
@@ -473,12 +483,13 @@
           "runs": [
             {
               "index": 1,
-              "text": "首选接入实时 Grok / X 信息流；现场演示使用预置 xAI / Grok signal bank 作为稳定兜底。",
-              "fontSize": 14,
+              "text": "这不是热点库，而是可萃取的信息原料库。",
+              "fontSize": 15,
               "typeface": "Microsoft YaHei UI",
               "color": "#CDBFAE"
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -490,7 +501,7 @@
       "order": 8,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/9s36hcrm",
+      "aid": "sh/je9cvixc",
       "id": "8",
       "bbox": [
         64,
@@ -507,7 +518,7 @@
       "order": 9,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/g7adsji5",
+      "aid": "sh/qtcj6tov",
       "id": "9",
       "bbox": [
         64,
@@ -524,7 +535,7 @@
       "order": 10,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/y1kre1w7",
+      "aid": "sh/svu9knih",
       "id": "10",
       "bbox": [
         64,
@@ -541,7 +552,7 @@
       "order": 11,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/rmhk3q5o",
+      "aid": "sh/hgn29gr2",
       "id": "11",
       "bbox": [
         92,
@@ -552,13 +563,12 @@
       "geometry": "rect",
       "text": "PRIMARY PRODUCT MODE",
       "textPreview": "PRIMARY PRODUCT MODE",
-      "resolvedFontSize": 9,
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#3BA7A1",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -592,12 +602,13 @@
             {
               "index": 1,
               "text": "PRIMARY PRODUCT MODE",
-              "fontSize": 9,
+              "fontSize": 10,
               "typeface": "Aptos Mono",
               "color": "#3BA7A1",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -609,7 +620,7 @@
       "order": 12,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/g7adsji5",
+      "aid": "sh/ap4r65wj",
       "id": "12",
       "bbox": [
         92,
@@ -618,15 +629,14 @@
         18
       ],
       "geometry": "rect",
-      "text": "Live Signal Stream",
-      "textPreview": "Live Signal Stream",
-      "resolvedFontSize": 15,
+      "text": "Live Grok / X / AI Ingestion",
+      "textPreview": "Live Grok / X / AI Ingestion",
+      "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 14,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -641,14 +651,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Live Signal Stream"
+            "text": "Live Grok / X / AI Ingestion"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Live Signal Stream",
+          "text": "Live Grok / X / AI Ingestion",
           "resolvedTextStyle": {
             "fontSize": 15,
             "typeface": "Georgia",
@@ -659,13 +669,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Live Signal Stream",
-              "fontSize": 15,
+              "text": "Live Grok / X / AI Ingestion",
+              "fontSize": 14,
               "typeface": "Georgia",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -677,7 +688,7 @@
       "order": 13,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/9s36hcrm",
+      "aid": "sh/za1gvy90",
       "id": "13",
       "bbox": [
         92,
@@ -694,7 +705,7 @@
       "order": 14,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/yd0z6103",
+      "aid": "sh/s36hcrmh",
       "id": "14",
       "bbox": [
         92,
@@ -711,7 +722,7 @@
       "order": 15,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/rytsvu9k",
+      "aid": "sh/hoza1gvy",
       "id": "15",
       "bbox": [
         106,
@@ -720,15 +731,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Designed for Grok / X API ingestion",
-      "textPreview": "Designed for Grok / X API ingestion",
-      "resolvedFontSize": 9.51,
+      "text": "Real-time signal stream",
+      "textPreview": "Real-time signal stream",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -743,14 +753,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Designed for Grok / X API ingestion"
+            "text": "Real-time signal stream"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Designed for Grok / X API ingestion",
+          "text": "Real-time signal stream",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -761,13 +771,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Designed for Grok / X API ingestion",
-              "fontSize": 9.51,
+              "text": "Real-time signal stream",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -779,7 +790,7 @@
       "order": 16,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gfmlkjm1",
+      "aid": "sh/a1gvy90j",
       "id": "16",
       "bbox": [
         92,
@@ -796,7 +807,7 @@
       "order": 17,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/90je9cvi",
+      "aid": "sh/zidonyd0",
       "id": "17",
       "bbox": [
         92,
@@ -813,7 +824,7 @@
       "order": 18,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ylc7u54z",
+      "aid": "sh/s72x4nap",
       "id": "18",
       "bbox": [
         106,
@@ -822,117 +833,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Target live signal stream",
-      "textPreview": "Target live signal stream",
-      "resolvedFontSize": 9.51,
-      "resolvedTextStyle": {
-        "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
-        "alignment": "left",
-        "verticalAlignment": "middle",
-        "insets": {
-          "top": 0,
-          "right": 0,
-          "bottom": 0,
-          "left": 0
-        }
-      },
-      "textLayout": {
-        "lineCount": 1,
-        "lines": [
-          {
-            "index": 1,
-            "text": "Target live signal stream"
-          }
-        ]
-      },
-      "paragraphs": [
-        {
-          "index": 1,
-          "text": "Target live signal stream",
-          "resolvedTextStyle": {
-            "fontSize": 9.51,
-            "typeface": "Aptos",
-            "color": "#15100D",
-            "bold": true,
-            "alignment": "left"
-          },
-          "runs": [
-            {
-              "index": 1,
-              "text": "Target live signal stream",
-              "fontSize": 9.51,
-              "typeface": "Aptos",
-              "color": "#15100D",
-              "bold": true
-            }
-          ],
-          "marginLeft": 0
-        }
-      ],
-      "fillColor": "rgba(0, 0, 0, 0)",
-      "lineColor": "rgba(0, 0, 0, 0)",
-      "lineWidth": 0
-    },
-    {
-      "order": 19,
-      "kind": "shape",
-      "scope": "slide",
-      "aid": "sh/r65wjudg",
-      "id": "19",
-      "bbox": [
-        92,
-        526,
-        276,
-        24
-      ],
-      "geometry": "rect",
-      "fillColor": "#FFF9EF",
-      "lineColor": "#D5C8B8",
-      "lineWidth": 1
-    },
-    {
-      "order": 20,
-      "kind": "shape",
-      "scope": "slide",
-      "aid": "sh/fa9w3m94",
-      "id": "20",
-      "bbox": [
-        92,
-        526,
-        4,
-        24
-      ],
-      "geometry": "rect",
-      "fillColor": "#B5482E",
-      "lineColor": "rgba(0, 0, 0, 0)",
-      "lineWidth": 0
-    },
-    {
-      "order": 21,
-      "kind": "shape",
-      "scope": "slide",
-      "aid": "sh/qpg3ex0n",
-      "id": "21",
-      "bbox": [
-        106,
-        532,
-        248,
-        12
-      ],
-      "geometry": "rect",
       "text": "Dynamic information shelves",
       "textPreview": "Dynamic information shelves",
-      "resolvedFontSize": 9.51,
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -966,12 +874,13 @@
             {
               "index": 1,
               "text": "Dynamic information shelves",
-              "fontSize": 9.51,
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -980,14 +889,14 @@
       "lineWidth": 0
     },
     {
-      "order": 22,
+      "order": 19,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/xczed8v6",
-      "id": "22",
+      "aid": "sh/lszqtcj6",
+      "id": "19",
       "bbox": [
         92,
-        560,
+        526,
         276,
         24
       ],
@@ -997,44 +906,43 @@
       "lineWidth": 1
     },
     {
-      "order": 23,
+      "order": 20,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/8v6psfil",
-      "id": "23",
+      "aid": "sh/pg3ex0nu",
+      "id": "20",
       "bbox": [
         92,
-        560,
+        526,
         4,
         24
       ],
       "geometry": "rect",
-      "fillColor": "#3BA7A1",
+      "fillColor": "#B5482E",
       "lineColor": "rgba(0, 0, 0, 0)",
       "lineWidth": 0
     },
     {
-      "order": 24,
+      "order": 21,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/fyxobm58",
-      "id": "24",
+      "aid": "sh/wval87ed",
+      "id": "21",
       "bbox": [
         106,
-        566,
+        532,
         248,
         12
       ],
       "geometry": "rect",
       "text": "Fresh raw signals from today",
       "textPreview": "Fresh raw signals from today",
-      "resolvedFontSize": 9.51,
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1068,12 +976,115 @@
             {
               "index": 1,
               "text": "Fresh raw signals from today",
-              "fontSize": 9.51,
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7adsji5s",
+      "id": "22",
+      "bbox": [
+        92,
+        560,
+        276,
+        24
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFF9EF",
+      "lineColor": "#D5C8B8",
+      "lineWidth": 1
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/epkzupwb",
+      "id": "23",
+      "bbox": [
+        92,
+        560,
+        4,
+        24
+      ],
+      "geometry": "rect",
+      "fillColor": "#3BA7A1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/psfil0rq",
+      "id": "24",
+      "bbox": [
+        106,
+        566,
+        248,
+        12
+      ],
+      "geometry": "rect",
+      "text": "Live Signal First",
+      "textPreview": "Live Signal First",
+      "resolvedFontSize": 10,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Live Signal First"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Live Signal First",
+          "resolvedTextStyle": {
+            "fontSize": 9.51,
+            "typeface": "Aptos",
+            "color": "#15100D",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Live Signal First",
+              "fontSize": 10,
+              "typeface": "Aptos",
+              "color": "#15100D",
+              "bold": true
+            }
+          ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1085,7 +1096,7 @@
       "order": 25,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/qd4vmtwr",
+      "aid": "sh/w7mp0bi9",
       "id": "25",
       "bbox": [
         474,
@@ -1102,7 +1113,7 @@
       "order": 26,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/x4nap4r6",
+      "aid": "sh/7mp0bi9s",
       "id": "26",
       "bbox": [
         474,
@@ -1119,7 +1130,7 @@
       "order": 27,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/8jqh0fep",
+      "aid": "sh/e1w7mp0b",
       "id": "27",
       "bbox": [
         474,
@@ -1136,7 +1147,7 @@
       "order": 28,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/fmlkjm1c",
+      "aid": "sh/l0rqd4vm",
       "id": "28",
       "bbox": [
         502,
@@ -1145,15 +1156,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "SAME BREWING PIPELINE",
-      "textPreview": "SAME BREWING PIPELINE",
-      "resolvedFontSize": 9,
+      "text": "extractionNotes",
+      "textPreview": "extractionNotes",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#B5482E",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1168,14 +1178,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "SAME BREWING PIPELINE"
+            "text": "extractionNotes"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "SAME BREWING PIPELINE",
+          "text": "extractionNotes",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -1186,13 +1196,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "SAME BREWING PIPELINE",
-              "fontSize": 9,
+              "text": "extractionNotes",
+              "fontSize": 10,
               "typeface": "Aptos Mono",
               "color": "#B5482E",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1204,7 +1215,7 @@
       "order": 29,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/q1orytsv",
+      "aid": "sh/wfyxobm5",
       "id": "29",
       "bbox": [
         502,
@@ -1213,15 +1224,14 @@
         18
       ],
       "geometry": "rect",
-      "text": "One pipeline for both inputs",
-      "textPreview": "One pipeline for both inputs",
-      "resolvedFontSize": 15,
+      "text": "Signal → Slice → Receipt → Label",
+      "textPreview": "Signal → Slice → Receipt → Label",
+      "resolvedFontSize": 13,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 13,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1236,14 +1246,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "One pipeline for both inputs"
+            "text": "Signal → Slice → Receipt → Label"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "One pipeline for both inputs",
+          "text": "Signal → Slice → Receipt → Label",
           "resolvedTextStyle": {
             "fontSize": 15,
             "typeface": "Georgia",
@@ -1254,13 +1264,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "One pipeline for both inputs",
-              "fontSize": 15,
+              "text": "Signal → Slice → Receipt → Label",
+              "fontSize": 13,
               "typeface": "Georgia",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1272,7 +1283,7 @@
       "order": 30,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/kjm1cfa9",
+      "aid": "sh/a9w3m94f",
       "id": "30",
       "bbox": [
         502,
@@ -1289,7 +1300,7 @@
       "order": 31,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/94fu18jq",
+      "aid": "sh/zupwb2hw",
       "id": "31",
       "bbox": [
         502,
@@ -1306,7 +1317,7 @@
       "order": 32,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/2hwfyxob",
+      "aid": "sh/sfil0rqd",
       "id": "32",
       "bbox": [
         516,
@@ -1315,15 +1326,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Extracted Slice",
-      "textPreview": "Extracted Slice",
-      "resolvedFontSize": 9.51,
+      "text": "coreShift",
+      "textPreview": "coreShift",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1338,14 +1348,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Extracted Slice"
+            "text": "coreShift"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Extracted Slice",
+          "text": "coreShift",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -1356,13 +1366,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Extracted Slice",
-              "fontSize": 9.51,
+              "text": "coreShift",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1374,7 +1385,7 @@
       "order": 33,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/r2p8nqxs",
+      "aid": "sh/h0fepkzu",
       "id": "33",
       "bbox": [
         502,
@@ -1391,7 +1402,7 @@
       "order": 34,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/gvy90je9",
+      "aid": "sh/al87ed8b",
       "id": "34",
       "bbox": [
         502,
@@ -1408,7 +1419,7 @@
       "order": 35,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/9gr2p8nq",
+      "aid": "sh/z61032ls",
       "id": "35",
       "bbox": [
         516,
@@ -1417,15 +1428,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Persona",
-      "textPreview": "Persona",
-      "resolvedFontSize": 9.51,
+      "text": "whyToday",
+      "textPreview": "whyToday",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1440,14 +1450,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Persona"
+            "text": "whyToday"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Persona",
+          "text": "whyToday",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -1458,13 +1468,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Persona",
-              "fontSize": 9.51,
+              "text": "whyToday",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1476,7 +1487,7 @@
       "order": 36,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/2p8nqxs7",
+      "aid": "sh/orytsvu9",
       "id": "36",
       "bbox": [
         502,
@@ -1493,7 +1504,7 @@
       "order": 37,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ra5gbq1o",
+      "aid": "sh/hcrmhk3q",
       "id": "37",
       "bbox": [
         502,
@@ -1510,7 +1521,7 @@
       "order": 38,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/kzupwb2h",
+      "aid": "sh/6xkf6dcb",
       "id": "38",
       "bbox": [
         516,
@@ -1519,15 +1530,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Density",
-      "textPreview": "Density",
-      "resolvedFontSize": 9.51,
+      "text": "possibleUserValue",
+      "textPreview": "possibleUserValue",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1542,14 +1552,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Density"
+            "text": "possibleUserValue"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Density",
+          "text": "possibleUserValue",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -1560,13 +1570,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Density",
-              "fontSize": 9.51,
+              "text": "possibleUserValue",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1578,7 +1589,7 @@
       "order": 39,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/9knih4by",
+      "aid": "sh/zed8v6ps",
       "id": "39",
       "bbox": [
         502,
@@ -1595,7 +1606,7 @@
       "order": 40,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lc7u54zi",
+      "aid": "sh/jqh0fepk",
       "id": "40",
       "bbox": [
         502,
@@ -1612,7 +1623,7 @@
       "order": 41,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wra5gbq1",
+      "aid": "sh/q5o7qpg3",
       "id": "41",
       "bbox": [
         516,
@@ -1621,15 +1632,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Served Hot / Iced",
-      "textPreview": "Served Hot / Iced",
-      "resolvedFontSize": 9.51,
+      "text": "noiseToIgnore",
+      "textPreview": "noiseToIgnore",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1644,14 +1654,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Served Hot / Iced"
+            "text": "noiseToIgnore"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Served Hot / Iced",
+          "text": "noiseToIgnore",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -1662,13 +1672,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Served Hot / Iced",
-              "fontSize": 9.51,
+              "text": "noiseToIgnore",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1680,7 +1691,7 @@
       "order": 42,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/36hcrmhk",
+      "aid": "sh/1w7mp0bi",
       "id": "42",
       "bbox": [
         502,
@@ -1697,7 +1708,7 @@
       "order": 43,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/eloj2t83",
+      "aid": "sh/8bat47y1",
       "id": "43",
       "bbox": [
         502,
@@ -1714,7 +1725,7 @@
       "order": 44,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/l0rqd4vm",
+      "aid": "sh/j2t83itg",
       "id": "44",
       "bbox": [
         516,
@@ -1723,15 +1734,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Brew Result",
-      "textPreview": "Brew Result",
-      "resolvedFontSize": 9.51,
+      "text": "labelPotential",
+      "textPreview": "labelPotential",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1746,14 +1756,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Brew Result"
+            "text": "labelPotential"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Brew Result",
+          "text": "labelPotential",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -1764,13 +1774,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Brew Result",
-              "fontSize": 9.51,
+              "text": "labelPotential",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1782,7 +1793,7 @@
       "order": 45,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wfyxobm5",
+      "aid": "sh/qh0fepkz",
       "id": "45",
       "bbox": [
         502,
@@ -1799,7 +1810,7 @@
       "order": 46,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/7u54zido",
+      "aid": "sh/18jqh0fe",
       "id": "46",
       "bbox": [
         502,
@@ -1816,24 +1827,23 @@
       "order": 47,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ed8bat47",
+      "aid": "sh/8nqxs72x",
       "id": "47",
       "bbox": [
         516,
-        602,
+        596,
         248,
         12
       ],
       "geometry": "rect",
-      "text": "Label / Pick Up",
-      "textPreview": "Label / Pick Up",
-      "resolvedFontSize": 9.51,
+      "text": "rawTitle / rawSummary / source / fetchedAt",
+      "textPreview": "rawTitle / rawSummary / source / fetchedAt",
+      "resolvedFontSize": 9.2,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 9.2,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -1848,14 +1858,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Label / Pick Up"
+            "text": "rawTitle / rawSummary / source / fetchedAt"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Label / Pick Up",
+          "text": "rawTitle / rawSummary / source / fetchedAt",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -1866,13 +1876,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Label / Pick Up",
-              "fontSize": 9.51,
+              "text": "rawTitle / rawSummary / source / fetchedAt",
+              "fontSize": 9.2,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -1884,7 +1895,7 @@
       "order": 48,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/psfil0rq",
+      "aid": "sh/j6tovaho",
       "id": "48",
       "bbox": [
         884,
@@ -1901,7 +1912,7 @@
       "order": 49,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/w7mp0bi9",
+      "aid": "sh/ulwval87",
       "id": "49",
       "bbox": [
         884,
@@ -1918,7 +1929,7 @@
       "order": 50,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/65wjudg7",
+      "aid": "sh/4nap4r65",
       "id": "50",
       "bbox": [
         884,
@@ -1935,7 +1946,7 @@
       "order": 51,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zqtcj6to",
+      "aid": "sh/t83itgfm",
       "id": "51",
       "bbox": [
         912,
@@ -1944,15 +1955,14 @@
         14
       ],
       "geometry": "rect",
-      "text": "DEMO-SAFE FALLBACK",
-      "textPreview": "DEMO-SAFE FALLBACK",
-      "resolvedFontSize": 9,
+      "text": "DEMO-SAFE MODES",
+      "textPreview": "DEMO-SAFE MODES",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#8F321F",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -1967,14 +1977,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "DEMO-SAFE FALLBACK"
+            "text": "DEMO-SAFE MODES"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "DEMO-SAFE FALLBACK",
+          "text": "DEMO-SAFE MODES",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -1985,13 +1995,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "DEMO-SAFE FALLBACK",
-              "fontSize": 9,
+              "text": "DEMO-SAFE MODES",
+              "fontSize": 10,
               "typeface": "Aptos Mono",
               "color": "#8F321F",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2003,7 +2014,7 @@
       "order": 52,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/obm58z25",
+      "aid": "sh/mhk3q5o7",
       "id": "52",
       "bbox": [
         912,
@@ -2012,15 +2023,14 @@
         18
       ],
       "geometry": "rect",
-      "text": "Curated Signal Bank",
-      "textPreview": "Curated Signal Bank",
-      "resolvedFontSize": 15,
+      "text": "Prepared + Candidate Signals",
+      "textPreview": "Prepared + Candidate Signals",
+      "resolvedFontSize": 14,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 15,
-        "typeface": "Georgia",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 14,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -2035,14 +2045,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Curated Signal Bank"
+            "text": "Prepared + Candidate Signals"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Curated Signal Bank",
+          "text": "Prepared + Candidate Signals",
           "resolvedTextStyle": {
             "fontSize": 15,
             "typeface": "Georgia",
@@ -2053,13 +2063,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Curated Signal Bank",
-              "fontSize": 15,
+              "text": "Prepared + Candidate Signals",
+              "fontSize": 14,
               "typeface": "Georgia",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2071,7 +2082,7 @@
       "order": 53,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hwfyxobm",
+      "aid": "sh/b2hwfyxo",
       "id": "53",
       "bbox": [
         912,
@@ -2088,7 +2099,7 @@
       "order": 54,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/6xkf6dcb",
+      "aid": "sh/4byhgn29",
       "id": "54",
       "bbox": [
         912,
@@ -2105,7 +2116,7 @@
       "order": 55,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/zed8v6ps",
+      "aid": "sh/twra5gbq",
       "id": "55",
       "bbox": [
         926,
@@ -2114,15 +2125,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Preloaded xAI / Grok signals",
-      "textPreview": "Preloaded xAI / Grok signals",
-      "resolvedFontSize": 9.51,
+      "text": "Default prepared signals: /",
+      "textPreview": "Default prepared signals: /",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2137,14 +2147,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Preloaded xAI / Grok signals"
+            "text": "Default prepared signals: /"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Preloaded xAI / Grok signals",
+          "text": "Default prepared signals: /",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -2155,13 +2165,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Preloaded xAI / Grok signals",
-              "fontSize": 9.51,
+              "text": "Default prepared signals: /",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2173,7 +2184,7 @@
       "order": 56,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/oza1gvy9",
+      "aid": "sh/m58z25kb",
       "id": "56",
       "bbox": [
         912,
@@ -2190,7 +2201,7 @@
       "order": 57,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/hk3q5o7q",
+      "aid": "sh/bq1oryts",
       "id": "57",
       "bbox": [
         912,
@@ -2207,7 +2218,7 @@
       "order": 58,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/al87ed8b",
+      "aid": "sh/47y1kre1",
       "id": "58",
       "bbox": [
         926,
@@ -2216,15 +2227,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "6 shelves × 9 raw signals",
-      "textPreview": "6 shelves × 9 raw signals",
-      "resolvedFontSize": 9.51,
+      "text": "Candidate mode: /?signals=candidate",
+      "textPreview": "Candidate mode: /?signals=candidate",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2239,14 +2249,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "6 shelves × 9 raw signals"
+            "text": "Candidate mode: /?signals=candidate"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "6 shelves × 9 raw signals",
+          "text": "Candidate mode: /?signals=candidate",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -2257,13 +2267,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "6 shelves × 9 raw signals",
-              "fontSize": 9.51,
+              "text": "Candidate mode: /?signals=candidate",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2275,7 +2286,7 @@
       "order": 59,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/z61032ls",
+      "aid": "sh/tsvu9kni",
       "id": "59",
       "bbox": [
         912,
@@ -2292,7 +2303,7 @@
       "order": 60,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bi9s36hc",
+      "aid": "sh/xkf6dcbu",
       "id": "60",
       "bbox": [
         912,
@@ -2309,7 +2320,7 @@
       "order": 61,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/ixczed8v",
+      "aid": "sh/4zidonyd",
       "id": "61",
       "bbox": [
         926,
@@ -2318,15 +2329,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "No network / API risk on stage",
-      "textPreview": "No network / API risk on stage",
-      "resolvedFontSize": 9.51,
+      "text": "6 shelves × 12 signals = 72",
+      "textPreview": "6 shelves × 12 signals = 72",
+      "resolvedFontSize": 10,
       "resolvedTextStyle": {
         "anchor": 2,
-        "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "fontSize": 10,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2341,14 +2351,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "No network / API risk on stage"
+            "text": "6 shelves × 12 signals = 72"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "No network / API risk on stage",
+          "text": "6 shelves × 12 signals = 72",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -2359,13 +2369,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "No network / API risk on stage",
-              "fontSize": 9.51,
+              "text": "6 shelves × 12 signals = 72",
+              "fontSize": 10,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2377,7 +2388,7 @@
       "order": 62,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/tovahoza",
+      "aid": "sh/fepkzupw",
       "id": "62",
       "bbox": [
         912,
@@ -2394,7 +2405,7 @@
       "order": 63,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/032lszqt",
+      "aid": "sh/mtwra5gb",
       "id": "63",
       "bbox": [
         912,
@@ -2411,7 +2422,7 @@
       "order": 64,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/bulwval8",
+      "aid": "sh/xc3ylc7u",
       "id": "64",
       "bbox": [
         926,
@@ -2420,15 +2431,14 @@
         12
       ],
       "geometry": "rect",
-      "text": "Same output experience",
-      "textPreview": "Same output experience",
+      "text": "Public Render demo; local NIIMBOT print",
+      "textPreview": "Public Render demo; local NIIMBOT print",
       "resolvedFontSize": 9.51,
       "resolvedTextStyle": {
         "anchor": 2,
         "fontSize": 9.51,
-        "typeface": "Aptos",
-        "color": "#15100D",
-        "bold": true,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "middle",
         "insets": {
@@ -2443,14 +2453,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "Same output experience"
+            "text": "Public Render demo; local NIIMBOT print"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "Same output experience",
+          "text": "Public Render demo; local NIIMBOT print",
           "resolvedTextStyle": {
             "fontSize": 9.51,
             "typeface": "Aptos",
@@ -2461,13 +2471,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "Same output experience",
+              "text": "Public Render demo; local NIIMBOT print",
               "fontSize": 9.51,
               "typeface": "Aptos",
               "color": "#15100D",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2479,7 +2490,7 @@
       "order": 65,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/i9s36hcr",
+      "aid": "sh/4r65wjud",
       "id": "65",
       "bbox": [
         396,
@@ -2496,7 +2507,7 @@
       "order": 66,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/p0bi9s36",
+      "aid": "sh/f6dcbulw",
       "id": "66",
       "bbox": [
         806,
@@ -2513,7 +2524,7 @@
       "order": 67,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/0fepkzup",
+      "aid": "sh/mlkjm1cf",
       "id": "67",
       "bbox": [
         410,
@@ -2522,16 +2533,15 @@
         14
       ],
       "geometry": "rect",
-      "text": "input",
-      "textPreview": "input",
-      "resolvedFontSize": 9,
+      "text": "live input",
+      "textPreview": "live input",
+      "resolvedFontSize": 8,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#CDBFAE",
-        "bold": true,
-        "alignment": "center",
+        "fontSize": 8,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -2545,14 +2555,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "input"
+            "text": "live input"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "input",
+          "text": "live input",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -2563,13 +2573,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "input",
-              "fontSize": 9,
+              "text": "live input",
+              "fontSize": 8,
               "typeface": "Aptos Mono",
               "color": "#CDBFAE",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2581,7 +2592,7 @@
       "order": 68,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/byhgn29g",
+      "aid": "sh/x0nuxc3y",
       "id": "68",
       "bbox": [
         812,
@@ -2590,16 +2601,15 @@
         14
       ],
       "geometry": "rect",
-      "text": "fallback input",
-      "textPreview": "fallback input",
-      "resolvedFontSize": 9,
+      "text": "fallback modes",
+      "textPreview": "fallback modes",
+      "resolvedFontSize": 8,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 9,
-        "typeface": "Aptos Mono",
-        "color": "#CDBFAE",
-        "bold": true,
-        "alignment": "center",
+        "fontSize": 8,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -2613,14 +2623,14 @@
         "lines": [
           {
             "index": 1,
-            "text": "fallback input"
+            "text": "fallback modes"
           }
         ]
       },
       "paragraphs": [
         {
           "index": 1,
-          "text": "fallback input",
+          "text": "fallback modes",
           "resolvedTextStyle": {
             "fontSize": 9,
             "typeface": "Aptos Mono",
@@ -2631,13 +2641,14 @@
           "runs": [
             {
               "index": 1,
-              "text": "fallback input",
-              "fontSize": 9,
+              "text": "fallback modes",
+              "fontSize": 8,
               "typeface": "Aptos Mono",
               "color": "#CDBFAE",
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2649,7 +2660,7 @@
       "order": 69,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/idonyd0z",
+      "aid": "sh/4fu18jqh",
       "id": "69",
       "bbox": [
         72,
@@ -2666,7 +2677,7 @@
       "order": 70,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/wb2hwfyx",
+      "aid": "sh/ed8v6psf",
       "id": "70",
       "bbox": [
         116,
@@ -2677,13 +2688,12 @@
       "geometry": "rect",
       "text": "TIME SLICE COFFEE",
       "textPreview": "TIME SLICE COFFEE",
-      "resolvedFontSize": 10,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 10,
-        "typeface": "Aptos Mono",
-        "color": "#BEB4A8",
-        "bold": true,
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
         "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
@@ -2723,6 +2733,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
@@ -2734,7 +2745,7 @@
       "order": 71,
       "kind": "shape",
       "scope": "slide",
-      "aid": "sh/lwval87e",
+      "aid": "sh/7y1kre1w",
       "id": "71",
       "bbox": [
         1136,
@@ -2745,14 +2756,13 @@
       "geometry": "rect",
       "text": "07",
       "textPreview": "07",
-      "resolvedFontSize": 12,
+      "resolvedFontSize": 24,
       "resolvedTextStyle": {
         "anchor": 1,
-        "fontSize": 12,
-        "typeface": "Aptos Mono",
-        "color": "#BEB4A8",
-        "bold": true,
-        "alignment": "right",
+        "fontSize": 24,
+        "typeface": "Calibri",
+        "color": "tx1",
+        "alignment": "left",
         "verticalAlignment": "top",
         "insets": {
           "top": 0,
@@ -2791,6 +2801,7 @@
               "bold": true
             }
           ],
+          "bulletCharacter": "",
           "marginLeft": 0
         }
       ],
