@@ -94,9 +94,11 @@ Start Command: node server.js
 
 `server.js` 会读取 Render 提供的 `process.env.PORT`，并监听 `0.0.0.0`，以便公网访问。
 
-## Printing
+## Printing Notes / 打印说明
 
 线上网页可以展示 50×70 标签，也可以打开浏览器打印预览。
+
+线上 Demo 可以完整展示网页流程、Time Slice Receipt 和 50×70 标签预览；真实 NIIMBOT 打印将在现场使用本地浏览器 + NIIMBOT B1 Pro 演示。线上访问者点击 Print Label 时，只会调用自己设备的浏览器打印环境。
 
 真实 NIIMBOT B1 Pro 打印仍建议本地演示：
 
@@ -128,4 +130,3 @@ Key runtime modes:
 
 - Default: `https://qingsong-time-slice-coffee.onrender.com`
 - Candidate: `https://qingsong-time-slice-coffee.onrender.com/?signals=candidate`
-
