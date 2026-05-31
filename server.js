@@ -3,7 +3,8 @@ const http = require("node:http");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 
-const port = Number(process.env.PORT || 8080);
+const PORT = process.env.PORT || 8080;
+const HOST = process.env.HOST || "0.0.0.0";
 const root = process.cwd();
 
 const mimeTypes = {
@@ -448,6 +449,6 @@ const server = http.createServer((request, response) => {
   serveStatic(request, response);
 });
 
-server.listen(port, "127.0.0.1", () => {
-  console.log(`Time Slice Coffee demo running at http://127.0.0.1:${port}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Time Slice Coffee demo running on http://${HOST}:${PORT}`);
 });
