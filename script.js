@@ -860,6 +860,20 @@ function trimLabelCopy(value, maxLength) {
     .trim();
 }
 
+function trimNoteCopy(value, maxLength) {
+  const text = cleanLabelCopy(value);
+  if (text.length <= maxLength) return text;
+
+  const nextChar = text[maxLength] || "";
+  let fitted = text.slice(0, maxLength);
+
+  if (/[A-Za-z0-9_-]/.test(nextChar) && /[A-Za-z0-9_-]$/.test(fitted)) {
+    fitted = fitted.replace(/\s?[A-Za-z0-9_-]+$/g, "");
+  }
+
+  return fitted.replace(/[，、：；,.:/\s]+$/g, "").trim();
+}
+
 function ensureLabelSentence(value) {
   const text = cleanLabelCopy(value).replace(/[.。]+$/g, "");
   return text ? `${text}。` : "";
@@ -867,6 +881,11 @@ function ensureLabelSentence(value) {
 
 function fitLabelSentence(value, maxLength, fallback) {
   const fitted = trimLabelCopy(value, maxLength);
+  return ensureLabelSentence(fitted || fallback);
+}
+
+function fitNoteSentence(value, maxLength, fallback) {
+  const fitted = trimNoteCopy(value, maxLength);
   return ensureLabelSentence(fitted || fallback);
 }
 
@@ -907,6 +926,16 @@ function getLabelRelationNoun(signal) {
   return relationBySignalShelf[signal?.shelfId] || "关键变化";
 }
 
+function getSignalExtractionNotes(signal) {
+  return signal?.extractionNotes && typeof signal.extractionNotes === "object"
+    ? signal.extractionNotes
+    : null;
+}
+
+function getCleanNoteField(signal, field) {
+  return cleanLabelCopy(getSignalExtractionNotes(signal)?.[field]);
+}
+
 function getSignalPurposeSubject(signal, maxLength = 10) {
   const source =
     signal?.rawTitleZh ||
@@ -933,6 +962,11 @@ function getSignalContextText(signal, candidateTitle = "") {
     signal?.rawSummary,
     signal?.whyWorthWatchingZh,
     signal?.whyWorthWatching,
+    signal?.extractionNotes?.labelPotential,
+    signal?.extractionNotes?.coreShift,
+    signal?.extractionNotes?.whyToday,
+    signal?.extractionNotes?.possibleUserValue,
+    signal?.extractionNotes?.noiseToIgnore,
     signal?.shelfTitle,
   ].map(cleanLabelCopy).filter(Boolean).join(" ");
 }
@@ -962,6 +996,9 @@ function isStructuralSliceTitle(title) {
 }
 
 function getStructuralSliceTitle(signal, candidateTitle = "") {
+  const noteCoreShift = getCleanNoteField(signal, "coreShift");
+  if (noteCoreShift) return ensureLabelSentence(noteCoreShift);
+
   const context = getSignalContextText(signal, candidateTitle);
 
   if (/客服|工单/.test(context) && /agent|Agent|AI/.test(context)) {
@@ -1019,7 +1056,7 @@ function safeLabelTitleForPrint(title, signal) {
     ].some((phrase) => text.includes(phrase));
   };
 
-  const pickSafeClause = (value) => {
+  const pickSafeClause = (value, maxLength = 28) => {
     const text = cleanLabelCopy(value)
       .replace(/[。.!?！？]+$/g, "")
       .replace(/账号|用户|帖子|博主/g, "")
@@ -1035,25 +1072,25 @@ function safeLabelTitleForPrint(title, signal) {
       .split(/[，,：:；;]/)
       .map((clause) => clause.trim())
       .filter(Boolean);
-    const safeClause = clauses.find((clause) => clause.length >= 6 && clause.length <= 24 && !isBrokenTitle(clause));
+    const safeClause = clauses.find((clause) => clause.length >= 6 && clause.length <= maxLength && !isBrokenTitle(clause));
     if (safeClause) return safeClause;
-    if (firstSentence.length <= 28 && !isBrokenTitle(firstSentence)) return firstSentence;
+    if (firstSentence.length <= maxLength && !isBrokenTitle(firstSentence)) return firstSentence;
 
     return "";
   };
 
   const candidates = [
-    signal?.extractionNotes?.labelPotential,
-    signal?.labelPotential,
-    signal?.rawTitleZh,
-    signal?.rawTitle,
-    signal?.rawSummaryZh,
-    signal?.rawSummary,
-    title,
+    { value: signal?.extractionNotes?.labelPotential, maxLength: 34 },
+    { value: signal?.labelPotential, maxLength: 34 },
+    { value: signal?.rawTitleZh, maxLength: 28 },
+    { value: signal?.rawTitle, maxLength: 28 },
+    { value: signal?.rawSummaryZh, maxLength: 28 },
+    { value: signal?.rawSummary, maxLength: 28 },
+    { value: title, maxLength: 28 },
   ];
 
   for (const candidate of candidates) {
-    const safeTitle = pickSafeClause(candidate);
+    const safeTitle = pickSafeClause(candidate.value, candidate.maxLength);
     if (safeTitle) return ensureLabelSentence(safeTitle);
   }
 
@@ -1064,7 +1101,33 @@ function buildLabelSliceTitle(signal, intensity, candidateTitle) {
   return safeLabelTitleForPrint(candidateTitle, signal);
 }
 
+function buildExtractionIdentityValue(identity, signal) {
+  const notes = getSignalExtractionNotes(signal);
+  if (!notes) return "";
+
+  const coreShift = cleanLabelCopy(notes.coreShift);
+  const whyToday = cleanLabelCopy(notes.whyToday);
+  const possibleUserValue = cleanLabelCopy(notes.possibleUserValue);
+  const noiseToIgnore = cleanLabelCopy(notes.noiseToIgnore);
+  const shortWhyToday = trimSentenceEnd(trimNoteCopy(whyToday, 14));
+  const shortNoiseToIgnore = trimSentenceEnd(trimNoteCopy(noiseToIgnore, 10));
+
+  const lines = {
+    student: whyToday || coreShift,
+    builder: possibleUserValue || coreShift,
+    designer: possibleUserValue || coreShift,
+    founder: possibleUserValue || whyToday || coreShift,
+    vc: whyToday || noiseToIgnore || coreShift,
+    everyday: noiseToIgnore || coreShift,
+  };
+
+  return lines[identity?.id] || possibleUserValue || whyToday || coreShift;
+}
+
 function buildLabelIdentityFallback(identity, signal) {
+  const noteValue = buildExtractionIdentityValue(identity, signal);
+  if (noteValue) return ensureLabelSentence(noteValue);
+
   const subject = getSignalPurposeSubject(signal, 10);
   const lines = {
     student: `理解${subject}带来的关键变化。`,
@@ -1091,58 +1154,94 @@ function buildLabelFocusFallback(identity) {
   return lines[identity?.id] || "保留一个真实判断。";
 }
 
+function buildSignalKeywords(signal, fallbackKeywords = []) {
+  const notes = getSignalExtractionNotes(signal);
+  const source = [
+    signal?.rawTitleZh,
+    signal?.rawTitle,
+    signal?.shelfTitle,
+    notes?.labelPotential,
+    notes?.coreShift,
+  ].map(cleanLabelCopy).filter(Boolean).join(" ");
+  const rules = [
+    ["Claude Code", /Claude Code/i],
+    ["Cursor", /Cursor/i],
+    ["Supabase", /Supabase/i],
+    ["MCP", /\bMCP\b/i],
+    ["Figma", /Figma/i],
+    ["Firefly", /Firefly|Adobe/i],
+    ["GPU", /\bGPU\b|NVIDIA/i],
+    ["Power", /电力|变压器|power/i],
+    ["Agent", /Agent|agent/i],
+    ["Research", /研究|research/i],
+    ["Workflow", /工作流|workflow/i],
+    ["Provenance", /provenance|来源证明|Content Credentials/i],
+    ["Financing", /融资|贷款|债券|financing/i],
+  ];
+  const keywords = rules
+    .filter(([, pattern]) => pattern.test(source))
+    .map(([keyword]) => keyword);
+  const merged = [...keywords, ...fallbackKeywords].filter(Boolean);
+
+  return Array.from(new Set(merged)).slice(0, 3);
+}
+
 function getPurposeBrewCopy(identity, signal, label) {
   const subject = getSignalPurposeSubject(signal, 14);
+  const notes = getSignalExtractionNotes(signal);
+  const noteTitle = notes ? trimSentenceEnd(notes.labelPotential || notes.coreShift) : "";
   const identityValue = buildLabelIdentityFallback(identity, signal);
-  const todayFocus = buildLabelFocusFallback(identity);
+  const todayFocus = getCleanNoteField(signal, "coreShift") || buildLabelFocusFallback(identity);
+  const keywords = buildSignalKeywords(signal);
   const copyByIdentity = {
     student: {
-      title: "先理解这一点",
+      title: noteTitle || "先理解这一点",
       whyImportant: `从${subject}里看今天该学什么。`,
       relationToYou: identityValue,
       focusNow: todayFocus,
-      keywords: ["Learn", "Skill", "Signal"],
+      keywords: buildSignalKeywords(signal, ["Learn", "Skill", "Signal"]),
     },
     builder: {
-      title: "看见新的做法",
+      title: noteTitle || "看见新的做法",
       whyImportant: `从${subject}里看下一步怎么做。`,
       relationToYou: identityValue,
       focusNow: todayFocus,
-      keywords: ["Build", "Workflow", "Action"],
+      keywords: buildSignalKeywords(signal, ["Build", "Workflow", "Action"]),
     },
     designer: {
-      title: "找到一个表达角度",
+      title: noteTitle || "找到一个表达角度",
       whyImportant: `从${subject}里看表达可以怎么变。`,
       relationToYou: identityValue,
       focusNow: todayFocus,
-      keywords: ["Create", "Taste", "Judgment"],
+      keywords: buildSignalKeywords(signal, ["Create", "Design", "Judgment"]),
     },
     founder: {
-      title: "机会可能在这里",
+      title: noteTitle || "机会可能在这里",
       whyImportant: `从${subject}里看需求入口在哪里。`,
       relationToYou: identityValue,
       focusNow: todayFocus,
-      keywords: ["Opportunity", "Need", "Entry"],
+      keywords: buildSignalKeywords(signal, ["Opportunity", "Need", "Entry"]),
     },
     vc: {
-      title: "值不值得继续看",
+      title: noteTitle || "值不值得继续看",
       whyImportant: `从${subject}里看是否值得跟进。`,
       relationToYou: identityValue,
       focusNow: todayFocus,
-      keywords: ["Decision", "Risk", "Follow"],
+      keywords: buildSignalKeywords(signal, ["Decision", "Risk", "Follow"]),
     },
     everyday: {
-      title: "今天先带走这一点",
+      title: noteTitle || "今天先带走这一点",
       whyImportant: `从${subject}里只留真正相关的一点。`,
       relationToYou: identityValue,
       focusNow: todayFocus,
-      keywords: ["FOMO", "Focus", "Calm"],
+      keywords: buildSignalKeywords(signal, ["Signal", "Focus", "Calm"]),
     },
   };
 
   return {
     ...(copyByIdentity[identity?.id] || copyByIdentity.everyday),
-    coreLine: label?.sliceTitle || signal?.coreJudgment || signal?.sliceTitle || "",
+    keywords: (copyByIdentity[identity?.id] || copyByIdentity.everyday).keywords || keywords,
+    coreLine: label?.sliceTitle || getCleanNoteField(signal, "coreShift") || signal?.coreJudgment || signal?.sliceTitle || "",
   };
 }
 
@@ -1184,6 +1283,54 @@ function getReceiptResultLines({ forceComplete = false } = {}) {
   const canShowStrength = hasSelectedStrength || forceComplete;
   const canShowServe = hasSelectedServeStyle || forceComplete;
   const hotTone = canShowServe && serveStyle === "hot";
+  const notes = getSignalExtractionNotes(selectedSignal);
+
+  if (notes) {
+    const whyToday = cleanLabelCopy(notes.whyToday);
+    const possibleUserValue = cleanLabelCopy(notes.possibleUserValue);
+    const noiseToIgnore = cleanLabelCopy(notes.noiseToIgnore);
+    const noteIdentityValue = buildExtractionIdentityValue(selectedIdentity, selectedSignal);
+    const copyByNotes = {
+      student: {
+        core: whyToday || structuralCore,
+        reason: structuralCore,
+        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "记下一个要理解的问题。",
+      },
+      builder: {
+        core: possibleUserValue || structuralCore,
+        reason: structuralCore,
+        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "选一个步骤做小测试。",
+      },
+      designer: {
+        core: possibleUserValue || structuralCore,
+        reason: structuralCore,
+        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "留下一个不能外包的判断。",
+      },
+      founder: {
+        core: possibleUserValue || whyToday || structuralCore,
+        reason: structuralCore,
+        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "选一个可测试的入口。",
+      },
+      vc: {
+        core: whyToday || structuralCore,
+        reason: noiseToIgnore ? `判断时先避开：${noiseToIgnore}` : structuralCore,
+        detail: "留下一个跟进依据。",
+      },
+      everyday: {
+        core: noteIdentityValue || structuralCore,
+        reason: noiseToIgnore ? `先不用追：${noiseToIgnore}` : "其他噪音可以先不用追。",
+        detail: structuralCore,
+      },
+    };
+    const noteCopy = copyByNotes[identityId] || copyByNotes.everyday;
+
+    if (!canShowStrength) return [];
+    if (intensity === "light") return [ensureLabelSentence(noteCopy.core)];
+    if (intensity === "double") return [noteCopy.core, noteCopy.reason, noteCopy.detail].map(ensureLabelSentence);
+
+    return [noteCopy.core, noteCopy.reason].map(ensureLabelSentence);
+  }
+
   const copyByIdentity = {
     student: {
       core: hotTone ? `先带走：${structuralCore}。` : `今天值得理解的是：${structuralCore}。`,
@@ -1333,8 +1480,9 @@ function getReceiptCompletionMarkup(value) {
 function buildLabelIdentityValue(base, identity, signal, intensity) {
   const normalizedIntensity = normalizeLabelIntensity(intensity);
   const limits = getLabelCopyLimits(normalizedIntensity);
+  const noteValue = buildExtractionIdentityValue(identity, signal);
   const fallback = normalizedIntensity === "light"
-    ? "一句今天要带走的判断。"
+    ? noteValue || "一句今天要带走的判断。"
     : buildLabelIdentityFallback(identity, signal);
 
   return fitLabelSentence(fallback, limits.identityValue, fallback);
@@ -1345,7 +1493,7 @@ function buildLabelTodayFocus(identity, signal, intensity, serveStyle) {
   if (normalizedIntensity !== "double") return "";
 
   const limits = getLabelCopyLimits(normalizedIntensity);
-  const fallback = buildLabelFocusFallback(identity);
+  const fallback = getCleanNoteField(signal, "coreShift") || buildLabelFocusFallback(identity);
   const servePrompt = normalizeLabelServeStyle(serveStyle) === "iced" ? "看清证据。" : "";
 
   return fitLabelSentence(`${fallback.replace(/[。]+$/g, "")}${servePrompt}`, limits.todayFocus, fallback);
@@ -1356,14 +1504,16 @@ function fitTimeSliceLabelCopy(label, identity = selectedIdentity, signal = sele
   const serveStyle = normalizeLabelServeStyle(label?.serveStyle);
   const limits = getLabelCopyLimits(intensity);
   const sliceTitle = buildLabelSliceTitle(signal, intensity, label?.sliceTitle);
+  const noteIdentityValue = buildExtractionIdentityValue(identity, signal);
+  const fitCopySentence = getSignalExtractionNotes(signal) ? fitNoteSentence : fitLabelSentence;
   const identityFallback = intensity === "light"
-    ? "一句今天要带走的判断。"
-    : "先判断这条变化与你有什么关系。";
+    ? noteIdentityValue || "一句今天要带走的判断。"
+    : noteIdentityValue || "先判断这条变化与你有什么关系。";
   const identityValue = intensity === "light"
-    ? fitLabelSentence(label?.identityValue || identityFallback, limits.identityValue, identityFallback)
-    : fitLabelSentence(label?.identityValue, limits.identityValue, identityFallback);
+    ? fitCopySentence(label?.identityValue || identityFallback, limits.identityValue, identityFallback)
+    : fitCopySentence(label?.identityValue, limits.identityValue, identityFallback);
   const todayFocus = intensity === "double"
-    ? fitLabelSentence(label?.todayFocus, limits.todayFocus, "保留一个真实判断。")
+    ? fitCopySentence(label?.todayFocus, limits.todayFocus, getCleanNoteField(signal, "coreShift") || "保留一个真实判断。")
     : "";
   const fittedLabel = {
     ...label,
@@ -1412,8 +1562,10 @@ function buildFallbackTimeSliceLabel() {
     sourceSignal: getSignalRawTitle(selectedSignal) || "No source signal available",
     sliceTitle: selectedSignal?.sliceTitle || "今天只看一条关键变化。",
     identity,
-    identityValue: intensity === "light" ? "一句今天要带走的判断。" : buildLabelIdentityFallback(selectedIdentity, selectedSignal),
-    todayFocus: intensity === "double" ? buildLabelFocusFallback(selectedIdentity) : "",
+    identityValue: intensity === "light"
+      ? buildExtractionIdentityValue(selectedIdentity, selectedSignal) || "一句今天要带走的判断。"
+      : buildLabelIdentityFallback(selectedIdentity, selectedSignal),
+    todayFocus: intensity === "double" ? getCleanNoteField(selectedSignal, "coreShift") || buildLabelFocusFallback(selectedIdentity) : "",
     intensity,
     serveStyle,
     signalMark: selectedSignal?.shelfId || "life-signals",
