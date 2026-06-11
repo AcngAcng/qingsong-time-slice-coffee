@@ -2356,37 +2356,262 @@ function getDevLabelServeFooter(serveStyle) {
   return normalizeLabelServeStyle(serveStyle) === "iced" ? "SERVED ICED / CLEAR CUP" : "SERVED HOT / PAPER CUP";
 }
 
-function formatLabelSourceUrl(sourceUrl) {
-  const rawSourceUrl = cleanLabelCopy(sourceUrl);
-  if (!rawSourceUrl) return null;
+function decodeSourceQuery(rawQuery) {
+  const query = cleanLabelCopy(rawQuery).replace(/\+/g, " ");
 
-  if (/^grok-search:\/\//i.test(rawSourceUrl)) {
-    const rawQuery = rawSourceUrl.replace(/^grok-search:\/\//i, "").replace(/^\/+/, "");
-    let query = rawQuery.replace(/\+/g, " ");
+  try {
+    return decodeURIComponent(query);
+  } catch {
+    return query;
+  }
+}
 
-    try {
-      query = decodeURIComponent(query);
-    } catch {
-      query = rawQuery;
+function getQrTargetUrl(rawUrl) {
+  const sourceUrl = cleanLabelCopy(rawUrl);
+  if (!sourceUrl) return "";
+
+  if (/^https?:\/\//i.test(sourceUrl)) {
+    return sourceUrl;
+  }
+
+  if (/^grok-search:\/\//i.test(sourceUrl)) {
+    const rawQuery = sourceUrl.replace(/^grok-search:\/\//i, "").replace(/^\/+/, "");
+    const query = decodeSourceQuery(rawQuery);
+    return query ? `https://x.com/search?q=${encodeURIComponent(query)}` : "";
+  }
+
+  return "";
+}
+
+function getSourceAccessScanLabel(rawUrl, targetUrl) {
+  const sourceUrl = cleanLabelCopy(rawUrl);
+  const qrTargetUrl = cleanLabelCopy(targetUrl);
+
+  if (/^grok-search:\/\//i.test(sourceUrl)) {
+    return "SCAN SEARCH QUERY";
+  }
+
+  if (/^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/search/i.test(qrTargetUrl)) {
+    return "SCAN X SEARCH";
+  }
+
+  return "SCAN ORIGINAL";
+}
+
+function getQrBytes(value) {
+  if (typeof TextEncoder !== "undefined") {
+    return Array.from(new TextEncoder().encode(value));
+  }
+
+  return Array.from(unescape(encodeURIComponent(value))).map((char) => char.charCodeAt(0));
+}
+
+function appendQrBits(bitBuffer, value, bitLength) {
+  for (let i = bitLength - 1; i >= 0; i -= 1) {
+    bitBuffer.push((value >>> i) & 1);
+  }
+}
+
+function multiplyQrGalois(x, y) {
+  let result = 0;
+
+  for (let i = 7; i >= 0; i -= 1) {
+    result = (result << 1) ^ ((result >>> 7) * 0x11d);
+    result ^= ((y >>> i) & 1) * x;
+  }
+
+  return result & 0xff;
+}
+
+function getQrErrorCorrectionDivisor(degree) {
+  const result = Array(degree).fill(0);
+  result[degree - 1] = 1;
+  let root = 1;
+
+  for (let i = 0; i < degree; i += 1) {
+    for (let j = 0; j < result.length; j += 1) {
+      result[j] = multiplyQrGalois(result[j], root);
+      if (j + 1 < result.length) {
+        result[j] ^= result[j + 1];
+      }
     }
-
-    return {
-      label: "GROK QUERY",
-      value: cleanLabelCopy(query) || rawQuery,
-    };
+    root = multiplyQrGalois(root, 2);
   }
 
-  if (/^https?:\/\//i.test(rawSourceUrl)) {
-    return {
-      label: "URL",
-      value: rawSourceUrl,
-    };
+  return result;
+}
+
+function getQrErrorCorrectionCodewords(dataCodewords, degree) {
+  const divisor = getQrErrorCorrectionDivisor(degree);
+  const result = Array(degree).fill(0);
+
+  dataCodewords.forEach((codeword) => {
+    const factor = codeword ^ result.shift();
+    result.push(0);
+    divisor.forEach((coefficient, index) => {
+      result[index] ^= multiplyQrGalois(coefficient, factor);
+    });
+  });
+
+  return result;
+}
+
+function getQrFormatBits(errorCorrectionBits = 1, mask = 0) {
+  const data = (errorCorrectionBits << 3) | mask;
+  let remainder = data;
+
+  for (let i = 0; i < 10; i += 1) {
+    remainder = (remainder << 1) ^ (((remainder >>> 9) & 1) * 0x537);
   }
 
-  return {
-    label: "SOURCE URL",
-    value: rawSourceUrl,
+  return ((data << 10) | remainder) ^ 0x5412;
+}
+
+function buildQrMatrix(text) {
+  const version = 5;
+  const size = 17 + version * 4;
+  const dataCodewordCount = 108;
+  const errorCorrectionCodewordCount = 26;
+  const dataBytes = getQrBytes(text);
+
+  if (dataBytes.length > 106) {
+    return null;
+  }
+
+  const bitBuffer = [];
+  appendQrBits(bitBuffer, 0x4, 4);
+  appendQrBits(bitBuffer, dataBytes.length, 8);
+  dataBytes.forEach((byte) => appendQrBits(bitBuffer, byte, 8));
+  const dataCapacityBits = dataCodewordCount * 8;
+  appendQrBits(bitBuffer, 0, Math.min(4, dataCapacityBits - bitBuffer.length));
+
+  while (bitBuffer.length % 8 !== 0) {
+    bitBuffer.push(0);
+  }
+
+  const dataCodewords = [];
+  for (let i = 0; i < bitBuffer.length; i += 8) {
+    dataCodewords.push(bitBuffer.slice(i, i + 8).reduce((sum, bit) => (sum << 1) | bit, 0));
+  }
+
+  for (let padByte = 0xec; dataCodewords.length < dataCodewordCount; padByte ^= 0xfd) {
+    dataCodewords.push(padByte);
+  }
+
+  const codewords = dataCodewords.concat(getQrErrorCorrectionCodewords(dataCodewords, errorCorrectionCodewordCount));
+  const modules = Array.from({ length: size }, () => Array(size).fill(false));
+  const isFunction = Array.from({ length: size }, () => Array(size).fill(false));
+
+  const setModule = (x, y, isDark, isFunctionModule = true) => {
+    if (x < 0 || y < 0 || x >= size || y >= size) return;
+    modules[y][x] = Boolean(isDark);
+    if (isFunctionModule) isFunction[y][x] = true;
   };
+
+  const drawFinder = (left, top) => {
+    for (let y = -1; y <= 7; y += 1) {
+      for (let x = -1; x <= 7; x += 1) {
+        const xx = left + x;
+        const yy = top + y;
+        const isInside = x >= 0 && x <= 6 && y >= 0 && y <= 6;
+        const isDark = isInside && (x === 0 || x === 6 || y === 0 || y === 6 || (x >= 2 && x <= 4 && y >= 2 && y <= 4));
+        setModule(xx, yy, isDark);
+      }
+    }
+  };
+
+  const drawAlignment = (centerX, centerY) => {
+    for (let y = -2; y <= 2; y += 1) {
+      for (let x = -2; x <= 2; x += 1) {
+        setModule(centerX + x, centerY + y, Math.max(Math.abs(x), Math.abs(y)) !== 1);
+      }
+    }
+  };
+
+  drawFinder(0, 0);
+  drawFinder(size - 7, 0);
+  drawFinder(0, size - 7);
+  drawAlignment(30, 30);
+
+  for (let i = 8; i < size - 8; i += 1) {
+    setModule(i, 6, i % 2 === 0);
+    setModule(6, i, i % 2 === 0);
+  }
+
+  setModule(8, size - 8, true);
+
+  const formatBits = getQrFormatBits(1, 0);
+  for (let i = 0; i <= 5; i += 1) setModule(8, i, ((formatBits >>> i) & 1) !== 0);
+  setModule(8, 7, ((formatBits >>> 6) & 1) !== 0);
+  setModule(8, 8, ((formatBits >>> 7) & 1) !== 0);
+  setModule(7, 8, ((formatBits >>> 8) & 1) !== 0);
+  for (let i = 9; i < 15; i += 1) setModule(14 - i, 8, ((formatBits >>> i) & 1) !== 0);
+  for (let i = 0; i < 8; i += 1) setModule(size - 1 - i, 8, ((formatBits >>> i) & 1) !== 0);
+  for (let i = 8; i < 15; i += 1) setModule(8, size - 15 + i, ((formatBits >>> i) & 1) !== 0);
+
+  const dataBits = codewords.flatMap((codeword) => {
+    const bits = [];
+    appendQrBits(bits, codeword, 8);
+    return bits;
+  });
+  let bitIndex = 0;
+  let upward = true;
+
+  for (let right = size - 1; right >= 1; right -= 2) {
+    if (right === 6) right -= 1;
+    for (let vertical = 0; vertical < size; vertical += 1) {
+      const y = upward ? size - 1 - vertical : vertical;
+      for (let j = 0; j < 2; j += 1) {
+        const x = right - j;
+        if (isFunction[y][x]) continue;
+        let isDark = bitIndex < dataBits.length ? dataBits[bitIndex] === 1 : false;
+        bitIndex += 1;
+        if ((x + y) % 2 === 0) isDark = !isDark;
+        setModule(x, y, isDark, false);
+      }
+    }
+    upward = !upward;
+  }
+
+  return modules;
+}
+
+function getQrSvgMarkup(text) {
+  const qrTargetUrl = cleanLabelCopy(text);
+  if (!qrTargetUrl) {
+    return `<span class="label-source-qr-fallback">QR</span>`;
+  }
+
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=1&data=${encodeURIComponent(qrTargetUrl)}`;
+
+  return `
+    <img
+      alt="Scan source signal"
+      class="label-source-qr-img"
+      decoding="sync"
+      loading="eager"
+      referrerpolicy="no-referrer"
+      src="${escapeHtml(qrImageUrl)}"
+    >
+  `;
+}
+
+function getSourceAccessMarkup(label, sourceSignal = null) {
+  const rawUrl = sourceSignal?.rawUrl || label.sourceUrl;
+  const qrTargetUrl = getQrTargetUrl(rawUrl);
+  if (!qrTargetUrl) return "";
+  const scanLabel = getSourceAccessScanLabel(rawUrl, qrTargetUrl);
+
+  return `
+    <section class="label-source-access" aria-label="source access">
+      <div class="label-source-access-copy">
+        <span>SOURCE ACCESS</span>
+        <p>${escapeHtml(scanLabel)}</p>
+        <strong>SOURCE ${escapeHtml(label.labelNo)}</strong>
+      </div>
+      <div class="label-source-qr">${getQrSvgMarkup(qrTargetUrl)}</div>
+    </section>
+  `;
 }
 
 function normalizeDevLabel50x70(label) {
@@ -2414,17 +2639,16 @@ function normalizeDevLabel50x70(label) {
   };
 }
 
-function getLabel50x70DensityClass(label) {
-  const sourceUrlWeight = label.sourceUrl ? Math.min(cleanLabelCopy(label.sourceUrl).length, 48) : 0;
+function getLabel50x70DensityClass(label, hasSourceAccess = false) {
+  const sourceAccessWeight = hasSourceAccess ? 24 : 0;
   const copyLength = [
     label.sliceTitle,
     label.sourceSignal,
     label.identityValue,
     label.todayFocus,
-  ].filter(Boolean).join("").length + sourceUrlWeight;
+  ].filter(Boolean).join("").length + sourceAccessWeight;
   const hasLongToken = /[A-Za-z0-9/_-]{16,}/.test([
     label.sliceTitle,
-    label.sourceUrl,
     label.sourceSignal,
     label.identityValue,
     label.todayFocus,
@@ -2441,18 +2665,14 @@ function getLabel50x70DensityClass(label) {
   return "label-copy-normal";
 }
 
-function getDevLabel50x70Markup(label, { printable = false } = {}) {
+function getDevLabel50x70Markup(label, { printable = false, sourceSignal = null } = {}) {
   const shelfShort = getLabelShelfShort(label.shelf);
   const brewLine = `BREW ${label.intensity.toUpperCase()} / ${shelfShort}`;
   const serveLine = getDevLabelServeFooter(label.serveStyle);
   const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
   const printAttribute = printable ? ` data-print-label="true"` : "";
-  const densityClass = getLabel50x70DensityClass(label);
+  const densityClass = getLabel50x70DensityClass(label, Boolean(sourceSignal?.id));
   const headerMeta = `<span>${escapeHtml(label.source)} &middot; ${escapeHtml(label.date)}</span>`;
-  const sourceUrlMeta = formatLabelSourceUrl(label.sourceUrl);
-  const sourceUrlMarkup = sourceUrlMeta
-    ? `<span class="label-source-url"><b>${escapeHtml(sourceUrlMeta.label)} /</b> ${escapeHtml(sourceUrlMeta.value)}</span>`
-    : "";
   const signalContext = cleanLabelCopy(label.sourceSignal);
   const contextValue = signalContext
     ? `<section class="label-test-context" aria-label="signal context">
@@ -2486,6 +2706,7 @@ function getDevLabel50x70Markup(label, { printable = false } = {}) {
         <p>${escapeHtml(noiseValue)}</p>
       </section>`
     : "";
+  const sourceAccessMarkup = getSourceAccessMarkup(label, sourceSignal);
 
   return `
     <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)} ${densityClass}"${printAttribute}>
@@ -2494,7 +2715,6 @@ function getDevLabel50x70Markup(label, { printable = false } = {}) {
           <strong>TIME SLICE COFFEE</strong>
           <span>${escapeHtml(label.labelNo)} / ${escapeHtml(shelfShort)}</span>
           ${headerMeta}
-          ${sourceUrlMarkup}
         </header>
 
         <h3>${escapeHtml(label.sliceTitle)}</h3>
@@ -2503,6 +2723,7 @@ function getDevLabel50x70Markup(label, { printable = false } = {}) {
         ${bodyValue}
         ${focusValue}
         ${noiseSection}
+        ${sourceAccessMarkup}
 
         <div class="label-test-brew">${escapeHtml(brewLine)}</div>
         <footer>${escapeHtml(serveLine)}</footer>
@@ -2534,7 +2755,9 @@ function renderDevLabel50x70Preview(label = generatedLabel) {
   if (devLabel50x70CurrentMeta) {
     devLabel50x70CurrentMeta.innerHTML = getDevLabel50x70MetaMarkup(safeLabel, hasGeneratedLabel);
   }
-  devLabel50x70Current.innerHTML = getDevLabel50x70Markup(safeLabel);
+  devLabel50x70Current.innerHTML = getDevLabel50x70Markup(safeLabel, {
+    sourceSignal: hasGeneratedLabel ? getCurrentSignal() : null,
+  });
 
   if (hasGeneratedLabel) {
     console.log("DEV 50X70 LABEL PREVIEW", {
@@ -2558,7 +2781,9 @@ function renderPickup50x70LabelPreview(label = generatedLabel) {
       : label;
   const safeLabel = normalizeDevLabel50x70(currentLabel);
   pickupLabel50x70Preview.innerHTML = "";
-  pickupLabel50x70Preview.innerHTML = getDevLabel50x70Markup(safeLabel);
+  pickupLabel50x70Preview.innerHTML = getDevLabel50x70Markup(safeLabel, {
+    sourceSignal: getCurrentSignal(),
+  });
 }
 
 function getPrintFrame50x70Styles() {
@@ -2654,20 +2879,6 @@ function getPrintFrame50x70Styles() {
       letter-spacing: 0 !important;
     }
 
-    .label-test-header .label-source-url {
-      font-size: 3.85pt !important;
-      font-weight: 650 !important;
-      line-height: 1.12 !important;
-      letter-spacing: 0 !important;
-      overflow-wrap: anywhere !important;
-      white-space: normal !important;
-      word-break: break-all !important;
-    }
-
-    .label-test-header .label-source-url b {
-      font-weight: 750 !important;
-    }
-
     h3 {
       font-size: 10.9pt !important;
       line-height: 1.08 !important;
@@ -2753,8 +2964,73 @@ function getPrintFrame50x70Styles() {
       padding-left: 0 !important;
     }
 
-    .label-test-brew {
+    .label-source-access {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 17mm !important;
+      gap: 1mm !important;
+      align-items: center !important;
       margin-top: auto !important;
+      padding-top: 0.8mm !important;
+      border-top: 0.5px solid #000000 !important;
+      flex-shrink: 0 !important;
+    }
+
+    .label-source-access-copy {
+      display: grid !important;
+      gap: 0.3mm !important;
+      min-width: 0 !important;
+    }
+
+    .label-source-access-copy span {
+      font-size: 5pt !important;
+      font-weight: 700 !important;
+      line-height: 1.05 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .label-source-access-copy p,
+    .label-source-access-copy strong {
+      margin: 0 !important;
+      font-size: 5pt !important;
+      font-weight: 700 !important;
+      line-height: 1.08 !important;
+      letter-spacing: 0 !important;
+    }
+
+    .label-source-qr {
+      width: 17mm !important;
+      height: 17mm !important;
+      display: grid !important;
+      place-items: center !important;
+      justify-self: end !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      flex-shrink: 0 !important;
+    }
+
+    .label-source-qr-svg,
+    .label-source-qr-img {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+      filter: none !important;
+      image-rendering: pixelated !important;
+      opacity: 1 !important;
+      shape-rendering: crispEdges !important;
+    }
+
+    .label-source-qr-fallback {
+      width: 100% !important;
+      height: 100% !important;
+      display: grid !important;
+      place-items: center !important;
+      border: 0.5px solid #000000 !important;
+      font-size: 5pt !important;
+      font-weight: 700 !important;
+    }
+
+    .label-test-brew {
+      margin-top: 0.75mm !important;
       padding-top: 0.85mm !important;
       border-top: 0.5px solid #000000 !important;
       font-size: 5.8pt !important;
@@ -2778,11 +3054,6 @@ function getPrintFrame50x70Styles() {
     .label-paper-50x70.label-copy-compact .label-test-header {
       gap: 0.5mm !important;
       padding-bottom: 0.85mm !important;
-    }
-
-    .label-paper-50x70.label-copy-compact .label-test-header .label-source-url {
-      font-size: 3.55pt !important;
-      line-height: 1.08 !important;
     }
 
     .label-paper-50x70.label-copy-compact h3 {
@@ -2824,6 +3095,24 @@ function getPrintFrame50x70Styles() {
       line-height: 1.08 !important;
     }
 
+    .label-paper-50x70.label-copy-compact .label-source-access {
+      grid-template-columns: minmax(0, 1fr) 16mm !important;
+      gap: 0.75mm !important;
+      padding-top: 0.6mm !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-source-qr {
+      width: 16mm !important;
+      height: 16mm !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-source-access-copy span,
+    .label-paper-50x70.label-copy-compact .label-source-access-copy p,
+    .label-paper-50x70.label-copy-compact .label-source-access-copy strong {
+      font-size: 4.55pt !important;
+      line-height: 1.05 !important;
+    }
+
     .label-paper-50x70.label-copy-dense .label-test-header {
       gap: 0.4mm !important;
       padding-bottom: 0.7mm !important;
@@ -2832,11 +3121,6 @@ function getPrintFrame50x70Styles() {
     .label-paper-50x70.label-copy-dense .label-test-header span {
       font-size: 4.65pt !important;
       line-height: 1.08 !important;
-    }
-
-    .label-paper-50x70.label-copy-dense .label-test-header .label-source-url {
-      font-size: 3.35pt !important;
-      line-height: 1.06 !important;
     }
 
     .label-paper-50x70.label-copy-dense h3 {
@@ -2885,6 +3169,24 @@ function getPrintFrame50x70Styles() {
     .label-paper-50x70.label-copy-dense .label-test-focus p {
       font-size: 5.2pt !important;
       line-height: 1.06 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-source-access {
+      grid-template-columns: minmax(0, 1fr) 15.5mm !important;
+      gap: 0.6mm !important;
+      padding-top: 0.5mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-source-qr {
+      width: 15.5mm !important;
+      height: 15.5mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-source-access-copy span,
+    .label-paper-50x70.label-copy-dense .label-source-access-copy p,
+    .label-paper-50x70.label-copy-dense .label-source-access-copy strong {
+      font-size: 4.2pt !important;
+      line-height: 1.03 !important;
     }
 
     .label-paper-50x70.label-copy-dense .label-test-brew {
