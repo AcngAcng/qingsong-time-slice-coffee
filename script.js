@@ -164,6 +164,8 @@ let activeSignals = baseSignalSource;
 let isPreparingSignals = false;
 let signalRoundIndex = 0;
 let generatedLabel = null;
+let currentCanonicalSlice = null;
+let currentCanonicalSignalId = null;
 let hasVisitedSignals = false;
 let hasSelectedStrength = false;
 let hasSelectedServeStyle = false;
@@ -387,6 +389,7 @@ function waitForSignalsLayout(callback) {
 }
 
 function ensureSignalsIntroRendered() {
+  clearGeneratedOutputState();
   selectedShelfId = null;
   selectedSignal = null;
   renderShelves();
@@ -427,6 +430,45 @@ function resetPagePositionOnLoad() {
 
 function enableSection(section) {
   section.classList.remove("is-disabled");
+}
+
+function getCurrentSignal() {
+  return selectedSignal || null;
+}
+
+function shouldLogSignalFlowDebug() {
+  const host = window.location.hostname || "";
+  return host === "127.0.0.1" || host === "localhost" || window.location.search.includes("debug=signal");
+}
+
+function getSignalLabelNo(signal = getCurrentSignal()) {
+  return signal?.id ? `#${signal.id}` : "#000";
+}
+
+function isLabelForCurrentSignal(label, signal = getCurrentSignal()) {
+  if (!label || !signal?.id) return false;
+  return cleanLabelCopy(label.labelNo) === getSignalLabelNo(signal);
+}
+
+function isLabelForCurrentSelection(label, signal = getCurrentSignal()) {
+  if (!isLabelForCurrentSignal(label, signal)) return false;
+  return normalizeLabelIntensity(label.intensity) === normalizeLabelIntensity(selectedStrength?.id)
+    && normalizeLabelServeStyle(label.serveStyle) === normalizeLabelServeStyle(selectedServeStyle?.id);
+}
+
+function clearGeneratedOutputState({ clearDom = true } = {}) {
+  activeRewrite = null;
+  generatedLabel = null;
+  currentCanonicalSlice = null;
+  currentCanonicalSignalId = null;
+
+  if (!clearDom) return;
+
+  if (valuePanel) valuePanel.innerHTML = "";
+  if (valueTitle) valueTitle.textContent = "";
+  if (printLabel) printLabel.innerHTML = "";
+  if (pickupLabel50x70Preview) pickupLabel50x70Preview.innerHTML = "";
+  if (productPreview) productPreview.innerHTML = "";
 }
 
 function getSelectedShelf() {
@@ -495,6 +537,7 @@ function setSignalRefreshState(isLoading, message = "") {
 
 function resetSignalFlowAfterRefresh(nextSignals) {
   const normalizedSignals = normalizeSignalList(nextSignals);
+  clearGeneratedOutputState();
   activeSignals = normalizedSignals.length ? normalizedSignals : normalizeSignalList(baseSignalSource);
   selectedSignal = null;
   selectedIdentity = null;
@@ -850,6 +893,14 @@ function cleanLabelCopy(value) {
     .trim();
 }
 
+function cleanCoreShiftCopy(value) {
+  return cleanLabelCopy(value)
+    .replace(/^它说明/, "")
+    .replace(/^这说明/, "")
+    .replace(/^说明/, "")
+    .trim();
+}
+
 function trimLabelCopy(value, maxLength) {
   const text = cleanLabelCopy(value);
   if (text.length <= maxLength) return text;
@@ -889,27 +940,75 @@ function fitNoteSentence(value, maxLength, fallback) {
   return ensureLabelSentence(fitted || fallback);
 }
 
+function normalizeCopyForCompare(value) {
+  return cleanLabelCopy(value)
+    .replace(/[，。.!?！？、：:；;\s]/g, "")
+    .replace(/^它说明/, "")
+    .toLowerCase();
+}
+
+function areCopyLinesSimilar(first, second) {
+  const a = normalizeCopyForCompare(first);
+  const b = normalizeCopyForCompare(second);
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const minLength = Math.min(a.length, b.length);
+  return minLength >= 10 && (a.includes(b) || b.includes(a));
+}
+
+function isBrokenGeneratedCopy(value) {
+  const text = cleanLabelCopy(value);
+  if (!text || /undefined|null/i.test(text)) return true;
+  if (/[、,，:：;；]$/.test(text)) return true;
+  if (/[A-Za-z]$/.test(text) && !/[A-Za-z]{2,}$/.test(text)) return true;
+  if (/从单次回$/.test(text)) return true;
+  if (/何时保$/.test(text)) return true;
+  if (/让用户控制何时保$/.test(text)) return true;
+  return [
+    "从 Anthropic 影响的",
+    "影响的流程开始调整",
+    "用 xxx 判断",
+    "用 Anthropic 判断",
+    "先看它会改变哪一步执行流程",
+  ].some((phrase) => text.includes(phrase));
+}
+
+function getUniqueCopyLines(lines) {
+  return lines
+    .map((line) => ensureLabelSentence(line))
+    .filter((line) => line && !isBrokenGeneratedCopy(line))
+    .reduce((uniqueLines, line) => {
+      if (!uniqueLines.some((existing) => areCopyLinesSimilar(existing, line))) {
+        uniqueLines.push(line);
+      }
+      return uniqueLines;
+    }, []);
+}
+
 function getLabelCopyLimits(intensity) {
   if (intensity === "light") {
     return {
-      sliceTitle: 18,
-      identityValue: 18,
-      todayFocus: 0,
+      sliceTitle: 24,
+      signalContext: 34,
+      identityValue: 32,
+      todayFocus: 30,
     };
   }
 
   if (intensity === "double") {
     return {
-      sliceTitle: 22,
-      identityValue: 30,
-      todayFocus: 20,
+      sliceTitle: 30,
+      signalContext: 38,
+      identityValue: 46,
+      todayFocus: 42,
     };
   }
 
   return {
-    sliceTitle: 22,
-    identityValue: 28,
-    todayFocus: 0,
+    sliceTitle: 30,
+    signalContext: 38,
+    identityValue: 44,
+    todayFocus: 40,
   };
 }
 
@@ -934,6 +1033,62 @@ function getSignalExtractionNotes(signal) {
 
 function getCleanNoteField(signal, field) {
   return cleanLabelCopy(getSignalExtractionNotes(signal)?.[field]);
+}
+
+function isMemoryControlSignal(signal) {
+  const context = getSignalContextText(signal);
+  return /OpenAI|Agent|agent|记忆|memory|何时忘记|忘记|控制权|审查记忆|长期关系/i.test(context)
+    && /记忆|memory|何时忘记|忘记|控制权|审查记忆/i.test(context);
+}
+
+function isRobotVideoLearningSignal(signal) {
+  const context = getSignalContextText(signal);
+  return /DeepMind|robotics|机器人论文|视频学习|video learning|倒水|开抽屉|连续动作|物理世界|manipulation/i.test(context)
+    && /视频学习|video learning|倒水|开抽屉|连续动作|物理世界|manipulation/i.test(context);
+}
+
+function isCursorIndexingSignal(signal) {
+  return /Cursor|monorepo|大型仓库|仓库索引|repo indexing|agent 友好/i.test(getSignalContextText(signal));
+}
+
+function isNvidiaCapitalSignal(signal) {
+  return /NVIDIA|财报|数据中心收入|资本开支|capex|GPU|HBM/i.test(getSignalContextText(signal));
+}
+
+function isAiImageCopyrightSignal(signal) {
+  return /AI 图像|生成图像|版权|授权|来源凭证|训练来源|商业使用|Content Credentials|provenance|Firefly/i.test(getSignalContextText(signal))
+    && /版权|授权|来源|凭证|commercial|provenance|Content Credentials/i.test(getSignalContextText(signal));
+}
+
+function getSignalCoreInsight(signal) {
+  const notes = getSignalExtractionNotes(signal);
+  const context = getSignalContextText(signal);
+  if (!notes?.coreShift && isMemoryControlSignal(signal)) {
+    return "Agent 能力正在从单次回答转向长期关系，控制权会成为产品核心。";
+  }
+
+  if (!notes?.coreShift && isRobotVideoLearningSignal(signal)) {
+    return "模型边界正在从屏幕文本延伸到物理世界的连续操作。";
+  }
+
+  if (!notes?.coreShift && isAiImageCopyrightSignal(signal)) {
+    return "生成内容的价值不只看效果，也要看能否解释权利来源。";
+  }
+
+  if (!notes?.coreShift && /Claude|Anthropic/i.test(context) && /工具调用|权限确认|确认机制|删改文件|发送邮件|外部 API|API 调用/.test(context)) {
+    return "Claude 工具调用风险集中在权限确认。";
+  }
+
+  return cleanCoreShiftCopy(
+    notes?.coreShift ||
+    signal?.whyWorthWatchingZh ||
+    signal?.whyWorthWatching ||
+    signal?.sliceReason ||
+    signal?.coreJudgment ||
+    signal?.sliceTitle ||
+    signal?.rawSummaryZh ||
+    signal?.rawSummary
+  );
 }
 
 function getSignalPurposeSubject(signal, maxLength = 10) {
@@ -971,6 +1126,247 @@ function getSignalContextText(signal, candidateTitle = "") {
   ].map(cleanLabelCopy).filter(Boolean).join(" ");
 }
 
+function getRawHeadline(signal) {
+  return cleanLabelCopy(signal?.rawTitleZh || signal?.rawTitle || "");
+}
+
+function stripPropagationShell(value) {
+  return cleanLabelCopy(value)
+    .replace(/^(OpenAI|Anthropic|DeepMind|Google|Meta|NVIDIA|Cursor|Claude|xAI)\s*/i, "$1 ")
+    .replace(/^(.*?)?(研究员|安全团队|开发者|用户|账号|博主|社区|团队|投资者|交易员|论文)\s*(在 X )?(转发|讨论|晒出|比较|热议|分享|发布|展示|记录)(：|:)/, "")
+    .replace(/^(OpenAI 研究员在 X 讨论|DeepMind 机器人论文被开发者转发|Cursor 用户晒出|AI infra 账号比较|社区热议|开发者转发)(：|:)?/i, "")
+    .trim();
+}
+
+function getSignalSubject(signal) {
+  const rawHeadline = getRawHeadline(signal);
+  const colonParts = rawHeadline.split(/[：:]/).map((part) => part.trim()).filter(Boolean);
+  let subject = colonParts.length > 1 ? colonParts.slice(1).join("：") : rawHeadline;
+  subject = stripPropagationShell(subject || rawHeadline).replace(/[。.!?！？]+$/g, "");
+
+  if (isRobotVideoLearningSignal(signal)) {
+    return "机器人通过视频学习连续动作。";
+  }
+
+  if (isMemoryControlSignal(signal)) {
+    return "Agent 记忆重点变成何时忘记。";
+  }
+
+  if (isCursorIndexingSignal(signal)) {
+    return "大型仓库文档开始变成 agent 友好结构。";
+  }
+
+  if (isNvidiaCapitalSignal(signal)) {
+    return "NVIDIA 财报把投资判断转向资本开支。";
+  }
+
+  if (isAiImageCopyrightSignal(signal)) {
+    return "AI 图像版权进入创作交付判断。";
+  }
+
+  if (/AI infra.*OpenAI.*Anthropic/i.test(rawHeadline)) {
+    return "AI infra 比较模型路线差异。";
+  }
+
+  const firstClause = subject.split(/[，,；;]/).find((clause) => {
+    const text = cleanLabelCopy(clause);
+    return text.length >= 6 && !/(转发|讨论|晒出|比较|热议|账号|用户|博主)$/.test(text);
+  }) || subject;
+
+  return ensureLabelSentence(trimNoteCopy(firstClause, 30) || getLabelRelationNoun(signal));
+}
+
+function getSignalEventDigest(signal, signalSubject = getSignalSubject(signal)) {
+  if (isRobotVideoLearningSignal(signal)) {
+    return "模型通过视频学习倒水、开抽屉等连续动作，展示机器人从视频示范中学习物理操作的能力。";
+  }
+
+  if (isMemoryControlSignal(signal)) {
+    return "Agent memory 的讨论重点从记住更多，转向何时忘记、如何让用户控制保留和删除。";
+  }
+
+  if (isCursorIndexingSignal(signal)) {
+    return "大型仓库索引失败让团队意识到，文档目录需要改成 Agent 更容易读取和定位的结构。";
+  }
+
+  if (isNvidiaCapitalSignal(signal)) {
+    return "投资者把 NVIDIA 数据中心收入和云厂商资本开支并排比较，用来判断 AI 需求是否真实兑现。";
+  }
+
+  if (isAiImageCopyrightSignal(signal)) {
+    return "生成图像的商业使用开始需要来源、授权和训练数据边界证明。";
+  }
+
+  const rawHeadline = getRawHeadline(signal);
+  const colonParts = rawHeadline.split(/[：:]/).map((part) => part.trim()).filter(Boolean);
+  const headlineEvent = colonParts.length > 1 ? stripPropagationShell(colonParts.slice(1).join("：")) : "";
+  const summary = cleanLabelCopy(signal?.rawSummaryZh || signal?.rawSummary);
+  const worthWatching = cleanCoreShiftCopy(signal?.whyWorthWatchingZh || signal?.whyWorthWatching);
+  const base = summary || headlineEvent || signalSubject || worthWatching;
+  const detail = worthWatching && !areCopyLinesSimilar(base, worthWatching)
+    ? `${trimSentenceEnd(base)}，${trimSentenceEnd(worthWatching)}。`
+    : base;
+
+  return ensureLabelSentence(detail || signalSubject || "今天出现了一条值得重新判断的信息信号。");
+}
+
+function getLabelSignalContext(signal, canonical = null) {
+  if (isAiImageCopyrightSignal(signal)) {
+    return "生成图像的商业使用开始需要来源与授权证明。";
+  }
+
+  if (isRobotVideoLearningSignal(signal)) {
+    return "模型通过视频学习倒水、开抽屉等物理操作。";
+  }
+
+  if (isMemoryControlSignal(signal)) {
+    return "OpenAI 研究员讨论 agent 记忆不只是存更多。";
+  }
+
+  if (isCursorIndexingSignal(signal)) {
+    return "Cursor 用户晒出索引失败后，团队调整文档目录。";
+  }
+
+  if (isNvidiaCapitalSignal(signal)) {
+    return "投资者用收入和资本开支判断 AI 需求兑现。";
+  }
+
+  const eventDigest = cleanLabelCopy(canonical?.eventDigest || getSignalEventDigest(signal, canonical?.signalSubject));
+  const firstSentence = eventDigest.split(/[。！？!?]/).map((part) => part.trim()).find(Boolean);
+  const firstClause = eventDigest.split(/[，,；;]/).map((part) => part.trim()).find((part) => part.length >= 8);
+  return ensureLabelSentence(firstSentence && firstSentence.length <= 40 ? firstSentence : firstClause || eventDigest);
+}
+
+function getSignalWhyToday(signal, coreShift = getSignalCoreInsight(signal)) {
+  const notes = getSignalExtractionNotes(signal);
+  const whyToday = cleanLabelCopy(notes?.whyToday);
+  if (whyToday && !isBrokenGeneratedCopy(whyToday)) return ensureLabelSentence(whyToday);
+
+  const worthWatching = cleanCoreShiftCopy(signal?.whyWorthWatchingZh || signal?.whyWorthWatching);
+  if (worthWatching && !isBrokenGeneratedCopy(worthWatching) && !areCopyLinesSimilar(worthWatching, coreShift)) {
+    return ensureLabelSentence(worthWatching);
+  }
+
+  return "";
+}
+
+function getSignalNoiseToIgnore(signal) {
+  const notes = getSignalExtractionNotes(signal);
+  const noiseToIgnore = cleanLabelCopy(notes?.noiseToIgnore);
+  if (noiseToIgnore && !isBrokenGeneratedCopy(noiseToIgnore)) {
+    return ensureLabelSentence(noiseToIgnore);
+  }
+
+  return "";
+}
+
+function getCanonicalLabelTitle(signal, candidateTitle = "") {
+  const subject = getSignalSubject(signal);
+  const labelPotential = getCleanNoteField(signal, "labelPotential");
+  const labelPotentialIsBetter = labelPotential
+    && !isBrokenGeneratedCopy(labelPotential)
+    && labelPotential.length <= 30
+    && (
+      cleanLabelCopy(subject).length > 28 ||
+      /Hyperscalers|Iris Energy|Nebius|TencentDB|Computer Use|MCP|API/i.test(subject)
+    );
+
+  if (labelPotentialIsBetter) {
+    return ensureLabelSentence(labelPotential);
+  }
+
+  if (subject && !isBrokenGeneratedCopy(subject)) return ensureLabelSentence(subject);
+
+  if (labelPotential && !isBrokenGeneratedCopy(labelPotential) && labelPotential.length <= 30) {
+    return ensureLabelSentence(labelPotential);
+  }
+
+  return safeLabelTitleForPrint(candidateTitle, signal);
+}
+
+function buildPurposeAngleFromNotes(identity, signal) {
+  const notes = getSignalExtractionNotes(signal);
+  if (!notes) return "";
+
+  const coreShift = cleanCoreShiftCopy(notes.coreShift);
+  const whyToday = cleanLabelCopy(notes.whyToday);
+  const possibleUserValue = cleanLabelCopy(notes.possibleUserValue);
+  const noiseToIgnore = cleanLabelCopy(notes.noiseToIgnore);
+  const labelPotential = cleanLabelCopy(notes.labelPotential);
+  const decisionValue = whyToday && noiseToIgnore
+    ? `判断时看：${trimSentenceEnd(whyToday)}；先忽略：${trimSentenceEnd(noiseToIgnore)}。`
+    : whyToday || noiseToIgnore || coreShift;
+  const everydayValue = noiseToIgnore || (labelPotential ? `今天只需要带走：${labelPotential}` : coreShift);
+
+  const lines = {
+    student: whyToday || coreShift,
+    builder: possibleUserValue || coreShift,
+    designer: possibleUserValue || coreShift,
+    founder: possibleUserValue || whyToday || coreShift,
+    vc: decisionValue,
+    everyday: everydayValue,
+  };
+
+  return ensureLabelSentence(lines[identity?.id] || possibleUserValue || whyToday || coreShift);
+}
+
+function buildCanonicalSlice(signal = getCurrentSignal(), identity = selectedIdentity, intensity = selectedStrength?.id, serveStyle = selectedServeStyle?.id) {
+  const normalizedIntensity = normalizeLabelIntensity(intensity);
+  const normalizedServeStyle = normalizeLabelServeStyle(serveStyle);
+  const rawHeadline = getRawHeadline(signal);
+  const signalSubject = getSignalSubject(signal);
+  const eventDigest = getSignalEventDigest(signal, signalSubject);
+  const coreShift = ensureLabelSentence(getSignalCoreInsight(signal) || signalSubject);
+  const whyToday = getSignalWhyToday(signal, coreShift);
+  const noiseToIgnore = getSignalNoiseToIgnore(signal);
+  const notePurposeAngle = buildPurposeAngleFromNotes(identity, signal);
+  const specificPurposeAngle = buildSpecificSignalIdentityValue(identity, signal);
+  const purposeTakeaway = ensureLabelSentence(notePurposeAngle || specificPurposeAngle || buildLabelIdentityFallback(identity, signal));
+  const labelTitle = getCanonicalLabelTitle(signal, signalSubject);
+  const labelValue = purposeTakeaway;
+  const labelFocus = coreShift;
+  const notes = getSignalExtractionNotes(signal);
+  const densityLines = normalizedIntensity === "light"
+    ? getUniqueCopyLines([signalSubject, eventDigest, purposeTakeaway])
+    : normalizedIntensity === "double"
+      ? getUniqueCopyLines([signalSubject, eventDigest, coreShift, whyToday, purposeTakeaway, noiseToIgnore || notes?.noiseToIgnore || notes?.whyToday])
+      : getUniqueCopyLines([signalSubject, eventDigest, coreShift, purposeTakeaway]);
+
+  const result = {
+    rawHeadline,
+    eventDigest,
+    signalSubject,
+    coreShift,
+    whyToday,
+    purposeTakeaway,
+    noiseToIgnore,
+    purposeAngle: purposeTakeaway,
+    densityLines,
+    labelTitle,
+    labelValue,
+    labelFocus,
+    keywords: buildSignalKeywords(signal),
+    intensity: normalizedIntensity,
+    serveStyle: normalizedServeStyle,
+  };
+
+  if (signal?.id && signal.id === getCurrentSignal()?.id) {
+    currentCanonicalSlice = result;
+    currentCanonicalSignalId = signal.id;
+    if (shouldLogSignalFlowDebug()) {
+      console.log("CANONICAL SIGNAL SOURCE", {
+        selectedSignalId: getCurrentSignal()?.id,
+        selectedShelfId: getCurrentSignal()?.shelfId,
+        rawTitleZh: getCurrentSignal()?.rawTitleZh,
+        signalSubject: result.signalSubject,
+        labelTitle: result.labelTitle,
+      });
+    }
+  }
+
+  return result;
+}
+
 function isInvalidSliceTitle(title) {
   const text = cleanLabelCopy(title);
   if (!text) return true;
@@ -996,45 +1392,9 @@ function isStructuralSliceTitle(title) {
 }
 
 function getStructuralSliceTitle(signal, candidateTitle = "") {
-  const noteCoreShift = getCleanNoteField(signal, "coreShift");
-  if (noteCoreShift) return ensureLabelSentence(noteCoreShift);
-
-  const context = getSignalContextText(signal, candidateTitle);
-
-  if (/客服|工单/.test(context) && /agent|Agent|AI/.test(context)) {
-    return "AI agent 正在进入客服工单流程。";
-  }
-
-  if (/Claude Code|Claude|代码|编程|开发|IDE/.test(context) && /验证|交付|测试|运行|agent|Agent|AI|补全/.test(context)) {
-    return "AI 编程正在从补全代码走向交付验证。";
-  }
-
-  if (/视频|影像|剪辑|成片|短片/.test(context) && /AI|生成|模型|创作/.test(context)) {
-    return "AI 视频创作正在从成片生成走向过程证明。";
-  }
-
-  if (/设计|视觉稿|Figma|交付|创作流程/.test(context)) {
-    return "设计交付正在从视觉稿走向可追溯流程。";
-  }
-
-  if (isStructuralSliceTitle(candidateTitle)) {
-    return ensureLabelSentence(candidateTitle);
-  }
-
-  if (isStructuralSliceTitle(signal?.sliceTitle)) {
-    return ensureLabelSentence(signal.sliceTitle);
-  }
-
-  const fallbackByShelf = {
-    "ai-frontier": "AI 能力正在进入具体业务流程。",
-    "build-workflow": "工具正在进入连续交付流程。",
-    "design-creation": "内容生产正在从生成走向判断。",
-    "market-capital": "市场信号正在从热度走向定价。",
-    "self-upgrade": "学习方式正在从答案走向判断。",
-    "life-signals": "日常选择正在被系统重新分流。",
-  };
-
-  return fallbackByShelf[signal?.shelfId] || "一个具体流程正在发生变化。";
+  return buildCanonicalSlice(signal, selectedIdentity, selectedStrength?.id, selectedServeStyle?.id).coreShift
+    || ensureLabelSentence(candidateTitle)
+    || "一个具体流程正在发生变化。";
 }
 
 function safeLabelTitleForPrint(title, signal) {
@@ -1079,6 +1439,15 @@ function safeLabelTitleForPrint(title, signal) {
     return "";
   };
 
+  const context = getSignalContextText(signal, title);
+  if (isMemoryControlSignal(signal)) {
+    return "Agent 记忆重点变成何时忘记。";
+  }
+
+  if (/Claude|Anthropic/i.test(context) && /工具调用|权限确认|确认机制|删改文件|发送邮件|外部 API|API 调用/.test(context)) {
+    return "Claude 工具调用评测暴露权限确认问题。";
+  }
+
   const candidates = [
     { value: signal?.extractionNotes?.labelPotential, maxLength: 34 },
     { value: signal?.labelPotential, maxLength: 34 },
@@ -1098,7 +1467,8 @@ function safeLabelTitleForPrint(title, signal) {
 }
 
 function buildLabelSliceTitle(signal, intensity, candidateTitle) {
-  return safeLabelTitleForPrint(candidateTitle, signal);
+  return buildCanonicalSlice(signal, selectedIdentity, intensity, selectedServeStyle?.id).labelTitle
+    || safeLabelTitleForPrint(candidateTitle, signal);
 }
 
 function buildExtractionIdentityValue(identity, signal) {
@@ -1109,33 +1479,122 @@ function buildExtractionIdentityValue(identity, signal) {
   const whyToday = cleanLabelCopy(notes.whyToday);
   const possibleUserValue = cleanLabelCopy(notes.possibleUserValue);
   const noiseToIgnore = cleanLabelCopy(notes.noiseToIgnore);
-  const shortWhyToday = trimSentenceEnd(trimNoteCopy(whyToday, 14));
-  const shortNoiseToIgnore = trimSentenceEnd(trimNoteCopy(noiseToIgnore, 10));
+  const decisionValue = whyToday && noiseToIgnore
+    ? `判断时看：${trimSentenceEnd(whyToday)}；先忽略：${trimSentenceEnd(noiseToIgnore)}。`
+    : whyToday || noiseToIgnore || coreShift;
 
   const lines = {
     student: whyToday || coreShift,
     builder: possibleUserValue || coreShift,
     designer: possibleUserValue || coreShift,
     founder: possibleUserValue || whyToday || coreShift,
-    vc: whyToday || noiseToIgnore || coreShift,
+    vc: decisionValue,
     everyday: noiseToIgnore || coreShift,
   };
 
   return lines[identity?.id] || possibleUserValue || whyToday || coreShift;
 }
 
+function buildSpecificSignalIdentityValue(identity, signal) {
+  if (isMemoryControlSignal(signal)) {
+    const lines = {
+      student: "理解记忆难点不是更长，而是何时忘记。",
+      builder: "做记忆功能时，要让用户控制保留和删除。",
+      designer: "把记忆控制做成可看见、可撤回的界面。",
+      founder: "机会在可控记忆、隐私边界和长期关系。",
+      vc: "判断重点是用户能否审查和删除记忆。",
+      everyday: "只记住：Agent 记忆要能被用户控制。",
+    };
+    return lines[identity?.id] || "";
+  }
+
+  if (isRobotVideoLearningSignal(signal)) {
+    const lines = {
+      student: "理解机器人学习正在从指令转向视频示范。",
+      builder: "先看视频数据、仿真迁移和低成本机械臂能否连起来。",
+      designer: "把机器人动作拆成可演示的连续步骤。",
+      founder: "机会在家庭机器人训练数据和低成本执行场景。",
+      vc: "判断重点是视频学习能否稳定迁移到真实机械臂。",
+      everyday: "今天只需要带走：机器人开始从视频里学连续动作。",
+    };
+    return lines[identity?.id] || "";
+  }
+
+  if (isCursorIndexingSignal(signal)) {
+    const lines = {
+      student: "理解大仓库索引会决定 Agent 能不能看懂项目边界。",
+      builder: "先把 README、模块边界和文档目录整理成 Agent 容易读取的结构。",
+      designer: "把交付文档做成 Agent 和团队都能追踪的入口。",
+      founder: "机会在大型项目的代码理解、文档结构和上下文检索。",
+      vc: "判断重点是索引质量能否支撑真实大型代码库协作。",
+      everyday: "今天只需要带走：Agent 也需要更清楚的项目入口。",
+    };
+    return lines[identity?.id] || "";
+  }
+
+  if (isNvidiaCapitalSignal(signal)) {
+    const lines = {
+      student: "理解 AI 热度正在被收入、资本开支和供应链数字检验。",
+      builder: "做 AI 项目预算时，要把 GPU 交付和云厂商资本开支一起看。",
+      designer: "把 AI 叙事表达成收入、供给和采购节奏的证据链。",
+      founder: "机会在能降低推理成本、交付周期或基础设施不确定性的环节。",
+      vc: "判断重点是数据中心收入、资本开支和供应链是否互相验证。",
+      everyday: "今天只需要带走：AI 热度最终要被真实采购和成本验证。",
+    };
+    return lines[identity?.id] || "";
+  }
+
+  if (isAiImageCopyrightSignal(signal)) {
+    const lines = {
+      student: "理解生成图像商业使用为什么需要来源和授权证明。",
+      builder: "把版权和来源证明纳入创作交付流程。",
+      designer: "交付 AI 图像时，同时说明生成来源和授权边界。",
+      founder: "机会在版权证明、授权检查和客户验收流程。",
+      vc: "判断重点是来源证明能否降低商业使用风险。",
+      everyday: "今天只需要带走：生成效果之外还要看授权证据。",
+    };
+    return lines[identity?.id] || "";
+  }
+
+  return "";
+}
+
+function buildPermissionSignalIdentityValue(identity, signal) {
+  const context = getSignalContextText(signal);
+  if (!/(Anthropic|Claude|工具调用|权限确认|确认机制|删改文件|发送邮件|外部 API|API 调用)/i.test(context)) {
+    return "";
+  }
+
+  const lines = {
+    student: "理解工具调用从回答问题变成执行边界。",
+    builder: "先检查删改文件、发邮件和 API 调用前的确认机制。",
+    designer: "把权限确认做成清楚的用户提示。",
+    founder: "机会在可控的 agent 执行和权限审计。",
+    vc: "判断重点是权限确认是否足够清楚。",
+    everyday: "只记住：能行动的 AI 必须先确认权限。",
+  };
+
+  return lines[identity?.id] || "";
+}
+
 function buildLabelIdentityFallback(identity, signal) {
   const noteValue = buildExtractionIdentityValue(identity, signal);
   if (noteValue) return ensureLabelSentence(noteValue);
 
-  const subject = getSignalPurposeSubject(signal, 10);
+  const specificValue = buildSpecificSignalIdentityValue(identity, signal);
+  if (specificValue) return ensureLabelSentence(specificValue);
+
+  const permissionValue = buildPermissionSignalIdentityValue(identity, signal);
+  if (permissionValue) return ensureLabelSentence(permissionValue);
+
+  const coreInsight = trimSentenceEnd(getSignalCoreInsight(signal));
   const lines = {
-    student: `理解${subject}带来的关键变化。`,
-    builder: `从${subject}影响的流程开始调整。`,
-    designer: `把${subject}转成一个表达入口。`,
-    founder: `看${subject}对应的需求场景。`,
-    vc: `用${subject}判断是否继续跟进。`,
-    everyday: `记住${subject}，其余先放下。`,
+    student: coreInsight ? `先理解：${coreInsight}。` : "先理解这条变化背后的原因。",
+    builder: coreInsight ? `把这条变化落到一个可调整的步骤。` : "先找一处可调整的流程。",
+    designer: coreInsight ? `先看它改变了哪个表达或交付入口。` : "先找一个表达入口。",
+    founder: coreInsight ? `先看它对应的需求和场景。` : "先看一个可测试的需求入口。",
+    vc: coreInsight ? `判断重点是：${coreInsight}。` : "先看一个真实判断依据。",
+    everyday: coreInsight ? `今天只需要带走：${coreInsight}。` : "今天只保留真正相关的一点。",
   };
 
   return lines[identity?.id] || "先判断这条变化与你有什么关系。";
@@ -1144,7 +1603,7 @@ function buildLabelIdentityFallback(identity, signal) {
 function buildLabelFocusFallback(identity) {
   const lines = {
     student: "记下一个要理解的问题。",
-    builder: "找一个新的做法。",
+    builder: "选一个可调整的步骤。",
     designer: "换一个表达角度。",
     founder: "选一个可测试的入口。",
     vc: "先看一个判断依据。",
@@ -1159,23 +1618,47 @@ function buildSignalKeywords(signal, fallbackKeywords = []) {
   const source = [
     signal?.rawTitleZh,
     signal?.rawTitle,
+    signal?.rawSummaryZh,
+    signal?.rawSummary,
+    signal?.whyWorthWatchingZh,
+    signal?.whyWorthWatching,
     signal?.shelfTitle,
     notes?.labelPotential,
     notes?.coreShift,
+    notes?.whyToday,
+    notes?.possibleUserValue,
   ].map(cleanLabelCopy).filter(Boolean).join(" ");
   const rules = [
+    ["DeepMind", /DeepMind/i],
+    ["Robotics", /机器人|robot/i],
+    ["Video Learning", /视频学习|video/i],
+    ["Physical Action", /倒水|开抽屉|连续动作|物理世界/i],
+    ["OpenAI", /OpenAI/i],
+    ["Agent Memory", /Agent.*记忆|agent.*记忆|memory|长期关系/i],
+    ["Forgetting", /忘记|何时忘记/i],
+    ["Control", /控制权|用户控制|审查记忆|权限确认|确认机制/i],
+    ["Claude", /Claude/i],
+    ["Tool Use", /工具调用|tool use|Computer Use/i],
+    ["Permission", /权限|确认机制|确认/i],
+    ["Safety", /安全|risk|风险/i],
     ["Claude Code", /Claude Code/i],
     ["Cursor", /Cursor/i],
+    ["Monorepo", /monorepo|大型仓库/i],
+    ["Indexing", /索引|indexing/i],
+    ["Docs", /文档|README|目录|doc/i],
     ["Supabase", /Supabase/i],
     ["MCP", /\bMCP\b/i],
     ["Figma", /Figma/i],
     ["Firefly", /Firefly|Adobe/i],
+    ["Copyright", /版权|授权|\bIP\b|commercial/i],
+    ["NVIDIA", /NVIDIA/i],
+    ["Capex", /资本开支|capex/i],
     ["GPU", /\bGPU\b|NVIDIA/i],
     ["Power", /电力|变压器|power/i],
     ["Agent", /Agent|agent/i],
     ["Research", /研究|research/i],
     ["Workflow", /工作流|workflow/i],
-    ["Provenance", /provenance|来源证明|Content Credentials/i],
+    ["Provenance", /provenance|来源证明|来源凭证|Content Credentials/i],
     ["Financing", /融资|贷款|债券|financing/i],
   ];
   const keywords = rules
@@ -1183,55 +1666,56 @@ function buildSignalKeywords(signal, fallbackKeywords = []) {
     .map(([keyword]) => keyword);
   const merged = [...keywords, ...fallbackKeywords].filter(Boolean);
 
-  return Array.from(new Set(merged)).slice(0, 3);
+  return Array.from(new Set(merged)).slice(0, 4);
 }
 
 function getPurposeBrewCopy(identity, signal, label) {
-  const subject = getSignalPurposeSubject(signal, 14);
+  const canonical = buildCanonicalSlice(signal, identity, label?.intensity, label?.serveStyle);
   const notes = getSignalExtractionNotes(signal);
   const noteTitle = notes ? trimSentenceEnd(notes.labelPotential || notes.coreShift) : "";
-  const identityValue = buildLabelIdentityFallback(identity, signal);
-  const todayFocus = getCleanNoteField(signal, "coreShift") || buildLabelFocusFallback(identity);
-  const keywords = buildSignalKeywords(signal);
+  const identityValue = canonical.purposeTakeaway || canonical.purposeAngle || buildLabelIdentityFallback(identity, signal);
+  const coreInsight = trimSentenceEnd(canonical.coreShift || getSignalCoreInsight(signal));
+  const todayFocus = canonical.coreShift || getSignalCoreInsight(signal) || buildLabelFocusFallback(identity);
+  const keywords = canonical.keywords || buildSignalKeywords(signal);
   const copyByIdentity = {
     student: {
-      title: noteTitle || "先理解这一点",
-      whyImportant: `从${subject}里看今天该学什么。`,
+      title: canonical.signalSubject || noteTitle || "先理解这一点",
+      whyImportant: canonical.whyToday || (coreInsight ? `今天值得理解：${coreInsight}。` : "今天值得理解这条变化背后的原因。"),
       relationToYou: identityValue,
       focusNow: todayFocus,
       keywords: buildSignalKeywords(signal, ["Learn", "Skill", "Signal"]),
     },
     builder: {
-      title: noteTitle || "看见新的做法",
-      whyImportant: `从${subject}里看下一步怎么做。`,
+      title: canonical.signalSubject || noteTitle || "找到可调整的步骤",
+      whyImportant: canonical.whyToday || (coreInsight ? `可以落到的步骤：${coreInsight}。` : "先找一处可调整的流程。"),
       relationToYou: identityValue,
       focusNow: todayFocus,
       keywords: buildSignalKeywords(signal, ["Build", "Workflow", "Action"]),
     },
     designer: {
-      title: noteTitle || "找到一个表达角度",
-      whyImportant: `从${subject}里看表达可以怎么变。`,
+      title: canonical.signalSubject || noteTitle || "找到一个表达角度",
+      whyImportant: canonical.whyToday || (coreInsight ? "先看它改变了哪个表达或交付入口。" : "先找一个表达入口。"),
       relationToYou: identityValue,
       focusNow: todayFocus,
       keywords: buildSignalKeywords(signal, ["Create", "Design", "Judgment"]),
     },
     founder: {
-      title: noteTitle || "机会可能在这里",
-      whyImportant: `从${subject}里看需求入口在哪里。`,
+      title: canonical.signalSubject || noteTitle || "看见需求入口",
+      whyImportant: canonical.whyToday || (coreInsight ? "先看它对应的需求和场景。" : "先看一个可测试的需求入口。"),
       relationToYou: identityValue,
       focusNow: todayFocus,
       keywords: buildSignalKeywords(signal, ["Opportunity", "Need", "Entry"]),
     },
     vc: {
-      title: noteTitle || "值不值得继续看",
-      whyImportant: `从${subject}里看是否值得跟进。`,
+      title: canonical.signalSubject || noteTitle || "先看判断依据",
+      whyImportant: canonical.whyToday || (coreInsight ? `判断重点是：${coreInsight}。` : "先看一个真实判断依据。"),
       relationToYou: identityValue,
       focusNow: todayFocus,
       keywords: buildSignalKeywords(signal, ["Decision", "Risk", "Follow"]),
     },
     everyday: {
-      title: noteTitle || "今天先带走这一点",
-      whyImportant: `从${subject}里只留真正相关的一点。`,
+      title: canonical.signalSubject || noteTitle || "今天先带走这一点",
+      whyImportant: canonical.whyToday || (coreInsight ? `今天只需要带走：${coreInsight}。` : "今天只保留真正相关的一点。"),
       relationToYou: identityValue,
       focusNow: todayFocus,
       keywords: buildSignalKeywords(signal, ["Signal", "Focus", "Calm"]),
@@ -1241,7 +1725,9 @@ function getPurposeBrewCopy(identity, signal, label) {
   return {
     ...(copyByIdentity[identity?.id] || copyByIdentity.everyday),
     keywords: (copyByIdentity[identity?.id] || copyByIdentity.everyday).keywords || keywords,
-    coreLine: label?.sliceTitle || getCleanNoteField(signal, "coreShift") || signal?.coreJudgment || signal?.sliceTitle || "",
+    coreLine: canonical.coreShift || label?.sliceTitle || getCleanNoteField(signal, "coreShift") || signal?.coreJudgment || signal?.sliceTitle || "",
+    eventDigest: canonical.eventDigest,
+    noiseToIgnore: canonical.noiseToIgnore,
   };
 }
 
@@ -1260,12 +1746,12 @@ function getReceiptSelectionParts({ forceComplete = false } = {}) {
 
 function getReceiptPurposeDirection(identityId) {
   const directionByIdentity = {
-    student: "将从关键变化和需要理解的问题来萃取。",
-    builder: "将从流程、工具和执行方式来萃取。",
-    designer: "将从表达、创作和判断方式来萃取。",
-    founder: "将从需求入口和产品场景来萃取。",
-    vc: "将从证据、风险和跟进价值来萃取。",
-    everyday: "将从真正相关的一点来萃取。",
+    student: "看今天最值得理解的一点。",
+    builder: "看它会改变哪一步做事。",
+    designer: "看它带来的表达或交付入口。",
+    founder: "看它对应的需求和场景。",
+    vc: "看判断依据和需要忽略的噪音。",
+    everyday: "只保留真正相关的一点。",
   };
 
   return directionByIdentity[identityId] || directionByIdentity.everyday;
@@ -1274,115 +1760,55 @@ function getReceiptPurposeDirection(identityId) {
 function getReceiptResultLines({ forceComplete = false } = {}) {
   if (!selectedSignal) return null;
 
-  const structuralTitle = getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle);
-  const structuralCore = trimSentenceEnd(structuralTitle);
-  const subject = getSignalPurposeSubject(selectedSignal, 12);
-  const identityId = selectedIdentity?.id || "everyday";
-  const serveStyle = normalizeLabelServeStyle(selectedServeStyle?.id);
+  const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, selectedStrength?.id, selectedServeStyle?.id);
   const intensity = normalizeLabelIntensity(selectedStrength?.id);
   const canShowStrength = hasSelectedStrength || forceComplete;
-  const canShowServe = hasSelectedServeStyle || forceComplete;
-  const hotTone = canShowServe && serveStyle === "hot";
-  const notes = getSignalExtractionNotes(selectedSignal);
 
-  if (notes) {
-    const whyToday = cleanLabelCopy(notes.whyToday);
-    const possibleUserValue = cleanLabelCopy(notes.possibleUserValue);
-    const noiseToIgnore = cleanLabelCopy(notes.noiseToIgnore);
-    const noteIdentityValue = buildExtractionIdentityValue(selectedIdentity, selectedSignal);
-    const copyByNotes = {
-      student: {
-        core: whyToday || structuralCore,
-        reason: structuralCore,
-        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "记下一个要理解的问题。",
-      },
-      builder: {
-        core: possibleUserValue || structuralCore,
-        reason: structuralCore,
-        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "选一个步骤做小测试。",
-      },
-      designer: {
-        core: possibleUserValue || structuralCore,
-        reason: structuralCore,
-        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "留下一个不能外包的判断。",
-      },
-      founder: {
-        core: possibleUserValue || whyToday || structuralCore,
-        reason: structuralCore,
-        detail: noiseToIgnore ? `先忽略：${noiseToIgnore}` : "选一个可测试的入口。",
-      },
-      vc: {
-        core: whyToday || structuralCore,
-        reason: noiseToIgnore ? `判断时先避开：${noiseToIgnore}` : structuralCore,
-        detail: "留下一个跟进依据。",
-      },
-      everyday: {
-        core: noteIdentityValue || structuralCore,
-        reason: noiseToIgnore ? `先不用追：${noiseToIgnore}` : "其他噪音可以先不用追。",
-        detail: structuralCore,
-      },
-    };
-    const noteCopy = copyByNotes[identityId] || copyByNotes.everyday;
-
-    if (!canShowStrength) return [];
-    if (intensity === "light") return [ensureLabelSentence(noteCopy.core)];
-    if (intensity === "double") return [noteCopy.core, noteCopy.reason, noteCopy.detail].map(ensureLabelSentence);
-
-    return [noteCopy.core, noteCopy.reason].map(ensureLabelSentence);
+  if (!canShowStrength) {
+    return getUniqueCopyLines([canonical.signalSubject, canonical.eventDigest]);
   }
 
-  const copyByIdentity = {
-    student: {
-      core: hotTone ? `先带走：${structuralCore}。` : `今天值得理解的是：${structuralCore}。`,
-      reason: `从${subject}里看今天该学什么。`,
-      detail: "记下一个要理解的问题。",
-    },
-    builder: {
-      core: hotTone ? `下一步可以这样做：从${subject}影响的流程开始。` : `它可能改变的做事方式是：从${subject}影响的流程开始调整。`,
-      reason: hotTone ? "先找一个新的做法。" : "看清哪一步会被工具、协作或执行方式改变。",
-      detail: "选一个步骤做小测试。",
-    },
-    designer: {
-      core: hotTone ? `可以带走一个表达入口：${subject}。` : `它给创作表达带来的变化是：把${subject}转成表达入口。`,
-      reason: "看表达、取舍和内容生产方式怎么变。",
-      detail: "留下一个不能外包的判断。",
-    },
-    founder: {
-      core: hotTone ? `机会可能落在：${subject}对应的需求场景。` : `机会可能落在：${subject}背后的需求、场景或产品入口。`,
-      reason: "先看谁会因为它更省事、更快或更确定。",
-      detail: "选一个可测试的入口。",
-    },
-    vc: {
-      core: hotTone ? `先判断：${subject}是否值得继续跟进。` : `判断它值不值得跟进，要看：${subject}是否形成持续需求。`,
-      reason: "看证据、成本变化和真实使用，不只看热度。",
-      detail: "留下一个跟进依据。",
-    },
-    everyday: {
-      core: hotTone ? `今天只需要带走：${subject}。` : `今天只需要带走：${subject}这个重点。`,
-      reason: "其他噪音可以先不用追。",
-      detail: "只保留一个真实判断。",
-    },
-  };
-  const copy = copyByIdentity[identityId] || copyByIdentity.everyday;
+  if (intensity === "light") {
+    return getUniqueCopyLines([canonical.signalSubject, canonical.eventDigest, canonical.purposeTakeaway]);
+  }
 
-  if (!canShowStrength) return [];
-  if (intensity === "light") return [copy.core];
-  if (intensity === "double") return [copy.core, copy.reason, copy.detail];
+  if (intensity === "double") {
+    return getUniqueCopyLines([
+      canonical.signalSubject,
+      canonical.eventDigest,
+      canonical.coreShift,
+      canonical.whyToday,
+      canonical.purposeTakeaway,
+      canonical.noiseToIgnore ? `可以不用追：${trimSentenceEnd(canonical.noiseToIgnore)}。` : "",
+    ]);
+  }
 
-  return [copy.core, copy.reason];
+  return getUniqueCopyLines([
+    canonical.signalSubject,
+    canonical.eventDigest,
+    canonical.coreShift,
+    canonical.purposeTakeaway,
+  ]);
 }
 
 function buildSliceReceiptCopy({ forceComplete = false } = {}) {
   if (!selectedSignal) return null;
-  const rawHeadline = getRawSignalHeadline(selectedSignal);
-  const structuralTitle = getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle);
+  const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, selectedStrength?.id, selectedServeStyle?.id);
+  const rawHeadline = canonical.rawHeadline || getRawSignalHeadline(selectedSignal);
+  const structuralTitle = canonical.coreShift || getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle);
   const selectionParts = getReceiptSelectionParts({ forceComplete });
   const resultLines = getReceiptResultLines({ forceComplete }) || [];
   const meta = [`#${selectedSignal.id || "000"}`, getLabelShelfShort(getLabelShelf(selectedSignal) || selectedSignal.shelfTitle)].filter(Boolean).join(" · ");
 
   return {
     rawHeadline,
+    signalSubject: canonical.signalSubject,
+    eventDigest: canonical.eventDigest,
     structuralTitle,
+    whyToday: canonical.whyToday,
+    purposeTakeaway: canonical.purposeTakeaway,
+    noiseToIgnore: canonical.noiseToIgnore,
+    labelTitle: canonical.labelTitle,
     meta,
     selectionParts,
     purposeDirection: selectedIdentity ? getReceiptPurposeDirection(selectedIdentity.id) : "",
@@ -1419,9 +1845,13 @@ function renderSliceReceiptPreview(stage = "raw") {
       <span>${escapeHtml(receipt.meta)}</span>
       <span>Raw Signal selected</span>
     </div>
-    <h3>${escapeHtml(receipt.rawHeadline)}</h3>
+    <h3>${escapeHtml(receipt.signalSubject || receipt.labelTitle || receipt.rawHeadline)}</h3>
     <div class="slice-receipt-layer">
-      <span>提炼切片</span>
+      <span>发生了什么</span>
+      <p>${escapeHtml(receipt.eventDigest)}</p>
+    </div>
+    <div class="slice-receipt-layer">
+      <span>这说明</span>
       <p>${escapeHtml(receipt.structuralTitle)}</p>
     </div>
     ${receipt.selectionParts.length ? `
@@ -1432,9 +1862,12 @@ function renderSliceReceiptPreview(stage = "raw") {
       </div>
     ` : ""}
     ${receipt.purposeDirection ? `<p class="slice-receipt-note">${escapeHtml(receipt.purposeDirection)}</p>` : ""}
-    ${receipt.resultLines.length ? `
+    ${selectedIdentity ? `
       <div class="slice-receipt-result">
-        ${receipt.resultLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+        <p><strong>这杯带走：</strong>${escapeHtml(receipt.purposeTakeaway)}</p>
+        ${receipt.noiseToIgnore && (selectedStrength?.id === "double" || hasSelectedServeStyle)
+          ? `<p><strong>可以不用追：</strong>${escapeHtml(receipt.noiseToIgnore)}</p>`
+          : ""}
       </div>
     ` : ""}
   `;
@@ -1451,9 +1884,7 @@ function getReceiptCompletionMeta(receipt) {
 
 function getReceiptCompletionMarkup(value) {
   const receipt = buildSliceReceiptCopy({ forceComplete: true });
-  const resultLines = receipt.resultLines.length
-    ? receipt.resultLines
-    : [value.relationToYou || value.whyImportant || value.coreLine].filter(Boolean);
+  const label = value.timeSliceLabel || generatedLabel || buildFallbackTimeSliceLabel();
 
   return `
     <article class="slice-receipt-complete">
@@ -1461,13 +1892,18 @@ function getReceiptCompletionMarkup(value) {
       <div class="slice-receipt-meta">
         <span>${escapeHtml(getReceiptCompletionMeta(receipt))}</span>
       </div>
-      <h4>${escapeHtml(receipt.rawHeadline)}</h4>
+      <h4>${escapeHtml(receipt.signalSubject || label.sliceTitle)}</h4>
       <div class="slice-receipt-layer">
-        <span>提炼切片</span>
+        <span>发生了什么</span>
+        <p>${escapeHtml(receipt.eventDigest)}</p>
+      </div>
+      <div class="slice-receipt-layer">
+        <span>这说明</span>
         <p>${escapeHtml(receipt.structuralTitle)}</p>
       </div>
       <div class="slice-receipt-result">
-        ${resultLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+        <p><strong>这杯带走：</strong>${escapeHtml(receipt.purposeTakeaway)}</p>
+        ${receipt.noiseToIgnore ? `<p><strong>可以不用追：</strong>${escapeHtml(receipt.noiseToIgnore)}</p>` : ""}
       </div>
       <div class="keyword-row">${value.keywords.map((keyword) => `<b>${escapeHtml(keyword)}</b>`).join("")}</div>
       <div class="value-actions">
@@ -1480,43 +1916,72 @@ function getReceiptCompletionMarkup(value) {
 function buildLabelIdentityValue(base, identity, signal, intensity) {
   const normalizedIntensity = normalizeLabelIntensity(intensity);
   const limits = getLabelCopyLimits(normalizedIntensity);
-  const noteValue = buildExtractionIdentityValue(identity, signal);
+  const canonical = buildCanonicalSlice(signal, identity, normalizedIntensity, selectedServeStyle?.id);
+  const noteValue = canonical.labelValue || canonical.purposeAngle;
   const fallback = normalizedIntensity === "light"
     ? noteValue || "一句今天要带走的判断。"
-    : buildLabelIdentityFallback(identity, signal);
+    : noteValue || buildLabelIdentityFallback(identity, signal);
 
   return fitLabelSentence(fallback, limits.identityValue, fallback);
 }
 
 function buildLabelTodayFocus(identity, signal, intensity, serveStyle) {
   const normalizedIntensity = normalizeLabelIntensity(intensity);
-  if (normalizedIntensity !== "double") return "";
+  if (normalizedIntensity === "light") return "";
 
   const limits = getLabelCopyLimits(normalizedIntensity);
-  const fallback = getCleanNoteField(signal, "coreShift") || buildLabelFocusFallback(identity);
-  const servePrompt = normalizeLabelServeStyle(serveStyle) === "iced" ? "看清证据。" : "";
+  const canonical = buildCanonicalSlice(signal, identity, normalizedIntensity, serveStyle);
+  const fallback = canonical.labelFocus || canonical.coreShift || buildLabelFocusFallback(identity);
 
-  return fitLabelSentence(`${fallback.replace(/[。]+$/g, "")}${servePrompt}`, limits.todayFocus, fallback);
+  return fitLabelSentence(fallback, limits.todayFocus, fallback);
+}
+
+function getTodayFocusAlternative(signal, identityValue = "") {
+  const notes = getSignalExtractionNotes(signal);
+  const candidates = [
+    notes?.noiseToIgnore ? `先忽略：${notes.noiseToIgnore}` : "",
+    notes?.whyToday,
+    getSignalCoreInsight(signal),
+    signal?.rawSummaryZh,
+    signal?.whyWorthWatchingZh,
+    buildLabelFocusFallback(selectedIdentity),
+  ];
+
+  return candidates
+    .map(cleanLabelCopy)
+    .find((candidate) => candidate && !areCopyLinesSimilar(candidate, identityValue) && !isBrokenGeneratedCopy(candidate)) || "";
 }
 
 function fitTimeSliceLabelCopy(label, identity = selectedIdentity, signal = selectedSignal) {
   const intensity = normalizeLabelIntensity(label?.intensity);
   const serveStyle = normalizeLabelServeStyle(label?.serveStyle);
   const limits = getLabelCopyLimits(intensity);
-  const sliceTitle = buildLabelSliceTitle(signal, intensity, label?.sliceTitle);
-  const noteIdentityValue = buildExtractionIdentityValue(identity, signal);
+  const canonical = buildCanonicalSlice(signal, identity, intensity, serveStyle);
+  const sliceTitle = canonical.labelTitle || buildLabelSliceTitle(signal, intensity, label?.sliceTitle);
+  const signalContextFallback = getLabelSignalContext(signal, canonical) || canonical.eventDigest || label?.sourceSignal || getSignalRawTitle(signal);
+  const sourceSignal = fitLabelSentence(signalContextFallback, limits.signalContext, signalContextFallback);
+  const noteIdentityValue = canonical.labelValue || canonical.purposeAngle || buildExtractionIdentityValue(identity, signal);
   const fitCopySentence = getSignalExtractionNotes(signal) ? fitNoteSentence : fitLabelSentence;
   const identityFallback = intensity === "light"
     ? noteIdentityValue || "一句今天要带走的判断。"
     : noteIdentityValue || "先判断这条变化与你有什么关系。";
-  const identityValue = intensity === "light"
+  let identityValue = intensity === "light"
     ? fitCopySentence(label?.identityValue || identityFallback, limits.identityValue, identityFallback)
     : fitCopySentence(label?.identityValue, limits.identityValue, identityFallback);
-  const todayFocus = intensity === "double"
-    ? fitCopySentence(label?.todayFocus, limits.todayFocus, getCleanNoteField(signal, "coreShift") || "保留一个真实判断。")
-    : "";
+  identityValue = isBrokenGeneratedCopy(identityValue)
+    ? fitCopySentence(identityFallback, limits.identityValue, identityFallback)
+    : identityValue;
+
+  const focusFallback = getTodayFocusAlternative(signal, identityValue) || canonical.labelFocus || canonical.coreShift || getSignalCoreInsight(signal) || "保留一个真实判断。";
+  let todayFocus = fitCopySentence(label?.todayFocus, limits.todayFocus, focusFallback);
+  if (todayFocus && (isBrokenGeneratedCopy(todayFocus) || areCopyLinesSimilar(identityValue, todayFocus))) {
+    todayFocus = fitCopySentence(focusFallback, limits.todayFocus, focusFallback);
+  }
+
   const fittedLabel = {
     ...label,
+    sourceUrl: cleanLabelCopy(label?.sourceUrl || label?.rawUrl || signal?.rawUrl),
+    sourceSignal,
     sliceTitle,
     identityValue,
     todayFocus,
@@ -1553,19 +2018,21 @@ function buildFallbackTimeSliceLabel() {
   const intensity = normalizeLabelIntensity(selectedStrength?.id);
   const serveStyle = normalizeLabelServeStyle(selectedServeStyle?.id);
   const signalId = selectedSignal?.id ? `#${selectedSignal.id}` : "#000";
+  const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, intensity, serveStyle);
 
   return fitTimeSliceLabelCopy({
     labelNo: signalId,
     shelf: selectedSignal?.shelfTitle || getLabelShelf(selectedSignal) || "TIME SLICE",
     source: selectedSignal?.source || "LOCAL FALLBACK",
     date: formatLabelDate(selectedSignal?.fetchedAt || "TODAY"),
+    sourceUrl: selectedSignal?.rawUrl || "",
     sourceSignal: getSignalRawTitle(selectedSignal) || "No source signal available",
-    sliceTitle: selectedSignal?.sliceTitle || "今天只看一条关键变化。",
+    sliceTitle: canonical.labelTitle || "今天只看一条关键变化。",
     identity,
     identityValue: intensity === "light"
-      ? buildExtractionIdentityValue(selectedIdentity, selectedSignal) || "一句今天要带走的判断。"
-      : buildLabelIdentityFallback(selectedIdentity, selectedSignal),
-    todayFocus: intensity === "double" ? getCleanNoteField(selectedSignal, "coreShift") || buildLabelFocusFallback(selectedIdentity) : "",
+      ? canonical.labelValue || canonical.purposeAngle || "一句今天要带走的判断。"
+      : canonical.labelValue || canonical.purposeAngle || buildLabelIdentityFallback(selectedIdentity, selectedSignal),
+    todayFocus: intensity !== "light" ? canonical.labelFocus || canonical.coreShift || buildLabelFocusFallback(selectedIdentity) : "",
     intensity,
     serveStyle,
     signalMark: selectedSignal?.shelfId || "life-signals",
@@ -1654,17 +2121,19 @@ function buildMockTimeSliceLabel() {
   const identityName = selectedIdentity.en?.toUpperCase() || fallback.identity;
   const intensity = normalizeLabelIntensity(selectedStrength.id || fallback.intensity);
   const serveStyle = normalizeLabelServeStyle(selectedServeStyle.id || fallback.serveStyle);
+  const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, intensity, serveStyle);
 
   return fitTimeSliceLabelCopy({
     labelNo: fallback.labelNo,
     shelf: getLabelShelf(selectedSignal) || fallback.shelf,
     source: selectedSignal.source || fallback.source,
     date: formatLabelDate(selectedSignal.fetchedAt || fallback.date),
+    sourceUrl: selectedSignal.rawUrl || fallback.sourceUrl || "",
     sourceSignal: getShortRawSignalTitle(selectedSignal) || fallback.sourceSignal,
-    sliceTitle: selectedSignal.sliceTitle || fallback.sliceTitle,
+    sliceTitle: canonical.labelTitle || fallback.sliceTitle,
     identity: identityName,
-    identityValue: buildLabelIdentityValue(base, selectedIdentity, selectedSignal, intensity) || fallback.identityValue,
-    todayFocus: buildLabelTodayFocus(selectedIdentity, selectedSignal, intensity, serveStyle) || fallback.todayFocus,
+    identityValue: canonical.labelValue || canonical.purposeAngle || buildLabelIdentityValue(base, selectedIdentity, selectedSignal, intensity) || fallback.identityValue,
+    todayFocus: intensity !== "light" ? canonical.labelFocus || canonical.coreShift || buildLabelTodayFocus(selectedIdentity, selectedSignal, intensity, serveStyle) || fallback.todayFocus : "",
     intensity,
     serveStyle,
     signalMark: getSignalMark(selectedSignal) || fallback.signalMark,
@@ -1689,8 +2158,9 @@ function getMockValueRewrite() {
 function normalizeTimeSliceLabel(rewrite) {
   const fallback = buildMockTimeSliceLabel();
   const candidate = rewrite?.timeSliceLabel || rewrite;
-  const purposeIdentityValue = buildLabelIdentityValue(null, selectedIdentity, selectedSignal, fallback.intensity);
-  const purposeTodayFocus = buildLabelTodayFocus(selectedIdentity, selectedSignal, fallback.intensity, fallback.serveStyle);
+  const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, fallback.intensity, fallback.serveStyle);
+  const purposeIdentityValue = canonical.labelValue || canonical.purposeAngle || buildLabelIdentityValue(null, selectedIdentity, selectedSignal, fallback.intensity);
+  const purposeTodayFocus = fallback.intensity !== "light" ? canonical.labelFocus || canonical.coreShift || buildLabelTodayFocus(selectedIdentity, selectedSignal, fallback.intensity, fallback.serveStyle) : "";
   const candidateMatchesCurrent =
     candidate?.identity === fallback.identity &&
     candidate?.intensity === fallback.intensity &&
@@ -1701,8 +2171,9 @@ function normalizeTimeSliceLabel(rewrite) {
     shelf: fallback.shelf,
     source: fallback.source,
     date: fallback.date,
+    sourceUrl: candidateMatchesCurrent && candidate?.sourceUrl ? candidate.sourceUrl : fallback.sourceUrl,
     sourceSignal: fallback.sourceSignal,
-    sliceTitle: candidateMatchesCurrent && candidate?.sliceTitle ? candidate.sliceTitle : fallback.sliceTitle,
+    sliceTitle: canonical.labelTitle || (candidateMatchesCurrent && candidate?.sliceTitle ? candidate.sliceTitle : fallback.sliceTitle),
     identity: fallback.identity,
     identityValue: purposeIdentityValue || (candidateMatchesCurrent && candidate?.identityValue ? candidate.identityValue : fallback.identityValue),
     todayFocus: purposeTodayFocus || (candidateMatchesCurrent && candidate?.todayFocus ? candidate.todayFocus : fallback.todayFocus),
@@ -1727,6 +2198,21 @@ function normalizeRewrite(rewrite) {
     coreLine: purposeCopy.coreLine || rewrite?.coreLine || timeSliceLabel.sliceTitle || fallback.coreLine,
     timeSliceLabel,
   };
+}
+
+function getStableRewriteValue(rewrite = activeRewrite) {
+  if (rewrite?.timeSliceLabel?.sliceTitle && isLabelForCurrentSelection(rewrite.timeSliceLabel)) {
+    return rewrite;
+  }
+
+  if (generatedLabel?.sliceTitle && isLabelForCurrentSelection(generatedLabel)) {
+    return {
+      ...(rewrite || activeRewrite || {}),
+      timeSliceLabel: generatedLabel,
+    };
+  }
+
+  return normalizeRewrite(rewrite || activeRewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
 }
 
 function getVisibleRows(value) {
@@ -1754,14 +2240,27 @@ function renderLoading() {
 
 function renderValueRewrite(rewrite) {
   const value = normalizeRewrite(rewrite);
-  const receipt = buildSliceReceiptCopy({ forceComplete: true });
   activeRewrite = value;
-  valueTitle.textContent = receipt?.rawHeadline || getRawSignalHeadline(selectedSignal);
+  generatedLabel = value.timeSliceLabel;
+  if (shouldLogSignalFlowDebug()) {
+    console.log("LABEL SIGNAL SOURCE", {
+      selectedSignalId: selectedSignal?.id,
+      generatedLabelNo: generatedLabel?.labelNo,
+      generatedLabelMatchesSignal: isLabelForCurrentSignal(generatedLabel),
+      generatedLabelMatchesSelection: isLabelForCurrentSelection(generatedLabel),
+      hasExtractionNotes: Boolean(getSignalExtractionNotes(selectedSignal)),
+      rawTitleZh: selectedSignal?.rawTitleZh,
+      coreShift: getCleanNoteField(selectedSignal, "coreShift") || getSignalCoreInsight(selectedSignal),
+      sliceTitle: generatedLabel?.sliceTitle,
+      todayFocus: generatedLabel?.todayFocus,
+    });
+  }
+  valueTitle.textContent = value.timeSliceLabel?.sliceTitle || getRawSignalHeadline(selectedSignal);
   valuePanel.innerHTML = getReceiptCompletionMarkup(value);
 }
 
 function renderTimeSliceLabel(rewrite = activeRewrite) {
-  const value = normalizeRewrite(rewrite);
+  const value = getStableRewriteValue(rewrite);
   const label = value.timeSliceLabel || buildFallbackTimeSliceLabel();
   const serveMeta = getServeMeta(label.serveStyle);
   const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
@@ -1857,6 +2356,39 @@ function getDevLabelServeFooter(serveStyle) {
   return normalizeLabelServeStyle(serveStyle) === "iced" ? "SERVED ICED / CLEAR CUP" : "SERVED HOT / PAPER CUP";
 }
 
+function formatLabelSourceUrl(sourceUrl) {
+  const rawSourceUrl = cleanLabelCopy(sourceUrl);
+  if (!rawSourceUrl) return null;
+
+  if (/^grok-search:\/\//i.test(rawSourceUrl)) {
+    const rawQuery = rawSourceUrl.replace(/^grok-search:\/\//i, "").replace(/^\/+/, "");
+    let query = rawQuery.replace(/\+/g, " ");
+
+    try {
+      query = decodeURIComponent(query);
+    } catch {
+      query = rawQuery;
+    }
+
+    return {
+      label: "GROK QUERY",
+      value: cleanLabelCopy(query) || rawQuery,
+    };
+  }
+
+  if (/^https?:\/\//i.test(rawSourceUrl)) {
+    return {
+      label: "URL",
+      value: rawSourceUrl,
+    };
+  }
+
+  return {
+    label: "SOURCE URL",
+    value: rawSourceUrl,
+  };
+}
+
 function normalizeDevLabel50x70(label) {
   const source = label || devLabel50x70Sample;
   const intensity = normalizeLabelIntensity(source.intensity);
@@ -1864,13 +2396,15 @@ function normalizeDevLabel50x70(label) {
   const identityValueFallback = intensity === "light"
     ? "一句今天要带走的判断。"
     : "先判断这条变化与你有什么关系。";
-  const todayFocusFallback = intensity === "double" ? "保留一个真实判断。" : "";
+  const todayFocusFallback = intensity === "light" ? "" : "保留一个真实判断。";
 
   return {
     labelNo: cleanLabelCopy(source.labelNo) || "#000",
     shelf,
     source: cleanLabelCopy(source.source) || "SIGNAL SOURCE",
     date: cleanLabelCopy(source.date) || getTodayLabelDate(),
+    sourceUrl: cleanLabelCopy(source.sourceUrl || source.rawUrl) || "",
+    sourceSignal: cleanLabelCopy(source.sourceSignal) || "",
     sliceTitle: cleanLabelCopy(source.sliceTitle) || "今天只看一条关键变化。",
     identity: cleanLabelCopy(source.identity) || "READER",
     identityValue: cleanLabelCopy(source.identityValue) || identityValueFallback,
@@ -1880,41 +2414,95 @@ function normalizeDevLabel50x70(label) {
   };
 }
 
+function getLabel50x70DensityClass(label) {
+  const sourceUrlWeight = label.sourceUrl ? Math.min(cleanLabelCopy(label.sourceUrl).length, 48) : 0;
+  const copyLength = [
+    label.sliceTitle,
+    label.sourceSignal,
+    label.identityValue,
+    label.todayFocus,
+  ].filter(Boolean).join("").length + sourceUrlWeight;
+  const hasLongToken = /[A-Za-z0-9/_-]{16,}/.test([
+    label.sliceTitle,
+    label.sourceUrl,
+    label.sourceSignal,
+    label.identityValue,
+    label.todayFocus,
+  ].filter(Boolean).join(" "));
+
+  if (label.intensity === "double" || copyLength > 112 || hasLongToken) {
+    return "label-copy-dense";
+  }
+
+  if (copyLength > 88) {
+    return "label-copy-compact";
+  }
+
+  return "label-copy-normal";
+}
+
 function getDevLabel50x70Markup(label, { printable = false } = {}) {
   const shelfShort = getLabelShelfShort(label.shelf);
   const brewLine = `BREW ${label.intensity.toUpperCase()} / ${shelfShort}`;
   const serveLine = getDevLabelServeFooter(label.serveStyle);
   const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
   const printAttribute = printable ? ` data-print-label="true"` : "";
-  const headerMeta = label.intensity === "light"
-    ? ""
-    : `<span>${escapeHtml(label.source)} &middot; ${escapeHtml(label.date)}</span>`;
+  const densityClass = getLabel50x70DensityClass(label);
+  const headerMeta = `<span>${escapeHtml(label.source)} &middot; ${escapeHtml(label.date)}</span>`;
+  const sourceUrlMeta = formatLabelSourceUrl(label.sourceUrl);
+  const sourceUrlMarkup = sourceUrlMeta
+    ? `<span class="label-source-url"><b>${escapeHtml(sourceUrlMeta.label)} /</b> ${escapeHtml(sourceUrlMeta.value)}</span>`
+    : "";
+  const signalContext = cleanLabelCopy(label.sourceSignal);
+  const contextValue = signalContext
+    ? `<section class="label-test-context" aria-label="signal context">
+        <span>SIGNAL CONTEXT</span>
+        <p>${escapeHtml(signalContext)}</p>
+      </section>`
+    : "";
   const bodyValue = label.intensity === "light" || label.identityValue
     ? `<section class="label-test-body" aria-label="current identity">
         <span>${escapeHtml(identityForLabel)}</span>
         ${label.identityValue ? `<p>${escapeHtml(label.identityValue)}</p>` : ""}
       </section>`
     : "";
-  const focusValue = label.intensity === "double"
-    ? `<section class="label-test-focus" aria-label="current today focus">
-        <span>TODAY'S FOCUS</span>
+  const focusValue = label.todayFocus
+    ? `<section class="label-test-focus${label.intensity === "light" ? " label-test-focus-lite" : ""}" aria-label="current today focus">
+        ${label.intensity === "light" ? "" : "<span>TODAY'S FOCUS</span>"}
         <p>${escapeHtml(label.todayFocus)}</p>
+      </section>`
+    : "";
+  const canonical = selectedSignal ? buildCanonicalSlice(selectedSignal, selectedIdentity, label.intensity, label.serveStyle) : null;
+  const possibleNoiseValue = cleanLabelCopy(canonical?.noiseToIgnore || canonical?.whyToday);
+  const noiseValue = label.intensity === "double"
+    && possibleNoiseValue
+    && !areCopyLinesSimilar(possibleNoiseValue, label.todayFocus)
+    && !areCopyLinesSimilar(possibleNoiseValue, label.identityValue)
+    ? possibleNoiseValue
+    : "";
+  const noiseSection = noiseValue
+    ? `<section class="label-test-noise" aria-label="do not chase">
+        <span>DON'T CHASE</span>
+        <p>${escapeHtml(noiseValue)}</p>
       </section>`
     : "";
 
   return `
-    <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)}"${printAttribute}>
+    <article class="label-paper-50x70 label-paper-${escapeHtml(label.intensity)} ${densityClass}"${printAttribute}>
       <div class="label-safe-area">
         <header class="label-test-header">
           <strong>TIME SLICE COFFEE</strong>
           <span>${escapeHtml(label.labelNo)} / ${escapeHtml(shelfShort)}</span>
           ${headerMeta}
+          ${sourceUrlMarkup}
         </header>
 
         <h3>${escapeHtml(label.sliceTitle)}</h3>
 
+        ${contextValue}
         ${bodyValue}
         ${focusValue}
+        ${noiseSection}
 
         <div class="label-test-brew">${escapeHtml(brewLine)}</div>
         <footer>${escapeHtml(serveLine)}</footer>
@@ -1938,8 +2526,11 @@ function getDevLabel50x70MetaMarkup(label, hasGeneratedLabel) {
 function renderDevLabel50x70Preview(label = generatedLabel) {
   if (!devLabel50x70Current) return;
 
-  const hasGeneratedLabel = Boolean(label);
-  const safeLabel = normalizeDevLabel50x70(label);
+  const currentLabel = label && (!getCurrentSignal() || isLabelForCurrentSelection(label))
+    ? label
+    : null;
+  const hasGeneratedLabel = Boolean(currentLabel);
+  const safeLabel = normalizeDevLabel50x70(currentLabel);
   if (devLabel50x70CurrentMeta) {
     devLabel50x70CurrentMeta.innerHTML = getDevLabel50x70MetaMarkup(safeLabel, hasGeneratedLabel);
   }
@@ -1960,7 +2551,12 @@ function renderDevLabel50x70Preview(label = generatedLabel) {
 function renderPickup50x70LabelPreview(label = generatedLabel) {
   if (!pickupLabel50x70Preview) return;
 
-  const safeLabel = normalizeDevLabel50x70(label);
+  const currentLabel = label && (!getCurrentSignal() || isLabelForCurrentSelection(label))
+    ? label
+    : getCurrentSignal()
+      ? buildFallbackTimeSliceLabel()
+      : label;
+  const safeLabel = normalizeDevLabel50x70(currentLabel);
   pickupLabel50x70Preview.innerHTML = "";
   pickupLabel50x70Preview.innerHTML = getDevLabel50x70Markup(safeLabel);
 }
@@ -2019,17 +2615,21 @@ function getPrintFrame50x70Styles() {
 
     .label-paper-50x70 * {
       border-color: #000000 !important;
+      overflow-wrap: anywhere !important;
+      text-overflow: clip !important;
+      white-space: normal !important;
+      word-break: break-word !important;
     }
 
     .label-safe-area {
       width: 42mm !important;
       max-width: 42mm !important;
-      height: 60mm !important;
-      margin: 4mm auto 6mm !important;
+      height: 62mm !important;
+      margin: 3mm auto 5mm !important;
       padding: 0 !important;
       display: flex !important;
       flex-direction: column !important;
-      overflow: hidden !important;
+      overflow: visible !important;
     }
 
     .label-test-header {
@@ -2054,17 +2654,31 @@ function getPrintFrame50x70Styles() {
       letter-spacing: 0 !important;
     }
 
+    .label-test-header .label-source-url {
+      font-size: 3.85pt !important;
+      font-weight: 650 !important;
+      line-height: 1.12 !important;
+      letter-spacing: 0 !important;
+      overflow-wrap: anywhere !important;
+      white-space: normal !important;
+      word-break: break-all !important;
+    }
+
+    .label-test-header .label-source-url b {
+      font-weight: 750 !important;
+    }
+
     h3 {
-      font-size: 11.8pt !important;
-      line-height: 1.1 !important;
-      margin: 2.2mm 0 2mm !important;
+      font-size: 10.9pt !important;
+      line-height: 1.08 !important;
+      margin: 1.8mm 0 1.4mm !important;
       font-weight: 750 !important;
       letter-spacing: 0 !important;
     }
 
     .label-paper-light h3 {
       font-size: 12.8pt !important;
-      margin: 3.4mm 0 2.4mm !important;
+      margin: 2.2mm 0 1.4mm !important;
     }
 
     .label-paper-double h3 {
@@ -2073,65 +2687,214 @@ function getPrintFrame50x70Styles() {
       margin: 1.8mm 0 1.5mm !important;
     }
 
+    .label-test-context,
+    .label-test-noise {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.4mm !important;
+      margin-bottom: 0.8mm !important;
+      padding-left: 0.75mm !important;
+      border-left: 0.5px solid #000000 !important;
+    }
+
+    .label-test-noise {
+      margin-top: 0.55mm !important;
+      margin-bottom: 0 !important;
+    }
+
     .label-test-body {
       display: flex !important;
       flex-direction: column !important;
-      gap: 0.9mm !important;
-      padding-top: 1.4mm !important;
+      gap: 0.65mm !important;
+      padding-top: 1mm !important;
       border-top: 0.5px solid #000000 !important;
     }
 
     .label-test-body span,
-    .label-test-focus span {
+    .label-test-focus span,
+    .label-test-context span,
+    .label-test-noise span {
       font-size: 5.6pt !important;
       font-weight: 700 !important;
       line-height: 1.16 !important;
       letter-spacing: 0 !important;
     }
 
-    .label-test-body p {
+    .label-test-context p,
+    .label-test-body p,
+    .label-test-noise p {
       margin: 0 !important;
-      font-size: 7.2pt !important;
+      font-size: 6.7pt !important;
       font-weight: 700 !important;
-      line-height: 1.28 !important;
+      line-height: 1.18 !important;
       letter-spacing: 0 !important;
     }
 
     .label-test-focus {
       display: flex !important;
       flex-direction: column !important;
-      gap: 0.7mm !important;
-      margin-top: 1.4mm !important;
-      padding-left: 1.2mm !important;
+      gap: 0.5mm !important;
+      margin-top: 1mm !important;
+      padding-left: 1mm !important;
       border-left: 0.5px solid #000000 !important;
     }
 
     .label-test-focus p {
       margin: 0 !important;
-      font-size: 6.8pt !important;
+      font-size: 6.3pt !important;
       font-weight: 700 !important;
-      line-height: 1.24 !important;
+      line-height: 1.16 !important;
       letter-spacing: 0 !important;
+    }
+
+    .label-test-focus-lite {
+      border-left: 0 !important;
+      margin-top: 0.65mm !important;
+      padding-left: 0 !important;
     }
 
     .label-test-brew {
       margin-top: auto !important;
-      padding-top: 1.1mm !important;
+      padding-top: 0.85mm !important;
       border-top: 0.5px solid #000000 !important;
       font-size: 5.8pt !important;
       font-weight: 700 !important;
       line-height: 1.16 !important;
       letter-spacing: 0 !important;
+      flex-shrink: 0 !important;
     }
 
     footer {
-      margin-top: 1.1mm !important;
-      padding-top: 1.1mm !important;
+      margin-top: 0.85mm !important;
+      padding-top: 0.85mm !important;
       border-top: 0.5px solid #000000 !important;
       font-size: 6.1pt !important;
       font-weight: 700 !important;
       line-height: 1.16 !important;
       letter-spacing: 0 !important;
+      flex-shrink: 0 !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-header {
+      gap: 0.5mm !important;
+      padding-bottom: 0.85mm !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-header .label-source-url {
+      font-size: 3.55pt !important;
+      line-height: 1.08 !important;
+    }
+
+    .label-paper-50x70.label-copy-compact h3 {
+      font-size: 10.4pt !important;
+      line-height: 1.04 !important;
+      margin: 1.1mm 0 0.8mm !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-body {
+      gap: 0.45mm !important;
+      padding-top: 0.75mm !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-context {
+      gap: 0.3mm !important;
+      margin-bottom: 0.55mm !important;
+      padding-left: 0.65mm !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-context p,
+    .label-paper-50x70.label-copy-compact .label-test-noise p {
+      font-size: 5.55pt !important;
+      line-height: 1.08 !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-body p {
+      font-size: 5.8pt !important;
+      line-height: 1.1 !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-focus {
+      gap: 0.35mm !important;
+      margin-top: 0.65mm !important;
+      padding-left: 0.75mm !important;
+    }
+
+    .label-paper-50x70.label-copy-compact .label-test-focus p {
+      font-size: 5.45pt !important;
+      line-height: 1.08 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-header {
+      gap: 0.4mm !important;
+      padding-bottom: 0.7mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-header span {
+      font-size: 4.65pt !important;
+      line-height: 1.08 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-header .label-source-url {
+      font-size: 3.35pt !important;
+      line-height: 1.06 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense h3 {
+      font-size: 9.8pt !important;
+      line-height: 1.03 !important;
+      margin: 0.85mm 0 0.65mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-body {
+      gap: 0.35mm !important;
+      padding-top: 0.6mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-context {
+      gap: 0.25mm !important;
+      margin-bottom: 0.45mm !important;
+      padding-left: 0.55mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-body span,
+    .label-paper-50x70.label-copy-dense .label-test-focus span,
+    .label-paper-50x70.label-copy-dense .label-test-context span,
+    .label-paper-50x70.label-copy-dense .label-test-noise span,
+    .label-paper-50x70.label-copy-dense .label-test-brew {
+      font-size: 4.9pt !important;
+      line-height: 1.06 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-context p,
+    .label-paper-50x70.label-copy-dense .label-test-noise p {
+      font-size: 5.15pt !important;
+      line-height: 1.06 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-body p {
+      font-size: 5.45pt !important;
+      line-height: 1.07 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-focus {
+      gap: 0.3mm !important;
+      margin-top: 0.5mm !important;
+      padding-left: 0.65mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-focus p {
+      font-size: 5.2pt !important;
+      line-height: 1.06 !important;
+    }
+
+    .label-paper-50x70.label-copy-dense .label-test-brew {
+      padding-top: 0.55mm !important;
+    }
+
+    .label-paper-50x70.label-copy-dense footer {
+      font-size: 5.1pt !important;
+      margin-top: 0.5mm !important;
+      padding-top: 0.55mm !important;
     }
   `;
 }
@@ -2242,13 +3005,14 @@ async function fetchAiRewrite({ signal } = {}) {
 }
 
 function resetBrewResult() {
-  activeRewrite = null;
+  clearGeneratedOutputState();
   heroCodeCup?.classList.remove("is-brewing", "is-ordering", "is-complete");
   valueSection.classList.add("is-disabled");
   labelSection.classList.add("is-disabled");
 }
 
 function resetDemoFlow({ render = true } = {}) {
+  clearGeneratedOutputState();
   selectedSignal = null;
   selectedShelfId = null;
   selectedIdentity = null;
@@ -2363,7 +3127,20 @@ function showGeneratedLabel() {
   if (!activeRewrite) return;
 
   enableSection(labelSection);
-  generatedLabel = renderTimeSliceLabel(activeRewrite);
+  if (!isLabelForCurrentSelection(activeRewrite.timeSliceLabel)) {
+    activeRewrite = normalizeRewrite(activeRewrite);
+  }
+
+  generatedLabel = isLabelForCurrentSelection(activeRewrite.timeSliceLabel)
+    ? activeRewrite.timeSliceLabel
+    : isLabelForCurrentSelection(generatedLabel)
+      ? generatedLabel
+      : buildFallbackTimeSliceLabel();
+  activeRewrite = {
+    ...activeRewrite,
+    timeSliceLabel: generatedLabel,
+  };
+  renderTimeSliceLabel(activeRewrite);
   renderPickup50x70LabelPreview(generatedLabel);
   renderDevLabel50x70Preview(generatedLabel);
   console.log("generatedLabel", generatedLabel);
@@ -2397,7 +3174,7 @@ async function brewSlice() {
     }
 
     renderValueRewrite(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
-    generatedLabel = renderTimeSliceLabel(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
+    generatedLabel = renderTimeSliceLabel(activeRewrite);
     renderPickup50x70LabelPreview(generatedLabel);
     renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
@@ -2427,7 +3204,7 @@ async function brewSlice() {
     }
 
     renderValueRewrite(fallback);
-    generatedLabel = renderTimeSliceLabel(fallback);
+    generatedLabel = renderTimeSliceLabel(activeRewrite);
     renderPickup50x70LabelPreview(generatedLabel);
     renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
