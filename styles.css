@@ -1690,13 +1690,16 @@ h2 {
 }
 
 .label-source-qr-svg,
-.label-source-qr-img {
+.label-source-qr-img,
+.time-slice-source-qr {
   display: block;
   height: 100%;
   filter: none;
   image-rendering: pixelated;
+  object-fit: contain;
   opacity: 1;
   shape-rendering: crispEdges;
+  visibility: visible;
   width: 100%;
 }
 

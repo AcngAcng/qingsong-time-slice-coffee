@@ -2587,7 +2587,7 @@ function getQrSvgMarkup(text) {
   return `
     <img
       alt="Scan source signal"
-      class="label-source-qr-img"
+      class="label-source-qr-img time-slice-source-qr"
       decoding="sync"
       loading="eager"
       referrerpolicy="no-referrer"
@@ -2603,8 +2603,8 @@ function getSourceAccessMarkup(label, sourceSignal = null) {
   const scanLabel = getSourceAccessScanLabel(rawUrl, qrTargetUrl);
 
   return `
-    <section class="label-source-access" aria-label="source access">
-      <div class="label-source-access-copy">
+    <section class="label-source-access time-slice-source-access" aria-label="source access">
+      <div class="label-source-access-copy source-copy">
         <span>SOURCE ACCESS</span>
         <p>${escapeHtml(scanLabel)}</p>
         <strong>SOURCE ${escapeHtml(label.labelNo)}</strong>
@@ -3009,12 +3009,15 @@ function getPrintFrame50x70Styles() {
     }
 
     .label-source-qr-svg,
-    .label-source-qr-img {
+    .label-source-qr-img,
+    .time-slice-source-qr {
       width: 100% !important;
       height: 100% !important;
       display: block !important;
+      visibility: visible !important;
       filter: none !important;
       image-rendering: pixelated !important;
+      object-fit: contain !important;
       opacity: 1 !important;
       shape-rendering: crispEdges !important;
     }
@@ -3201,7 +3204,31 @@ function getPrintFrame50x70Styles() {
   `;
 }
 
-function printCurrent50x70Label() {
+function waitForPrintImages(doc) {
+  const images = Array.from(doc?.images || []);
+  if (!images.length) return Promise.resolve();
+
+  return Promise.all(images.map((img) => {
+    if (img.complete && img.naturalWidth > 0) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      let isResolved = false;
+      const finish = () => {
+        if (isResolved) return;
+        isResolved = true;
+        resolve();
+      };
+
+      img.addEventListener("load", finish, { once: true });
+      img.addEventListener("error", finish, { once: true });
+      window.setTimeout(finish, 1800);
+    });
+  }));
+}
+
+async function printCurrent50x70Label() {
   const source = document.querySelector("#pickup-50x70-label .label-paper-50x70");
 
   if (!source) {
@@ -3253,13 +3280,19 @@ function printCurrent50x70Label() {
 
   console.log("IFRAME PRINT READY", {
     iframeLabels: printDocument.querySelectorAll(".label-paper-50x70").length,
+    iframeImages: printDocument.images.length,
   });
 
   printWindow.addEventListener("afterprint", () => {
     iframe.remove();
   }, { once: true });
 
-  window.setTimeout(() => {
+  window.setTimeout(async () => {
+    await waitForPrintImages(printDocument);
+    console.log("IFRAME PRINT IMAGES READY", {
+      iframeImages: printDocument.images.length,
+      loadedImages: Array.from(printDocument.images).filter((img) => img.complete && img.naturalWidth > 0).length,
+    });
     printWindow.focus();
     printWindow.print();
     window.setTimeout(() => {
