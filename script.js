@@ -166,6 +166,7 @@ let signalRoundIndex = 0;
 let generatedLabel = null;
 let currentCanonicalSlice = null;
 let currentCanonicalSignalId = null;
+let brewGenerationId = 0;
 let hasVisitedSignals = false;
 let hasSelectedStrength = false;
 let hasSelectedServeStyle = false;
@@ -436,6 +437,59 @@ function getCurrentSignal() {
   return selectedSignal || null;
 }
 
+function getCurrentSignalId(signal = getCurrentSignal()) {
+  return cleanLabelCopy(signal?.id);
+}
+
+function getCurrentSelectionSignature() {
+  return {
+    signalId: getCurrentSignalId(),
+    identityId: selectedIdentity?.id || "",
+    intensity: normalizeLabelIntensity(selectedStrength?.id),
+    serveStyle: normalizeLabelServeStyle(selectedServeStyle?.id),
+  };
+}
+
+function isCanonicalForSelection(canonical = currentCanonicalSlice, signal = getCurrentSignal()) {
+  if (!canonical || !signal?.id) return false;
+
+  const signature = getCurrentSelectionSignature();
+  return canonical.canonicalSignalId === signal.id
+    && canonical.canonicalIdentityId === signature.identityId
+    && canonical.intensity === signature.intensity
+    && canonical.serveStyle === signature.serveStyle;
+}
+
+function getBoundCanonicalSlice(signal = getCurrentSignal()) {
+  return isCanonicalForSelection(currentCanonicalSlice, signal) ? currentCanonicalSlice : null;
+}
+
+function ensureCanonicalSliceForCurrentSelection() {
+  if (!selectedSignal) return null;
+  const existingCanonical = getBoundCanonicalSlice(selectedSignal);
+  if (existingCanonical) return existingCanonical;
+
+  return buildCanonicalSlice(selectedSignal, selectedIdentity, selectedStrength?.id, selectedServeStyle?.id);
+}
+
+function invalidateBrewGeneration() {
+  brewGenerationId += 1;
+}
+
+function beginBrewGeneration() {
+  brewGenerationId += 1;
+  return {
+    generationId: brewGenerationId,
+    signalId: selectedSignal?.id || "",
+  };
+}
+
+function isCurrentBrewGeneration(token) {
+  return Boolean(token)
+    && token.generationId === brewGenerationId
+    && token.signalId === selectedSignal?.id;
+}
+
 function shouldLogSignalFlowDebug() {
   const host = window.location.hostname || "";
   return host === "127.0.0.1" || host === "localhost" || window.location.search.includes("debug=signal");
@@ -456,7 +510,7 @@ function isLabelForCurrentSelection(label, signal = getCurrentSignal()) {
     && normalizeLabelServeStyle(label.serveStyle) === normalizeLabelServeStyle(selectedServeStyle?.id);
 }
 
-function clearGeneratedOutputState({ clearDom = true } = {}) {
+function clearGeneratedOutputState({ clearDom = true, clearReceipt = false } = {}) {
   activeRewrite = null;
   generatedLabel = null;
   currentCanonicalSlice = null;
@@ -468,7 +522,13 @@ function clearGeneratedOutputState({ clearDom = true } = {}) {
   if (valueTitle) valueTitle.textContent = "";
   if (printLabel) printLabel.innerHTML = "";
   if (pickupLabel50x70Preview) pickupLabel50x70Preview.innerHTML = "";
+  if (devLabel50x70Current) devLabel50x70Current.innerHTML = "";
+  if (devLabel50x70CurrentMeta) devLabel50x70CurrentMeta.innerHTML = "";
   if (productPreview) productPreview.innerHTML = "";
+  if (clearReceipt) {
+    sliceReceiptPreview.innerHTML = "";
+    sliceReceiptPreview.remove();
+  }
 }
 
 function getSelectedShelf() {
@@ -1313,6 +1373,8 @@ function buildPurposeAngleFromNotes(identity, signal) {
 function buildCanonicalSlice(signal = getCurrentSignal(), identity = selectedIdentity, intensity = selectedStrength?.id, serveStyle = selectedServeStyle?.id) {
   const normalizedIntensity = normalizeLabelIntensity(intensity);
   const normalizedServeStyle = normalizeLabelServeStyle(serveStyle);
+  const canonicalSignalId = signal?.id || "";
+  const canonicalIdentityId = identity?.id || "";
   const rawHeadline = getRawHeadline(signal);
   const signalSubject = getSignalSubject(signal);
   const eventDigest = getSignalEventDigest(signal, signalSubject);
@@ -1333,6 +1395,8 @@ function buildCanonicalSlice(signal = getCurrentSignal(), identity = selectedIde
       : getUniqueCopyLines([signalSubject, eventDigest, coreShift, purposeTakeaway]);
 
   const result = {
+    canonicalSignalId,
+    canonicalIdentityId,
     rawHeadline,
     eventDigest,
     signalSubject,
@@ -1392,7 +1456,9 @@ function isStructuralSliceTitle(title) {
 }
 
 function getStructuralSliceTitle(signal, candidateTitle = "") {
-  return buildCanonicalSlice(signal, selectedIdentity, selectedStrength?.id, selectedServeStyle?.id).coreShift
+  const canonical = getBoundCanonicalSlice(signal);
+  return canonical?.coreShift
+    || ensureLabelSentence(getSignalCoreInsight(signal))
     || ensureLabelSentence(candidateTitle)
     || "一个具体流程正在发生变化。";
 }
@@ -1757,10 +1823,10 @@ function getReceiptPurposeDirection(identityId) {
   return directionByIdentity[identityId] || directionByIdentity.everyday;
 }
 
-function getReceiptResultLines({ forceComplete = false } = {}) {
+function getReceiptResultLines(canonical, { forceComplete = false } = {}) {
   if (!selectedSignal) return null;
+  if (!canonical) return [];
 
-  const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, selectedStrength?.id, selectedServeStyle?.id);
   const intensity = normalizeLabelIntensity(selectedStrength?.id);
   const canShowStrength = hasSelectedStrength || forceComplete;
 
@@ -1793,11 +1859,13 @@ function getReceiptResultLines({ forceComplete = false } = {}) {
 
 function buildSliceReceiptCopy({ forceComplete = false } = {}) {
   if (!selectedSignal) return null;
-  const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, selectedStrength?.id, selectedServeStyle?.id);
+  const canonical = getBoundCanonicalSlice(selectedSignal);
+  if (!canonical) return null;
+
   const rawHeadline = canonical.rawHeadline || getRawSignalHeadline(selectedSignal);
-  const structuralTitle = canonical.coreShift || getStructuralSliceTitle(selectedSignal, selectedSignal.sliceTitle);
+  const structuralTitle = canonical.coreShift || ensureLabelSentence(getSignalCoreInsight(selectedSignal));
   const selectionParts = getReceiptSelectionParts({ forceComplete });
-  const resultLines = getReceiptResultLines({ forceComplete }) || [];
+  const resultLines = getReceiptResultLines(canonical, { forceComplete }) || [];
   const meta = [`#${selectedSignal.id || "000"}`, getLabelShelfShort(getLabelShelf(selectedSignal) || selectedSignal.shelfTitle)].filter(Boolean).join(" · ");
 
   return {
@@ -1837,6 +1905,10 @@ function renderSliceReceiptPreview(stage = "raw") {
 
   mountSliceReceiptPreview(stage);
   const receipt = buildSliceReceiptCopy();
+  if (!receipt) {
+    sliceReceiptPreview.innerHTML = "";
+    return;
+  }
 
   sliceReceiptPreview.innerHTML = `
     <div class="slice-receipt-title">当前切片预览</div>
@@ -1884,7 +1956,9 @@ function getReceiptCompletionMeta(receipt) {
 
 function getReceiptCompletionMarkup(value) {
   const receipt = buildSliceReceiptCopy({ forceComplete: true });
-  const label = value.timeSliceLabel || generatedLabel || buildFallbackTimeSliceLabel();
+  const label = value.timeSliceLabel || generatedLabel;
+  if (!receipt || !isLabelForCurrentSelection(label)) return "";
+  const keywords = Array.isArray(value.keywords) ? value.keywords : [];
 
   return `
     <article class="slice-receipt-complete">
@@ -1905,7 +1979,7 @@ function getReceiptCompletionMarkup(value) {
         <p><strong>这杯带走：</strong>${escapeHtml(receipt.purposeTakeaway)}</p>
         ${receipt.noiseToIgnore ? `<p><strong>可以不用追：</strong>${escapeHtml(receipt.noiseToIgnore)}</p>` : ""}
       </div>
-      <div class="keyword-row">${value.keywords.map((keyword) => `<b>${escapeHtml(keyword)}</b>`).join("")}</div>
+      <div class="keyword-row">${keywords.map((keyword) => `<b>${escapeHtml(keyword)}</b>`).join("")}</div>
       <div class="value-actions">
         <button class="button primary" id="generate-label-button" type="button">Generate Label / 生成杯贴</button>
       </div>
@@ -2161,7 +2235,9 @@ function normalizeTimeSliceLabel(rewrite) {
   const canonical = buildCanonicalSlice(selectedSignal, selectedIdentity, fallback.intensity, fallback.serveStyle);
   const purposeIdentityValue = canonical.labelValue || canonical.purposeAngle || buildLabelIdentityValue(null, selectedIdentity, selectedSignal, fallback.intensity);
   const purposeTodayFocus = fallback.intensity !== "light" ? canonical.labelFocus || canonical.coreShift || buildLabelTodayFocus(selectedIdentity, selectedSignal, fallback.intensity, fallback.serveStyle) : "";
+  const candidateLabelNo = cleanLabelCopy(candidate?.labelNo);
   const candidateMatchesCurrent =
+    (!candidateLabelNo || candidateLabelNo === fallback.labelNo) &&
     candidate?.identity === fallback.identity &&
     candidate?.intensity === fallback.intensity &&
     candidate?.serveStyle === fallback.serveStyle;
@@ -2200,19 +2276,48 @@ function normalizeRewrite(rewrite) {
   };
 }
 
-function getStableRewriteValue(rewrite = activeRewrite) {
-  if (rewrite?.timeSliceLabel?.sliceTitle && isLabelForCurrentSelection(rewrite.timeSliceLabel)) {
-    return rewrite;
+function prepareRewriteForCurrentSelection(rewrite) {
+  ensureCanonicalSliceForCurrentSelection();
+  const value = normalizeRewrite(rewrite || {});
+
+  if (!isLabelForCurrentSelection(value.timeSliceLabel)) {
+    value.timeSliceLabel = buildFallbackTimeSliceLabel();
   }
 
-  if (generatedLabel?.sliceTitle && isLabelForCurrentSelection(generatedLabel)) {
-    return {
-      ...(rewrite || activeRewrite || {}),
-      timeSliceLabel: generatedLabel,
-    };
-  }
+  activeRewrite = value;
+  generatedLabel = value.timeSliceLabel;
+  return value;
+}
 
-  return normalizeRewrite(rewrite || activeRewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
+function getRenderableRewriteValue(rewrite = activeRewrite) {
+  const value = rewrite || activeRewrite;
+  const label = isLabelForCurrentSelection(value?.timeSliceLabel)
+    ? value.timeSliceLabel
+    : isLabelForCurrentSelection(generatedLabel)
+      ? generatedLabel
+      : null;
+
+  if (!label) return null;
+
+  return {
+    ...(value || {}),
+    timeSliceLabel: label,
+    keywords: Array.isArray(value?.keywords) ? value.keywords : [],
+  };
+}
+
+function ensureGeneratedLabelForCurrentSelection() {
+  if (isLabelForCurrentSelection(generatedLabel)) return generatedLabel;
+
+  const label = buildFallbackTimeSliceLabel();
+  generatedLabel = label;
+  activeRewrite = {
+    ...(activeRewrite || {}),
+    timeSliceLabel: label,
+    keywords: Array.isArray(activeRewrite?.keywords) ? activeRewrite.keywords : buildSignalKeywords(selectedSignal),
+  };
+
+  return label;
 }
 
 function getVisibleRows(value) {
@@ -2239,7 +2344,13 @@ function renderLoading() {
 }
 
 function renderValueRewrite(rewrite) {
-  const value = normalizeRewrite(rewrite);
+  const value = getRenderableRewriteValue(rewrite);
+  if (!value) {
+    valuePanel.innerHTML = "";
+    if (valueTitle) valueTitle.textContent = "";
+    return;
+  }
+
   activeRewrite = value;
   generatedLabel = value.timeSliceLabel;
   if (shouldLogSignalFlowDebug()) {
@@ -2260,8 +2371,14 @@ function renderValueRewrite(rewrite) {
 }
 
 function renderTimeSliceLabel(rewrite = activeRewrite) {
-  const value = getStableRewriteValue(rewrite);
-  const label = value.timeSliceLabel || buildFallbackTimeSliceLabel();
+  const value = getRenderableRewriteValue(rewrite);
+  if (!value) {
+    if (printLabel) printLabel.innerHTML = "";
+    if (productPreview) productPreview.innerHTML = "";
+    return null;
+  }
+
+  const label = value.timeSliceLabel;
   const serveMeta = getServeMeta(label.serveStyle);
   const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
   value.timeSliceLabel = label;
@@ -2312,7 +2429,12 @@ function renderTimeSliceLabel(rewrite = activeRewrite) {
 }
 
 function renderProductPreview(value) {
-  const label = value.timeSliceLabel || buildFallbackTimeSliceLabel();
+  const label = isLabelForCurrentSelection(value?.timeSliceLabel) ? value.timeSliceLabel : null;
+  if (!label) {
+    productPreview.innerHTML = "";
+    return;
+  }
+
   const identityForLabel = getIdentityForLabel(selectedIdentity?.id, label.identity);
 
   productPreview.innerHTML = `
@@ -2597,7 +2719,10 @@ function getQrSvgMarkup(text) {
 }
 
 function getSourceAccessMarkup(label, sourceSignal = null) {
-  const rawUrl = sourceSignal?.rawUrl || label.sourceUrl;
+  const currentSignal = getCurrentSignal();
+  const rawUrl = currentSignal && isLabelForCurrentSignal(label, currentSignal)
+    ? currentSignal.rawUrl
+    : sourceSignal?.rawUrl || label.sourceUrl;
   const qrTargetUrl = getQrTargetUrl(rawUrl);
   if (!qrTargetUrl) return "";
   const scanLabel = getSourceAccessScanLabel(rawUrl, qrTargetUrl);
@@ -2692,7 +2817,7 @@ function getDevLabel50x70Markup(label, { printable = false, sourceSignal = null 
         <p>${escapeHtml(label.todayFocus)}</p>
       </section>`
     : "";
-  const canonical = selectedSignal ? buildCanonicalSlice(selectedSignal, selectedIdentity, label.intensity, label.serveStyle) : null;
+  const canonical = sourceSignal?.id === selectedSignal?.id ? getBoundCanonicalSlice(sourceSignal) : null;
   const possibleNoiseValue = cleanLabelCopy(canonical?.noiseToIgnore || canonical?.whyToday);
   const noiseValue = label.intensity === "double"
     && possibleNoiseValue
@@ -2776,9 +2901,12 @@ function renderPickup50x70LabelPreview(label = generatedLabel) {
 
   const currentLabel = label && (!getCurrentSignal() || isLabelForCurrentSelection(label))
     ? label
-    : getCurrentSignal()
-      ? buildFallbackTimeSliceLabel()
-      : label;
+    : null;
+  if (getCurrentSignal() && !currentLabel) {
+    pickupLabel50x70Preview.innerHTML = "";
+    return;
+  }
+
   const safeLabel = normalizeDevLabel50x70(currentLabel);
   pickupLabel50x70Preview.innerHTML = "";
   pickupLabel50x70Preview.innerHTML = getDevLabel50x70Markup(safeLabel, {
@@ -3340,7 +3468,8 @@ async function fetchAiRewrite({ signal } = {}) {
 }
 
 function resetBrewResult() {
-  clearGeneratedOutputState();
+  invalidateBrewGeneration();
+  clearGeneratedOutputState({ clearReceipt: true });
   heroCodeCup?.classList.remove("is-brewing", "is-ordering", "is-complete");
   valueSection.classList.add("is-disabled");
   labelSection.classList.add("is-disabled");
@@ -3380,12 +3509,13 @@ function selectSignal(signalId) {
   selectedIdentity = null;
   hasSelectedStrength = false;
   hasSelectedServeStyle = false;
+  resetBrewResult();
+  ensureCanonicalSliceForCurrentSelection();
   renderSignals();
   renderIdentities();
   identitySection.classList.add("is-disabled");
   brewSection.classList.add("is-disabled");
   serveSection.classList.add("is-disabled");
-  resetBrewResult();
   renderSliceReceiptPreview("raw");
   scrollAfterRender(selectedSignalPanel);
 }
@@ -3420,12 +3550,13 @@ function selectIdentity(identityId) {
   selectedIdentity = identities.find((identity) => identity.id === identityId);
   hasSelectedStrength = false;
   hasSelectedServeStyle = false;
+  resetBrewResult();
+  ensureCanonicalSliceForCurrentSelection();
   renderIdentities();
   renderStrengths();
   renderServeStyles();
   enableSection(brewSection);
   enableSection(serveSection);
-  resetBrewResult();
   renderSliceReceiptPreview("brew");
   scrollToSection(brewSection);
 }
@@ -3434,26 +3565,21 @@ function selectStrength(strengthId) {
   selectedStrength = strengths.find((strength) => strength.id === strengthId);
   hasSelectedStrength = true;
   hasSelectedServeStyle = false;
+  resetBrewResult();
+  ensureCanonicalSliceForCurrentSelection();
   renderStrengths();
   renderServeStyles();
   enableSection(serveSection);
-  labelSection.classList.add("is-disabled");
   renderSliceReceiptPreview("serve");
   scrollToSection(serveSection);
-
-  if (activeRewrite) {
-    renderValueRewrite(activeRewrite);
-    renderTimeSliceLabel(activeRewrite);
-    renderPickup50x70LabelPreview();
-    renderDevLabel50x70Preview();
-  }
 }
 
 function selectServeStyle(serveId) {
   selectedServeStyle = serveStyles.find((serveStyle) => serveStyle.id === serveId);
   hasSelectedServeStyle = true;
+  resetBrewResult();
+  ensureCanonicalSliceForCurrentSelection();
   renderServeStyles();
-  labelSection.classList.add("is-disabled");
   renderSliceReceiptPreview("serve");
   brewSlice();
 }
@@ -3462,15 +3588,11 @@ function showGeneratedLabel() {
   if (!activeRewrite) return;
 
   enableSection(labelSection);
-  if (!isLabelForCurrentSelection(activeRewrite.timeSliceLabel)) {
-    activeRewrite = normalizeRewrite(activeRewrite);
-  }
-
   generatedLabel = isLabelForCurrentSelection(activeRewrite.timeSliceLabel)
     ? activeRewrite.timeSliceLabel
     : isLabelForCurrentSelection(generatedLabel)
       ? generatedLabel
-      : buildFallbackTimeSliceLabel();
+      : ensureGeneratedLabelForCurrentSelection();
   activeRewrite = {
     ...activeRewrite,
     timeSliceLabel: generatedLabel,
@@ -3485,12 +3607,16 @@ function showGeneratedLabel() {
 async function brewSlice() {
   if (!selectedSignal || !selectedIdentity) return;
 
+  const brewToken = beginBrewGeneration();
+
   console.log("brewing started");
   console.log("selectedSignal", selectedSignal);
   console.log("selectedIdentity", selectedIdentity);
   console.log("selectedIntensity", selectedStrength?.id || "regular");
   console.log("selectedServeStyle", selectedServeStyle?.id || "hot");
 
+  clearGeneratedOutputState();
+  ensureCanonicalSliceForCurrentSelection();
   enableSection(valueSection);
   labelSection.classList.add("is-disabled");
   setCodeCupBrewing(true);
@@ -3508,13 +3634,18 @@ async function brewSlice() {
       window.clearTimeout(timeoutId);
     }
 
-    renderValueRewrite(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
-    generatedLabel = renderTimeSliceLabel(activeRewrite);
+    if (!isCurrentBrewGeneration(brewToken)) return;
+
+    const value = prepareRewriteForCurrentSelection(rewrite || { timeSliceLabel: buildFallbackTimeSliceLabel() });
+    renderValueRewrite(value);
+    generatedLabel = renderTimeSliceLabel(value);
     renderPickup50x70LabelPreview(generatedLabel);
     renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
   } catch (error) {
+    if (!isCurrentBrewGeneration(brewToken)) return;
+
     console.error(error);
     const fallbackLabel = buildFallbackTimeSliceLabel();
     let fallback;
@@ -3538,16 +3669,19 @@ async function brewSlice() {
       };
     }
 
-    renderValueRewrite(fallback);
-    generatedLabel = renderTimeSliceLabel(activeRewrite);
+    const value = prepareRewriteForCurrentSelection(fallback);
+    renderValueRewrite(value);
+    generatedLabel = renderTimeSliceLabel(value);
     renderPickup50x70LabelPreview(generatedLabel);
     renderDevLabel50x70Preview(generatedLabel);
     console.log("generatedLabel", generatedLabel);
     setCodeCupComplete();
   } finally {
-    setCodeCupBrewing(false);
-    scrollAfterRender(valueSection);
-    console.log("brewing finished");
+    if (isCurrentBrewGeneration(brewToken)) {
+      setCodeCupBrewing(false);
+      scrollAfterRender(valueSection);
+      console.log("brewing finished");
+    }
   }
 }
 
