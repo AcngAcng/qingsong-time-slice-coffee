@@ -2,6 +2,14 @@
 
 **你今天 FO 了 MO？**
 
+## 换账号继续开发 / 项目备份
+
+新账号或新电脑接手时，先阅读 [当前项目状态](PROJECT_STATE.md)、[完整交接与恢复指南](docs/PROJECT_HANDOFF.md) 和 [开发历史及回归记录](docs/DEVELOPMENT_HISTORY.md)。项目文件校验清单位于 [BACKUP_MANIFEST.json](docs/BACKUP_MANIFEST.json)。
+
+代码、signal 数据、图片、PPT、逐页源码和项目文档都保存在此仓库；完整 Git 历史及源码备份下载见 [2026-10-24 备份版本](https://github.com/AcngAcng/qingsong-time-slice-coffee/releases/tag/backup-2026-10-24)。
+
+## 项目介绍
+
 Time Slice Coffee 是一个把今日信息信号萃取成“时代切片”的互动 demo。
 
 过去人们买水是为了解渴；后来人们买咖啡，是为了提神、停留和进入一种日常节奏。到了 AI 时代，人们真正需要购买的，可能是一种对时代的理解：今天发生了什么，哪些变化值得看见，哪些噪音可以先放下。

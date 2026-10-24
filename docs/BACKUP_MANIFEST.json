@@ -1,0 +1,387 @@
+{
+  "schemaVersion": 1,
+  "backupDate": "2026-10-24",
+  "repository": "https://github.com/AcngAcng/qingsong-time-slice-coffee",
+  "applicationBaseline": "4be7bda4fbf7a5812d88c5b681de20817cc45357",
+  "scope": "All project files in this backup except this manifest itself. Git history is preserved separately in the full-history bundle.",
+  "hashAlgorithm": "sha256",
+  "fileCount": 75,
+  "totalBytes": 36619217,
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 58,
+      "sha256": "a64615495c08d8deed6988c6072685d80e7df5e6dbdbd955205ba43d3cbf0144"
+    },
+    {
+      "path": "PROJECT_STATE.md",
+      "bytes": 5222,
+      "sha256": "493eac69b59e90caa0b81f622d8fc07fe8109cf5057f2e82df9d54bdf2693055"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4435,
+      "sha256": "1496e593970426d9f0781cac95f00e44b2825dbbef83fcd7570c8303442d05da"
+    },
+    {
+      "path": "components/CodeCupVisual.tsx",
+      "bytes": 4765,
+      "sha256": "bf2b700d8b12fb7166bdb2ae749ba5c6ac43f853872f9c89f978aeb245444eff"
+    },
+    {
+      "path": "components/CupPreview.tsx",
+      "bytes": 1236,
+      "sha256": "f130701c316086ceb2204947127a03a2b218deaf2cffe213b667dd8fe27a15df"
+    },
+    {
+      "path": "data/candidate-signals-expanded.js",
+      "bytes": 95959,
+      "sha256": "a87175768d873146148b4b8606d491d47ebbafe75db05d0a14c872e031be37c5"
+    },
+    {
+      "path": "data/prepared-signals.js",
+      "bytes": 227,
+      "sha256": "c30b3f91633d501b7717f0e6c00df07ac5952f9dc1d29ed748b0441c24dc250b"
+    },
+    {
+      "path": "data/prepared-signals.ts",
+      "bytes": 320,
+      "sha256": "47b231e06109f04f0ed0c08a99cc6f1ec8ba532500e697ce9d011feb6399075b"
+    },
+    {
+      "path": "data/raw-signals-xai-sample.js",
+      "bytes": 51821,
+      "sha256": "4d6cd4c65bd84744ee92b3e5ddbf7bb0ddc6ee81dae1ebd23304075f5784874e"
+    },
+    {
+      "path": "data/raw-signals-xai-sample.ts",
+      "bytes": 52173,
+      "sha256": "5faaa6a1e672d1a711171723f2093f0a9f7fad8f4364fb6ed1a50fa435e56a63"
+    },
+    {
+      "path": "data/raw-signals.js",
+      "bytes": 81,
+      "sha256": "d7d13c0bc267562c1949fa932c91283c86ac6cec5c9430d535b8e229007d2ea4"
+    },
+    {
+      "path": "data/signal-shelves.js",
+      "bytes": 1391,
+      "sha256": "ff6b6ac0781d683db8191cf7bd8c7bdf5583da942460cb6ab635e65744900abd"
+    },
+    {
+      "path": "data/signal-shelves.ts",
+      "bytes": 1515,
+      "sha256": "317bf056e4f638987acedd71654b479b6c69099849d5f793b8398c7cdaaf8a39"
+    },
+    {
+      "path": "data/signals.js",
+      "bytes": 4377,
+      "sha256": "0b7db8c0b979d30755381b27cc77d1710aa6deb7c8ac0eaa4e8c5415a0fb826c"
+    },
+    {
+      "path": "data/time-slice-label.ts",
+      "bytes": 1392,
+      "sha256": "f83bf6bc9ec008aa63407771dba2c4b6f496150f3fc17fdab17bd4ade63831aa"
+    },
+    {
+      "path": "docs/CANDIDATE_SIGNAL_AUDIT.md",
+      "bytes": 20587,
+      "sha256": "03902739bcc5e656ef5072982a2616ed04ae87bac890adfe02ca9a5174468def"
+    },
+    {
+      "path": "docs/DEVELOPMENT_HISTORY.md",
+      "bytes": 9106,
+      "sha256": "23ad957ad4419f2af2493c97bd3291d33de6ed4cb3ff2c6e3596d6f2594cec6f"
+    },
+    {
+      "path": "docs/PROJECT_DESCRIPTION.md",
+      "bytes": 9590,
+      "sha256": "b12c406b4174d4e91af494d96a5d9d152e2189a751f9bb26cc83e50744a3e8c7"
+    },
+    {
+      "path": "docs/PROJECT_HANDOFF.md",
+      "bytes": 12067,
+      "sha256": "045d7cf51510ebf3545e682d2cd6dc11ffa7b78e7e07a20f00117d0de75f0372"
+    },
+    {
+      "path": "docs/SIGNAL_QUALITY_STANDARD.md",
+      "bytes": 6431,
+      "sha256": "56d847847178f94daaae08d326ed648c44fe42732761bebf6151cce9d84f961c"
+    },
+    {
+      "path": "index.html",
+      "bytes": 11347,
+      "sha256": "ce960b8fb070f1f63b00b3004d04cfe59526e0900d3b7dfa9d5600d7b9fd0cc3"
+    },
+    {
+      "path": "lib/prepare-signal-beans.js",
+      "bytes": 8196,
+      "sha256": "29f4d7ddc1952f63fb748f3c460ac875f60209ed429e31ef69e5e1e7f8d1a535"
+    },
+    {
+      "path": "lib/prepare-signal-beans.ts",
+      "bytes": 9008,
+      "sha256": "5d12b1bab4d1e39f029267dd841ed02e3a30c91ed63b4f065fa4ecb23b8f8e62"
+    },
+    {
+      "path": "pitch-deck/Time_Slice_Coffee_Hackathon_Pitch_Deck.pptx",
+      "bytes": 6629398,
+      "sha256": "26cae129c4fd14cd0bceef653e807417df39f47d109f17fe8f449ea945280083"
+    },
+    {
+      "path": "pitch-deck/Time_Slice_Coffee_Hackathon_Pitch_Deck_BACKUP_before_micro_refinement.pptx",
+      "bytes": 6627834,
+      "sha256": "14365c91813f3d5376e84c9f6aa9b174b03d2380cc377c29b07092eff436d4b3"
+    },
+    {
+      "path": "pitch-deck/artifact-build-manifest.json",
+      "bytes": 3707,
+      "sha256": "a83b417b2a0690b19b9020f52817fc5ba9aa9ed9d2f890ae5a4c0b8b4bda755d"
+    },
+    {
+      "path": "pitch-deck/assets/closing-pickup-cups.png",
+      "bytes": 1543147,
+      "sha256": "63d7aa5d9e5a80702a9380a111360cf37ce9c1f9d74994c3455ccac826fd2b00"
+    },
+    {
+      "path": "pitch-deck/assets/cover-coffee-label.png",
+      "bytes": 1771345,
+      "sha256": "69517b787d8f3162e1fd22b00a6535014eca94aef0ea6ec8ed8c0a6792b1e982"
+    },
+    {
+      "path": "pitch-deck/assets/cover-coffee-neutral-cup.png",
+      "bytes": 1660335,
+      "sha256": "5ddddc752b184eee88e2ec3a54f302d82c2e899afd4c244bafd8dc31cf978f03"
+    },
+    {
+      "path": "pitch-deck/assets/cover-coffee-pickup-clean.png",
+      "bytes": 1688864,
+      "sha256": "e83032210a77ccf1ef24e720905f6d883b08a214def86676d6f7e016f4813023"
+    },
+    {
+      "path": "pitch-deck/assets/problem-feed-pressure.png",
+      "bytes": 1525264,
+      "sha256": "8679af715ae2dfe88cfd914b262fc7f5074c5b6997fec5a907b5a811581fdf46"
+    },
+    {
+      "path": "pitch-deck/assets/workflow-raw-signal-brew.png",
+      "bytes": 1787203,
+      "sha256": "44b8c86800aa9b40f1cb7cf1e3ce36245fc3ee34496eb544857a0e3541a42b26"
+    },
+    {
+      "path": "pitch-deck/deck-outline.md",
+      "bytes": 3816,
+      "sha256": "1b787e5ef70592e7a61c640ffc34c626c8424ee2d694d5610ec95040e8bf15f7"
+    },
+    {
+      "path": "pitch-deck/design-review-notes.md",
+      "bytes": 2747,
+      "sha256": "7e71ffd84cbda86ecfcdf690c3b29c4c046a0d872c201d2ea2fc8801c54ea877"
+    },
+    {
+      "path": "pitch-deck/label-visual-system-notes.md",
+      "bytes": 1161,
+      "sha256": "973ccebdf19e355397d930611ce37638f24c9edf94646b7012dee7d167b633e2"
+    },
+    {
+      "path": "pitch-deck/layout/slide-01.layout.json",
+      "bytes": 43116,
+      "sha256": "9996f89f2d0b581e31d07653ea3fdbd647a7d355dac3e3a2762500715d818551"
+    },
+    {
+      "path": "pitch-deck/layout/slide-02.layout.json",
+      "bytes": 23378,
+      "sha256": "a1a29478c768480e577c20a61c63c87f5ae2ee981e514029f14313bd7c6541fc"
+    },
+    {
+      "path": "pitch-deck/layout/slide-03.layout.json",
+      "bytes": 46057,
+      "sha256": "f29a24d61e3e7348129d8feeba68216974213d6289bf3d4a2f7f9ec013034990"
+    },
+    {
+      "path": "pitch-deck/layout/slide-04.layout.json",
+      "bytes": 60157,
+      "sha256": "ecfa25c613361ee73acca782a812b79600cef4fcbbd78f765853d0ebc9ede254"
+    },
+    {
+      "path": "pitch-deck/layout/slide-05.layout.json",
+      "bytes": 59681,
+      "sha256": "07758653f75197575fbd0294756a87dae3a46020ade7282750fce4c190b4c577"
+    },
+    {
+      "path": "pitch-deck/layout/slide-06.layout.json",
+      "bytes": 90843,
+      "sha256": "9c8b0c41a3ba546c04e2f2bb550dcf54806aff2b84f90a162065ea550ba06ad5"
+    },
+    {
+      "path": "pitch-deck/layout/slide-07.layout.json",
+      "bytes": 62530,
+      "sha256": "7b6d68ddc0196eef2721acd6b608aac40fee41299f1de1df0f2bc2aa49fa493c"
+    },
+    {
+      "path": "pitch-deck/layout/slide-08.layout.json",
+      "bytes": 49364,
+      "sha256": "991a86003cfad454e3ecebd4fd96fb1544903689ac4d23cceae825ccda2d5d4e"
+    },
+    {
+      "path": "pitch-deck/package.json",
+      "bytes": 42,
+      "sha256": "609158e6c5fbc237939fa3ddf7faab80ab690bdc0c8d584414a885130103c4e8"
+    },
+    {
+      "path": "pitch-deck/review-renders/contact-sheet.png",
+      "bytes": 347913,
+      "sha256": "2f5d522fcc27e897c93fcb59527503de1bb3828028971951559ad137f26cb2ad"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-01.png",
+      "bytes": 825643,
+      "sha256": "1e28026bd254800e6e29ba6f682807ce7b9a6c7a3eae5d1dcee43a0cc02b3a62"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-02.png",
+      "bytes": 743027,
+      "sha256": "a52d4e16a9e480925b6796dde2281b3dfcb03c8240e46314d76e0b7a21d40ce5"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-03.png",
+      "bytes": 69107,
+      "sha256": "7637e0f518c24f7148b4a1cc7cfdbce3e8043a0098e72bf09753aedda55a6ea4"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-04.png",
+      "bytes": 75806,
+      "sha256": "7d71a49a518f7009702ca4200b87081b0b1ac484e3533aed6beb1d003d9a9ee2"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-05.png",
+      "bytes": 846831,
+      "sha256": "415f61043615f262e45f54778e8cbaa7831c61d134c1bfc81a04608ae1704d02"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-06.png",
+      "bytes": 76629,
+      "sha256": "aac4d3bd59db36972e5c0436dda489da9715423752656c7e1c8fda1f69a54ff2"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-07.png",
+      "bytes": 74161,
+      "sha256": "68a8c456eba7f5d8b887eff5325fc9c6e80b42fadb6095bd45b61fbfe531e2c9"
+    },
+    {
+      "path": "pitch-deck/review-renders/slide-08.png",
+      "bytes": 738352,
+      "sha256": "a74fb3f9a1c747bfccf5039b5224126dc9d0a4b7b74e7fb19780be2b4439e0da"
+    },
+    {
+      "path": "pitch-deck/slides/common.mjs",
+      "bytes": 9027,
+      "sha256": "f8c6e838be34edbc00fdd56b885d78c0adc045805f9580a4204ed2b7602d0326"
+    },
+    {
+      "path": "pitch-deck/slides/slide-01.mjs",
+      "bytes": 2857,
+      "sha256": "2bd0d113e9165443265db059e5e279c5fdc8054ba5b538ca386f1ebe7faff308"
+    },
+    {
+      "path": "pitch-deck/slides/slide-02.mjs",
+      "bytes": 1436,
+      "sha256": "4f0345ad483d848474bd69cbb827f53dd736fe9faefdd1a6527fe573c52dbad4"
+    },
+    {
+      "path": "pitch-deck/slides/slide-03.mjs",
+      "bytes": 2167,
+      "sha256": "cfa475460f5c5dc3efdf41e9d33a7f024df0e267fc7fd4909e0cca4b4d9baa7d"
+    },
+    {
+      "path": "pitch-deck/slides/slide-04.mjs",
+      "bytes": 2876,
+      "sha256": "5ef8687d277d52338232a8464809c55a9b64394e49222133a81431cb79f81adf"
+    },
+    {
+      "path": "pitch-deck/slides/slide-05.mjs",
+      "bytes": 3181,
+      "sha256": "c76bfb546a8d8a3a1fb04a21d548e34e3903df73008518393159216fbff8f866"
+    },
+    {
+      "path": "pitch-deck/slides/slide-06.mjs",
+      "bytes": 3456,
+      "sha256": "6584c801663da0cc9e63075b6fa6ebe579060e8d5ae278b714026448bfd3335d"
+    },
+    {
+      "path": "pitch-deck/slides/slide-07.mjs",
+      "bytes": 2996,
+      "sha256": "b9e6fb38ba33c297ab3fb64fefbb98b7dac589c6965678a9b083c11df843e5cc"
+    },
+    {
+      "path": "pitch-deck/slides/slide-08.mjs",
+      "bytes": 3850,
+      "sha256": "e21d68f93f1e6bdeaa5ad92ff4e03a09f1257eca5ba3c093c4257ed370c1b4b2"
+    },
+    {
+      "path": "pitch-deck/speaker-notes.md",
+      "bytes": 3736,
+      "sha256": "d7c59deae432e7c0811becf83a056e403b37471a0726ea37d0e67fdfa9b64f71"
+    },
+    {
+      "path": "pitch-deck/visual-design-system.md",
+      "bytes": 3394,
+      "sha256": "898d7eb6c529dd3060c2e9135b97a75926cedd6157aedc4de7c7593dd90f0f01"
+    },
+    {
+      "path": "pitch-deck/~$Time_Slice_Coffee_Hackathon_Pitch_Deck.pptx",
+      "bytes": 165,
+      "sha256": "85ac8e8243e10ef3447cdd6228a3ae6aaf181d96d89c35ec4358f120515da495"
+    },
+    {
+      "path": "public/images/cup-hot-clean.png",
+      "bytes": 2278202,
+      "sha256": "974a9886c15090f4b66833485bd545e6ceb60afd785954be502d95c6d01825e1"
+    },
+    {
+      "path": "public/images/cup-hot.png",
+      "bytes": 1823020,
+      "sha256": "a2905379821e7383aca459ae7331d0181bae6014ec54be6ae422a7b13059bc1c"
+    },
+    {
+      "path": "public/images/cup-iced-clean.png",
+      "bytes": 2600504,
+      "sha256": "46f462b5c05cb5c63b5b6f0e9667b875e3de99ae89557ecd71f251a4c4a74280"
+    },
+    {
+      "path": "public/images/cup-iced.png",
+      "bytes": 1887018,
+      "sha256": "31d258719c0f4a3c6602fbe7534f64bc8823b04d45d7f3da3265fe0694dfa62c"
+    },
+    {
+      "path": "script.js",
+      "bytes": 130942,
+      "sha256": "dfac4122d9ddea1c78a25ba5ff45ce4aba6ac5060482841c4b675adf187d6fb1"
+    },
+    {
+      "path": "scripts/validate-candidate-signals.js",
+      "bytes": 6683,
+      "sha256": "17db96b4e8dd9f3d06528c6eeccbb30750caef29ec909cc322ac66efc66ff077"
+    },
+    {
+      "path": "server.js",
+      "bytes": 14188,
+      "sha256": "2d5de5d4ed2486b7798197f4495a9096ed12f2d30fb09b0f0c0784fc9fee776e"
+    },
+    {
+      "path": "source.html",
+      "bytes": 2779,
+      "sha256": "e5e52362ecb22e0c249b0ed21b0d75d82126f5de091ee5b9c0544c4006f34dbf"
+    },
+    {
+      "path": "source.js",
+      "bytes": 4467,
+      "sha256": "f5463530938e59e03736bdbdef6ff358b9a61db4614dcff097d8b1036898e366"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 43511,
+      "sha256": "13bed3b31b8ee5205346f4602411da3abba041edc265781121804ec0702be0c1"
+    }
+  ]
+}
